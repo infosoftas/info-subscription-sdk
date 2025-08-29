@@ -8,29 +8,27 @@ variables:
   branchName: 'sdk-update-${BUILD_BUILDID}'
 
 stages:
-- generate
-- branch
-- pr
 
-generate:
-  stage: generate
+- stage: generate
   displayName: 'Generate dotnet sdk'
   jobs:
   - job: generateSdk
     displayName: 'Generate SDKs'
     steps:
+
     - task: Docker@2
       displayName: 'Login to Docker'
       inputs:
         command: 'login'
         containerRegistry: 'dockerRegistryService'
-    - task: Docker@2
-      displayName: 'Generate SDK'
-      inputs:
-        command: 'run'
-        containerRegistry: 'dockerRegistryService'
-        container: 'mcr.microsoft.com/openapi/kiota'
-        args: 'mcr.microsoft.com/openapi/kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c INFOSubscriptionSDK -n info-subscription.sdk --output /dotnet-sdk/src/generated'
+    
+#   - task: Docker@2
+#     displayName: 'Generate SDK'
+#     inputs:
+#       command: 'run'
+#       containerRegistry: 'dockerRegistryService'
+#       container: 'mcr.microsoft.com/openapi/kiota'
+#       args: 'mcr.microsoft.com/openapi/kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c INFOSubscriptionSDK -n info-subscription.sdk --output /dotnet-sdk/src/generated'
 
 #branch:
 #  stage: branch
