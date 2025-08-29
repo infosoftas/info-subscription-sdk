@@ -26,6 +26,13 @@ stages:
         custom: tool
         arguments: 'install --global Microsoft.OpenApi.Kiota'
 
+    - task: DotNetCoreCLI@2
+      displayName: 'Generate SDK using dotnet-kiota'
+      inputs:
+        command: custom
+        custom: kiota
+        arguments: 'generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c INFOSubscriptionSDK -n info-subscription.sdk --output dotnet-sdk/src/generated'
+
 #   - task: Docker@2
 #     displayName: 'Generate SDK'
 #     inputs:
