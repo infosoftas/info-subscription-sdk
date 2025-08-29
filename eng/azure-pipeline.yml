@@ -36,6 +36,8 @@ stages:
       displayName: 'Compare SDK with existing'
 
     - script: |
+        echo 'what is going on'
+        echo '$(changeDetected)'
         if $(changeDetected);
         then
             echo "A change was detected! PRing"
