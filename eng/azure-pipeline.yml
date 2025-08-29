@@ -15,13 +15,17 @@ stages:
   - job: generateSdk
     displayName: 'Generate SDKs'
     steps:
-
-    - task: Docker@2
-      displayName: 'Login to Docker'
+    - task: UseDotNet@2
       inputs:
-        command: 'login'
-        containerRegistry: 'dockerRegistryService'
+        packageType: sdk
     
+    - task: DotNetCoreCLI@2
+      displayName: 'Install kiota as a dotnet tool'
+      inputs:
+        command: custom
+        custom: tool
+        arguments: 'install --global Microsoft.OpenApi.Kiota'
+
 #   - task: Docker@2
 #     displayName: 'Generate SDK'
 #     inputs:
