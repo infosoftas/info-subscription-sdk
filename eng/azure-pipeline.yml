@@ -28,7 +28,7 @@ stages:
         arguments: 'install --global Microsoft.OpenApi.Kiota'
 
     - script: |
-        generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c INFOSubscriptionSDK -n info-subscription.sdk --output dotnet-sdk/src/generated
+        kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c INFOSubscriptionSDK -n info-subscription.sdk --output dotnet-sdk/src/generated-temp
       displayName: 'Generate C# SDK'
 
 #   - task: DotNetCoreCLI@2
