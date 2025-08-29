@@ -35,8 +35,9 @@ stages:
         diff -qr dotnet-sdk/src/generated-temp dotnet-sdk/src/generated || echo "##vso[task.setvariable variable=changeDetected;isOutput=true]true"
       displayName: 'Compare SDK with existing'
 
-    - script: |
-        if $(myVar) then
+    - script: |        
+        if $(changeDetected);
+        then
             echo "A change was detected, do shit."
         fi
       displayName: 'Compare SDK with existing'
