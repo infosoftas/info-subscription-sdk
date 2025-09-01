@@ -2,7 +2,9 @@ trigger: none
 pr: none
 
 pool:
-  vmImage: ubuntu-latest
+  name: Release
+  demands:
+    - Agent.OS -equals Linux
 
 resources:
   repositories:
