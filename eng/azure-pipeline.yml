@@ -3,6 +3,13 @@ trigger: none
 pool:
   vmImage: ubuntu-latest
 
+resources:
+  repositories:
+    - repository: self
+      type: github
+      name: infosoftas/didactic-octo-chainsaw
+      endpoint: Github-SDKs # <-- Service Connection name
+
 variables:
   #githubToken: ${{ secrets.GITHUB_TOKEN }}
   branchName: 'feature/sdk-update-${BUILD_BUILDID}'
@@ -17,6 +24,7 @@ stages:
     displayName: 'Generate SDKs'
     steps:
     - checkout: self
+      persistCredentials: true
     - task: UseDotNet@2
       inputs:
         packageType: sdk
