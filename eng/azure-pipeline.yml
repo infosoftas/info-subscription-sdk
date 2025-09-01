@@ -2,7 +2,9 @@ trigger: none
 pr: none
 
 pool:
-  vmImage: ubuntu-latest
+  name: Release
+  demands:
+    - Agent.OS -equals Linux
 
 resources:
   repositories:
@@ -29,8 +31,19 @@ stages:
       persistCredentials: true
     - task: UseDotNet@2
       inputs:
-        packageType: sdk
+        packageType: 'sdk'
+        version: '9.x'
     
+    # Set the path of the recently installed dotnet tool (god that is stupid!).
+    # - script: |
+    #     echo "##vso[task.setvariable variable=DOTNET_ROOT]$(Agent.ToolsDirectory)/dotnet"
+    #     echo "##vso[task.setvariable variable=PATH]$PATH:$(Agent.ToolsDirectory)/dotnet"
+    #   displayName: 'Set DOTNET_ROOT and update PATH'
+# 
+    # - script: |
+    #     dotnet tool install --global Microsoft.OpenApi.Kiota
+    #   displayName: 'Install kiota as a dotnet tool'
+
     - task: DotNetCoreCLI@2
       displayName: 'Install kiota as a dotnet tool'
       inputs:
