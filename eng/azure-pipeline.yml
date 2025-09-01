@@ -12,9 +12,9 @@ resources:
 
 variables:
   #githubToken: ${{ secrets.GITHUB_TOKEN }}
-  branchName: 'sdk-update-${BUILD_BUILDID}'
+  branchName: 'sdk-update-$(Build.BuildId)'
   changeDetected: true
-  buildId: '${BUILD_BUILDID}'
+  buildId: '$(Build.BuildId)'
 
 stages:
 
