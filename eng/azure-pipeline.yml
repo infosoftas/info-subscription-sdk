@@ -53,6 +53,7 @@ stages:
           git add dotnet-sdk/src/generated
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin $(branchname)
+          sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
       displayName: 'Create PR if there are  changes'
       condition: eq(variables['changeDetected'], 'true')
 
