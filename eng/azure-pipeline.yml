@@ -40,12 +40,16 @@ stages:
         echo "##vso[task.setvariable variable=PATH]$PATH:$(Agent.ToolsDirectory)/dotnet"
       displayName: 'Set DOTNET_ROOT and update PATH'
 
-    - task: DotNetCoreCLI@2
+    - script: |
+        dotnet tool install --global Microsoft.OpenApi.Kiota
       displayName: 'Install kiota as a dotnet tool'
-      inputs:
-        command: custom
-        custom: tool
-        arguments: 'install --global Microsoft.OpenApi.Kiota'
+
+    #- task: DotNetCoreCLI@2
+    #  displayName: 'Install kiota as a dotnet tool'
+    #  inputs:
+    #    command: custom
+    #    custom: tool
+    #    arguments: 'install --global Microsoft.OpenApi.Kiota'
 
     - script: |
         kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c INFOSubscriptionSDK -n info-subscription.sdk --output dotnet-sdk/src/generated-temp
