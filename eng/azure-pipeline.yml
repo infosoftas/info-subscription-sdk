@@ -32,6 +32,7 @@ stages:
     - task: UseDotNet@2
       inputs:
         packageType: sdk
+        installationPath: $(Agent.ToolsDirectory)/dotnet
     
     # Set the path of the recently installed dotnet tool (god that is stupid!).
     - script: |
