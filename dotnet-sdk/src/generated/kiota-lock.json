@@ -1,0 +1,39 @@
+{
+  "descriptionHash": "B0D892C37F7EBBFCC03A06FCF381AD37C34A6AFE0EF8E97B031FC3A6E3DA252BF5E20E57A9D67479C8AC29A909D3C8C1DA1A9BCDC807F40181098282DD181106",
+  "descriptionLocation": "https://api.info-subscription.com/swagger/v1/swagger.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.28.0",
+  "clientClassName": "INFOSubscriptionSDK",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "info-subscription.sdk",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": false,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [
+    "/order",
+    "/order/**",
+    "/subscriber",
+    "/vippsmobilepay/agreement**/remote"
+  ],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}
