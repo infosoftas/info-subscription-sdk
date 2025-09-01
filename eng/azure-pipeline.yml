@@ -56,7 +56,7 @@ stages:
       displayName: 'Generate C# SDK'
 
     - script: |
-        diff -qr dotnet-sdk/src/generated-temp dotnet-sdk/src/generated || echo "##vso[task.setvariable variable=changeDetected;isOutput=true]false"
+        diff -qr dotnet-sdk/src/generated-temp dotnet-sdk/src/generated -x .kiota.log || echo "##vso[task.setvariable variable=changeDetected;isOutput=true]false"
       displayName: 'Compare SDK with existing'
 
     - script: |
