@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Sample/Sample.csproj" />
+  <Project Path="src/Info.Subscription.Dotnet.csproj" />
+</Solution>
