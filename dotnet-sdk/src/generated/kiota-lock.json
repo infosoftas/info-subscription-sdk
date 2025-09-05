@@ -1,11 +1,11 @@
 {
-  "descriptionHash": "B0D892C37F7EBBFCC03A06FCF381AD37C34A6AFE0EF8E97B031FC3A6E3DA252BF5E20E57A9D67479C8AC29A909D3C8C1DA1A9BCDC807F40181098282DD181106",
+  "descriptionHash": "F6F424C9B8348728F6301F42E80D6D465F2D0FD319CC83AD74F31DB4D2E19E471D54A6EC6B16DA1710B83C0547868D303D2135DF269BACB6E84311062A06F83E",
   "descriptionLocation": "https://api.info-subscription.com/swagger/v1/swagger.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.28.0",
-  "clientClassName": "INFOSubscriptionSDK",
+  "clientClassName": "InfoSubscription",
   "typeAccessModifier": "Public",
-  "clientNamespaceName": "info-subscription.sdk",
+  "clientNamespaceName": "info.subscription.dotnet",
   "language": "CSharp",
   "usesBackingStore": false,
   "excludeBackwardCompatible": false,
@@ -29,6 +29,9 @@
     "multipart/form-data;q=0.1"
   ],
   "includePatterns": [
+    "/subscription",
+    "/product",
+    "/package",
     "/order",
     "/order/**",
     "/subscriber",
