@@ -16,13 +16,14 @@ resources:
 variables:
   #githubToken: ${{ secrets.GITHUB_TOKEN }}
   branchName: 'sdk-update-$(Build.BuildId)'
-  changeDetected: true
   buildId: '$(Build.BuildId)'
   today: $[ format('{0:yyyy}{0:MM}{0:dd}', pipeline.startTime) ]
 
 stages:
 - stage: generate-dotnet
-  displayName: 'Generate dotnet sdk'
+  displayName: 'Generate dotnet sdk'  
+  variables:
+    changeDetected: true
   jobs:
   - job: generateSdk
     displayName: 'Generate SDKs'
@@ -78,6 +79,8 @@ stages:
 
 - stage: generate-ts
   displayName: 'Generate TypeScript sdk'
+  variables:
+    changeDetected: true
   jobs:
   - job: generateSdk
     displayName: 'Generate SDKs'
@@ -133,6 +136,8 @@ stages:
 
 - stage: generate-python
   displayName: 'Generate Python sdk'
+  variables:
+    changeDetected: true
   jobs:
   - job: generateSdk
     displayName: 'Generate SDKs'
