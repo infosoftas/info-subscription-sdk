@@ -1,0 +1,58 @@
+trigger: none
+pr: none
+
+# Pipeline variables
+variables:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
+  DOTNET_NOLOGO: 'true'
+  NuGetDirectory: '$(Build.ArtifactStagingDirectory)/nuget'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: CreateNuget
+  displayName: 'Create NuGet Package'
+  jobs:
+  - job: create_nuget
+    displayName: 'Pack NuGet'
+    steps:
+    - checkout: self
+      fetchDepth: 0
+
+    - task: UseDotNet@2
+      displayName: 'Setup .NET'
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+
+    - script: |
+        dotnet pack --configuration Release --output $(NuGetDirectory)
+      displayName: 'Pack NuGet'
+
+    - publish: $(NuGetDirectory)
+      artifact: nuget
+
+- stage: Deploy
+  displayName: 'Deploy NuGet Package'
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual')) # Only run on manual or webhook trigger
+  jobs:
+  - job: deploy
+    displayName: 'Deploy'
+    steps:
+    - download: current
+      artifact: nuget
+
+    - task: UseDotNet@2
+      displayName: 'Setup .NET'
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+
+    - script: |
+        for file in $(Pipeline.Workspace)/nuget/*.nupkg; do
+          dotnet nuget push "$file" --api-key "$(NUGET_APIKEY)" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        done
+      displayName: 'Publish NuGet package'
+      env:
+        NUGET_APIKEY: $(NUGET_APIKEY)
