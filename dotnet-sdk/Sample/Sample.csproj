@@ -8,11 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Infosoft.Info.Subscription.Dotnet" Version="0.0.0-alpha.0.11" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\src\Info.Subscription.Dotnet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
