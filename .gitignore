@@ -416,3 +416,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+## No need to upload new version of appSettings.json files without explicitly wanting to.
+**/appSettings.json
