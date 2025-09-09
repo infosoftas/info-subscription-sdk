@@ -45,8 +45,9 @@
       </PackageReference>
   </ItemGroup>
   
-  <!-- Copy the infosoft-icon to the root package location -->
+  <!-- Copy various data such as infosoft-icon to the root package location -->
   <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath=""/>
     <None Include="../../eng/infosoft-icon.png" Pack="true" PackagePath=""/>
   </ItemGroup>
 </Project>
