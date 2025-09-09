@@ -20,7 +20,7 @@ variables:
   today: $[ format('{0:yyyy}{0:MM}{0:dd}', pipeline.startTime) ]
 
 stages:
-- stage: generate-dotnet
+- stage: generate_dotnet
   displayName: 'Generate dotnet sdk'  
   variables:
     changeDetected: true
@@ -77,7 +77,7 @@ stages:
           }
         githubrestapiurl: https://api.github.com/repos/infosoftas/didactic-octo-chainsaw/pulls
 
-- stage: generate-ts
+- stage: generate_ts
   displayName: 'Generate TypeScript sdk'
   variables:
     changeDetected: true
@@ -134,7 +134,7 @@ stages:
           }
         githubrestapiurl: https://api.github.com/repos/infosoftas/didactic-octo-chainsaw/pulls
 
-- stage: generate-python
+- stage: generate_python
   displayName: 'Generate Python sdk'
   variables:
     changeDetected: true
