@@ -39,12 +39,22 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
         public DateTimeOffset? OrderCompleted { get; set; }
         /// <summary>Gets or sets the Date/Time of the order created.</summary>
         public DateTimeOffset? OrderCreated { get; set; }
+        /// <summary>An optional order reference.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? OrderReference { get; set; }
+#nullable restore
+#else
+        public string OrderReference { get; set; }
+#endif
         /// <summary>Gets or sets the identifier of the payment agreement.</summary>
         public Guid? PaymentAgreementId { get; set; }
         /// <summary>Gets or sets the identifier of the related payment.</summary>
         public Guid? PaymentId { get; set; }
         /// <summary>Gets the payment methods.</summary>
         public global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.PaymentMethods? PaymentMethod { get; set; }
+        /// <summary>Should this order settle existing account balance when when billed.</summary>
+        public bool? SettleAccountBalance { get; set; }
         /// <summary>Gets or sets the status.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -96,7 +106,7 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
         public static global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order.OrderView CreateFromDiscriminatorValue(IParseNode parseNode)
         {
-            _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
+            if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
             return new global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order.OrderView();
         }
         /// <summary>
@@ -114,9 +124,11 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
                 { "orderCancelled", n => { OrderCancelled = n.GetDateTimeOffsetValue(); } },
                 { "orderCompleted", n => { OrderCompleted = n.GetDateTimeOffsetValue(); } },
                 { "orderCreated", n => { OrderCreated = n.GetDateTimeOffsetValue(); } },
+                { "orderReference", n => { OrderReference = n.GetStringValue(); } },
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
                 { "paymentId", n => { PaymentId = n.GetGuidValue(); } },
                 { "paymentMethod", n => { PaymentMethod = n.GetEnumValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.PaymentMethods>(); } },
+                { "settleAccountBalance", n => { SettleAccountBalance = n.GetBoolValue(); } },
                 { "status", n => { Status = n.GetStringValue(); } },
                 { "subscriberAccount", n => { SubscriberAccount = n.GetGuidValue(); } },
                 { "subscriberId", n => { SubscriberId = n.GetGuidValue(); } },
@@ -135,7 +147,7 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer)
         {
-            _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("agreementReference", AgreementReference);
             writer.WriteStringValue("externalSubscriberId", ExternalSubscriberId);
             writer.WriteGuidValue("id", Id);
@@ -143,9 +155,11 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
             writer.WriteDateTimeOffsetValue("orderCancelled", OrderCancelled);
             writer.WriteDateTimeOffsetValue("orderCompleted", OrderCompleted);
             writer.WriteDateTimeOffsetValue("orderCreated", OrderCreated);
+            writer.WriteStringValue("orderReference", OrderReference);
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);
             writer.WriteGuidValue("paymentId", PaymentId);
             writer.WriteEnumValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.PaymentMethods>("paymentMethod", PaymentMethod);
+            writer.WriteBoolValue("settleAccountBalance", SettleAccountBalance);
             writer.WriteStringValue("status", Status);
             writer.WriteGuidValue("subscriberAccount", SubscriberAccount);
             writer.WriteGuidValue("subscriberId", SubscriberId);

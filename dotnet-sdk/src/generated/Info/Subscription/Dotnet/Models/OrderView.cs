@@ -47,6 +47,14 @@ namespace Info.Subscription.Dotnet.Models
         public DateTimeOffset? OrderCompleted { get; set; }
         /// <summary>Gets or sets the Date/Time of the order created.</summary>
         public DateTimeOffset? OrderCreated { get; set; }
+        /// <summary>An optional order reference.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? OrderReference { get; set; }
+#nullable restore
+#else
+        public string OrderReference { get; set; }
+#endif
         /// <summary>Gets or sets the identifier of the organization.</summary>
         public Guid? OrganizationId { get; set; }
         /// <summary>Gets or sets the identifier of the payment agreement.</summary>
@@ -55,6 +63,8 @@ namespace Info.Subscription.Dotnet.Models
         public Guid? PaymentId { get; set; }
         /// <summary>Gets the payment methods.</summary>
         public global::Info.Subscription.Dotnet.Models.PaymentMethods? PaymentMethod { get; set; }
+        /// <summary>Should this order settle existing account balance when when billed.</summary>
+        public bool? SettleAccountBalance { get; set; }
         /// <summary>An enum representing different order statuses.</summary>
         public global::Info.Subscription.Dotnet.Models.OrderStatus? Status { get; set; }
         /// <summary>Gets or sets the subscriber account.</summary>
@@ -92,7 +102,7 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
         public static global::Info.Subscription.Dotnet.Models.OrderView CreateFromDiscriminatorValue(IParseNode parseNode)
         {
-            _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
+            if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
             return new global::Info.Subscription.Dotnet.Models.OrderView();
         }
         /// <summary>
@@ -111,10 +121,12 @@ namespace Info.Subscription.Dotnet.Models
                 { "orderChoices", n => { OrderChoices = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.OrderChoices>(global::Info.Subscription.Dotnet.Models.OrderChoices.CreateFromDiscriminatorValue); } },
                 { "orderCompleted", n => { OrderCompleted = n.GetDateTimeOffsetValue(); } },
                 { "orderCreated", n => { OrderCreated = n.GetDateTimeOffsetValue(); } },
+                { "orderReference", n => { OrderReference = n.GetStringValue(); } },
                 { "organizationId", n => { OrganizationId = n.GetGuidValue(); } },
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
                 { "paymentId", n => { PaymentId = n.GetGuidValue(); } },
                 { "paymentMethod", n => { PaymentMethod = n.GetEnumValue<global::Info.Subscription.Dotnet.Models.PaymentMethods>(); } },
+                { "settleAccountBalance", n => { SettleAccountBalance = n.GetBoolValue(); } },
                 { "status", n => { Status = n.GetEnumValue<global::Info.Subscription.Dotnet.Models.OrderStatus>(); } },
                 { "subscriberAccount", n => { SubscriberAccount = n.GetGuidValue(); } },
                 { "subscriberId", n => { SubscriberId = n.GetGuidValue(); } },
@@ -132,7 +144,7 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer)
         {
-            _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("agreementReference", AgreementReference);
             writer.WriteStringValue("externalSubscriberId", ExternalSubscriberId);
             writer.WriteGuidValue("id", Id);
@@ -141,10 +153,12 @@ namespace Info.Subscription.Dotnet.Models
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.OrderChoices>("orderChoices", OrderChoices);
             writer.WriteDateTimeOffsetValue("orderCompleted", OrderCompleted);
             writer.WriteDateTimeOffsetValue("orderCreated", OrderCreated);
+            writer.WriteStringValue("orderReference", OrderReference);
             writer.WriteGuidValue("organizationId", OrganizationId);
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);
             writer.WriteGuidValue("paymentId", PaymentId);
             writer.WriteEnumValue<global::Info.Subscription.Dotnet.Models.PaymentMethods>("paymentMethod", PaymentMethod);
+            writer.WriteBoolValue("settleAccountBalance", SettleAccountBalance);
             writer.WriteEnumValue<global::Info.Subscription.Dotnet.Models.OrderStatus>("status", Status);
             writer.WriteGuidValue("subscriberAccount", SubscriberAccount);
             writer.WriteGuidValue("subscriberId", SubscriberId);

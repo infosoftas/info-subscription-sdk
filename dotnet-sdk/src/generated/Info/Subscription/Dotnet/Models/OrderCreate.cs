@@ -40,6 +40,14 @@ namespace Info.Subscription.Dotnet.Models
 #endif
         /// <summary>The identifier of the subscriber contact used as the Invoice recipient/Invoice payer.</summary>
         public Guid? InvoiceContactId { get; set; }
+        /// <summary>An optional order reference.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? OrderReference { get; set; }
+#nullable restore
+#else
+        public string OrderReference { get; set; }
+#endif
         /// <summary>The identifier of the organization that the subscription should be created for.If not set the first available organization will be choosen.</summary>
         public Guid? OrganizationId { get; set; }
         /// <summary>The identifier of a payment agreement to use for the new subscription.</summary>
@@ -52,6 +60,8 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public global::Info.Subscription.Dotnet.Models.PaymentAgreementParameters PaymentAgreementParameters { get; set; }
 #endif
+        /// <summary>Should this order settle existing account balance when when billed.</summary>
+        public bool? SettleAccountBalance { get; set; }
         /// <summary>The subscriber account the order should be associated with. If not given it will be automatically determined based on the current system state.</summary>
         public Guid? SubscriberAccount { get; set; }
         /// <summary>The identifier of the subscriber.</summary>
@@ -83,7 +93,7 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
         public static global::Info.Subscription.Dotnet.Models.OrderCreate CreateFromDiscriminatorValue(IParseNode parseNode)
         {
-            _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
+            if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
             return new global::Info.Subscription.Dotnet.Models.OrderCreate();
         }
         /// <summary>
@@ -98,9 +108,11 @@ namespace Info.Subscription.Dotnet.Models
                 { "externalSubscriberId", n => { ExternalSubscriberId = n.GetStringValue(); } },
                 { "invoiceContact", n => { InvoiceContact = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.SubscriberContact>(global::Info.Subscription.Dotnet.Models.SubscriberContact.CreateFromDiscriminatorValue); } },
                 { "invoiceContactId", n => { InvoiceContactId = n.GetGuidValue(); } },
+                { "orderReference", n => { OrderReference = n.GetStringValue(); } },
                 { "organizationId", n => { OrganizationId = n.GetGuidValue(); } },
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
                 { "paymentAgreementParameters", n => { PaymentAgreementParameters = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.PaymentAgreementParameters>(global::Info.Subscription.Dotnet.Models.PaymentAgreementParameters.CreateFromDiscriminatorValue); } },
+                { "settleAccountBalance", n => { SettleAccountBalance = n.GetBoolValue(); } },
                 { "subscriberAccount", n => { SubscriberAccount = n.GetGuidValue(); } },
                 { "subscriberId", n => { SubscriberId = n.GetGuidValue(); } },
                 { "subscriberNumber", n => { SubscriberNumber = n.GetLongValue(); } },
@@ -115,14 +127,16 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer)
         {
-            _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfObjectValues<global::Info.Subscription.Dotnet.Models.AdditionalProductOrder>("additionalProducts", AdditionalProducts);
             writer.WriteStringValue("externalSubscriberId", ExternalSubscriberId);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.SubscriberContact>("invoiceContact", InvoiceContact);
             writer.WriteGuidValue("invoiceContactId", InvoiceContactId);
+            writer.WriteStringValue("orderReference", OrderReference);
             writer.WriteGuidValue("organizationId", OrganizationId);
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.PaymentAgreementParameters>("paymentAgreementParameters", PaymentAgreementParameters);
+            writer.WriteBoolValue("settleAccountBalance", SettleAccountBalance);
             writer.WriteGuidValue("subscriberAccount", SubscriberAccount);
             writer.WriteGuidValue("subscriberId", SubscriberId);
             writer.WriteLongValue("subscriberNumber", SubscriberNumber);

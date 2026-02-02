@@ -8,24 +8,22 @@ using System;
 namespace Info.Subscription.Dotnet.Models
 {
     /// <summary>
-    /// A product calendar view.
+    /// Represents an Id for an object. Typically the Location of the object is available in the Location header.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ProductCalendar : IParsable
+    public partial class IdResult : IParsable
     {
-        /// <summary>Gets or sets the identifier of the calendar.</summary>
-        public Guid? CalendarId { get; set; }
-        /// <summary>Gets or sets the starts on date.</summary>
-        public DateTimeOffset? StartsOnDate { get; set; }
+        /// <summary>The wrapped identifier.</summary>
+        public Guid? Id { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.ProductCalendar"/></returns>
+        /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.IdResult"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::Info.Subscription.Dotnet.Models.ProductCalendar CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::Info.Subscription.Dotnet.Models.IdResult CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::Info.Subscription.Dotnet.Models.ProductCalendar();
+            return new global::Info.Subscription.Dotnet.Models.IdResult();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -35,8 +33,7 @@ namespace Info.Subscription.Dotnet.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "calendarId", n => { CalendarId = n.GetGuidValue(); } },
-                { "startsOnDate", n => { StartsOnDate = n.GetDateTimeOffsetValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
             };
         }
         /// <summary>
@@ -46,8 +43,7 @@ namespace Info.Subscription.Dotnet.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteGuidValue("calendarId", CalendarId);
-            writer.WriteDateTimeOffsetValue("startsOnDate", StartsOnDate);
+            writer.WriteGuidValue("id", Id);
         }
     }
 }

@@ -64,6 +64,8 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public List<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Identification> Identifications { get; set; }
 #endif
+        /// <summary>Gets or sets a value indicating whether this object is primary.</summary>
+        public bool? IsPrimary { get; set; }
         /// <summary>Gets or sets the name.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -103,7 +105,7 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
         public static global::Info.Subscription.Dotnet.Models.SubscriberContact CreateFromDiscriminatorValue(IParseNode parseNode)
         {
-            _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
+            if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
             return new global::Info.Subscription.Dotnet.Models.SubscriberContact();
         }
         /// <summary>
@@ -121,6 +123,7 @@ namespace Info.Subscription.Dotnet.Models
                 { "email", n => { Email = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
                 { "identifications", n => { Identifications = n.GetCollectionOfObjectValues<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Identification>(global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Identification.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "isPrimary", n => { IsPrimary = n.GetBoolValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "phone", n => { Phone = n.GetStringValue(); } },
                 { "source", n => { Source = n.GetStringValue(); } },
@@ -133,7 +136,7 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer)
         {
-            _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfPrimitiveValues<string>("addressLines", AddressLines);
             writer.WriteStringValue("careOf", CareOf);
             writer.WriteStringValue("city", City);
@@ -141,6 +144,7 @@ namespace Info.Subscription.Dotnet.Models
             writer.WriteStringValue("email", Email);
             writer.WriteGuidValue("id", Id);
             writer.WriteCollectionOfObjectValues<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Identification>("identifications", Identifications);
+            writer.WriteBoolValue("isPrimary", IsPrimary);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("phone", Phone);
             writer.WriteStringValue("source", Source);
