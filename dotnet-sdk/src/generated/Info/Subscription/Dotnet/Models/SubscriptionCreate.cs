@@ -34,6 +34,14 @@ namespace Info.Subscription.Dotnet.Models
         public Guid? EnterprisePlanId { get; set; }
         /// <summary>The identifier of the invoice contact, if not set will default to the buyer/subscriber.</summary>
         public Guid? InvoiceContactId { get; set; }
+        /// <summary>An optional order reference.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? OrderReference { get; set; }
+#nullable restore
+#else
+        public string OrderReference { get; set; }
+#endif
         /// <summary>Gets or sets the identifier of the organization that the subscription should be created for.If not set the first available organization will be choosen.</summary>
         public Guid? OrganizationId { get; set; }
         /// <summary>The identifier of the payment agreement to use when billing the subscription.</summary>
@@ -57,7 +65,7 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
         public static global::Info.Subscription.Dotnet.Models.SubscriptionCreate CreateFromDiscriminatorValue(IParseNode parseNode)
         {
-            _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
+            if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
             return new global::Info.Subscription.Dotnet.Models.SubscriptionCreate();
         }
         /// <summary>
@@ -72,6 +80,7 @@ namespace Info.Subscription.Dotnet.Models
                 { "contract", n => { Contract = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Contract>(global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Contract.CreateFromDiscriminatorValue); } },
                 { "enterprisePlanId", n => { EnterprisePlanId = n.GetGuidValue(); } },
                 { "invoiceContactId", n => { InvoiceContactId = n.GetGuidValue(); } },
+                { "orderReference", n => { OrderReference = n.GetStringValue(); } },
                 { "organizationId", n => { OrganizationId = n.GetGuidValue(); } },
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
                 { "permanentDiscountId", n => { PermanentDiscountId = n.GetGuidValue(); } },
@@ -88,11 +97,12 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer)
         {
-            _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.BillingOptions>("billingOptions", BillingOptions);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Contract>("contract", Contract);
             writer.WriteGuidValue("enterprisePlanId", EnterprisePlanId);
             writer.WriteGuidValue("invoiceContactId", InvoiceContactId);
+            writer.WriteStringValue("orderReference", OrderReference);
             writer.WriteGuidValue("organizationId", OrganizationId);
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);
             writer.WriteGuidValue("permanentDiscountId", PermanentDiscountId);

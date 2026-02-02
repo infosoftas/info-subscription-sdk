@@ -43,5 +43,13 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1
         #pragma warning disable CS1591
         BetalingsService,
         #pragma warning restore CS1591
+        [EnumMember(Value = "Autogiro")]
+        #pragma warning disable CS1591
+        Autogiro,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "eFaktura")]
+        #pragma warning disable CS1591
+        EFaktura,
+        #pragma warning restore CS1591
     }
 }

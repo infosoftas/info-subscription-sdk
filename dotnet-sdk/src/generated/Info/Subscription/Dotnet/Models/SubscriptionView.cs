@@ -59,6 +59,14 @@ namespace Info.Subscription.Dotnet.Models
         public Guid? NextInvoiceContactId { get; set; }
         /// <summary>Gets or sets the next subscription.</summary>
         public Guid? NextSubscription { get; set; }
+        /// <summary>An optional order reference.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? OrderReference { get; set; }
+#nullable restore
+#else
+        public string OrderReference { get; set; }
+#endif
         /// <summary>The organization this subscription belongs to.</summary>
         public Guid? OrganizationId { get; set; }
         /// <summary>A SubscriptionPackage view class.</summary>
@@ -100,7 +108,7 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
         public static global::Info.Subscription.Dotnet.Models.SubscriptionView CreateFromDiscriminatorValue(IParseNode parseNode)
         {
-            _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
+            if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
             return new global::Info.Subscription.Dotnet.Models.SubscriptionView();
         }
         /// <summary>
@@ -125,6 +133,7 @@ namespace Info.Subscription.Dotnet.Models
                 { "isRenewed", n => { IsRenewed = n.GetBoolValue(); } },
                 { "nextInvoiceContactId", n => { NextInvoiceContactId = n.GetGuidValue(); } },
                 { "nextSubscription", n => { NextSubscription = n.GetGuidValue(); } },
+                { "orderReference", n => { OrderReference = n.GetStringValue(); } },
                 { "organizationId", n => { OrganizationId = n.GetGuidValue(); } },
                 { "package", n => { Package = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.SubscriptionPackageView>(global::Info.Subscription.Dotnet.Models.SubscriptionPackageView.CreateFromDiscriminatorValue); } },
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
@@ -144,7 +153,7 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer)
         {
-            _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.BillingOptions>("billingOptions", BillingOptions);
             writer.WriteStringValue("cancellationCause", CancellationCause);
             writer.WriteDateTimeOffsetValue("cancellationTime", CancellationTime);
@@ -159,6 +168,7 @@ namespace Info.Subscription.Dotnet.Models
             writer.WriteBoolValue("isRenewed", IsRenewed);
             writer.WriteGuidValue("nextInvoiceContactId", NextInvoiceContactId);
             writer.WriteGuidValue("nextSubscription", NextSubscription);
+            writer.WriteStringValue("orderReference", OrderReference);
             writer.WriteGuidValue("organizationId", OrganizationId);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.SubscriptionPackageView>("package", Package);
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);

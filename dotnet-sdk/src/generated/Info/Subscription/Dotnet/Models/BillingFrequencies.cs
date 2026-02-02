@@ -19,6 +19,14 @@ namespace Info.Subscription.Dotnet.Models
         #pragma warning disable CS1591
         SevenDays,
         #pragma warning restore CS1591
+        [EnumMember(Value = "TwoWeeks")]
+        #pragma warning disable CS1591
+        TwoWeeks,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "ThreeWeeks")]
+        #pragma warning disable CS1591
+        ThreeWeeks,
+        #pragma warning restore CS1591
         [EnumMember(Value = "FourWeeks")]
         #pragma warning disable CS1591
         FourWeeks,
@@ -26,6 +34,10 @@ namespace Info.Subscription.Dotnet.Models
         [EnumMember(Value = "ThirtyDays")]
         #pragma warning disable CS1591
         ThirtyDays,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "SixWeeks")]
+        #pragma warning disable CS1591
+        SixWeeks,
         #pragma warning restore CS1591
         [EnumMember(Value = "EightWeeks")]
         #pragma warning disable CS1591

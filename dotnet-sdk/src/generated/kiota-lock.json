@@ -1,8 +1,8 @@
 {
-  "descriptionHash": "F6F424C9B8348728F6301F42E80D6D465F2D0FD319CC83AD74F31DB4D2E19E471D54A6EC6B16DA1710B83C0547868D303D2135DF269BACB6E84311062A06F83E",
-  "descriptionLocation": "https://api.info-subscription.com/swagger/v1/swagger.json",
+  "descriptionHash": "8A1D08AD81B05786885E37EC6899F74A747CF2F857AA48FDC35247A46733E1BFDA57E6BBCFCE38A63E34D9082F1AB1D1C81A9EBD399FD45761C417063648581E",
+  "descriptionLocation": "https://api.info-subscription.com/swagger/latest/swagger.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.28.0",
+  "kiotaVersion": "1.30.0",
   "clientClassName": "InfoSubscription",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "info.subscription.dotnet",

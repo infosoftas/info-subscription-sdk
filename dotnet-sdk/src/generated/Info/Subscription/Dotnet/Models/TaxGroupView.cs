@@ -2,18 +2,19 @@
 #pragma warning disable CS0618
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
+using Microsoft.Kiota.Abstractions;
 using System.Collections.Generic;
 using System.IO;
 using System;
 namespace Info.Subscription.Dotnet.Models
 {
     /// <summary>
-    /// A tax group view.
+    /// Properties of a tax group.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class TaxGroupView : IParsable
     {
-        /// <summary>Gets or sets the country.</summary>
+        /// <summary>The name of the country where the tax group is valid.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Country { get; set; }
@@ -21,7 +22,7 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public string Country { get; set; }
 #endif
-        /// <summary>Gets or sets the description.</summary>
+        /// <summary>The description.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Description { get; set; }
@@ -29,11 +30,11 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public string Description { get; set; }
 #endif
-        /// <summary>Gets or sets the expiry date.</summary>
-        public DateTimeOffset? ExpiryDate { get; set; }
-        /// <summary>Gets or sets the identifier.</summary>
+        /// <summary>The expiry date.</summary>
+        public Date? ExpiryDate { get; set; }
+        /// <summary>The identifier.</summary>
         public Guid? Id { get; set; }
-        /// <summary>Gets or sets the name.</summary>
+        /// <summary>The human identifiable name of the group.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Name { get; set; }
@@ -41,7 +42,7 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public string Name { get; set; }
 #endif
-        /// <summary>Gets or sets a list of identifiers of the products.</summary>
+        /// <summary>List of products associated with this group.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public List<Guid?>? ProductIds { get; set; }
@@ -49,9 +50,9 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public List<Guid?> ProductIds { get; set; }
 #endif
-        /// <summary>Gets or sets the start date.</summary>
-        public DateTimeOffset? StartDate { get; set; }
-        /// <summary>Gets or sets the tax percent.</summary>
+        /// <summary>The start date.</summary>
+        public Date? StartDate { get; set; }
+        /// <summary>The percent.</summary>
         public double? TaxPercent { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
@@ -60,7 +61,7 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
         public static global::Info.Subscription.Dotnet.Models.TaxGroupView CreateFromDiscriminatorValue(IParseNode parseNode)
         {
-            _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
+            if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
             return new global::Info.Subscription.Dotnet.Models.TaxGroupView();
         }
         /// <summary>
@@ -73,11 +74,11 @@ namespace Info.Subscription.Dotnet.Models
             {
                 { "country", n => { Country = n.GetStringValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "expiryDate", n => { ExpiryDate = n.GetDateTimeOffsetValue(); } },
+                { "expiryDate", n => { ExpiryDate = n.GetDateValue(); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "productIds", n => { ProductIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
-                { "startDate", n => { StartDate = n.GetDateTimeOffsetValue(); } },
+                { "startDate", n => { StartDate = n.GetDateValue(); } },
                 { "taxPercent", n => { TaxPercent = n.GetDoubleValue(); } },
             };
         }
@@ -87,14 +88,14 @@ namespace Info.Subscription.Dotnet.Models
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer)
         {
-            _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("country", Country);
             writer.WriteStringValue("description", Description);
-            writer.WriteDateTimeOffsetValue("expiryDate", ExpiryDate);
+            writer.WriteDateValue("expiryDate", ExpiryDate);
             writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("name", Name);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("productIds", ProductIds);
-            writer.WriteDateTimeOffsetValue("startDate", StartDate);
+            writer.WriteDateValue("startDate", StartDate);
             writer.WriteDoubleValue("taxPercent", TaxPercent);
         }
     }

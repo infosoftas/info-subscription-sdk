@@ -52,30 +52,27 @@ namespace Info.Subscription.Dotnet.Subscription
             var collectionResult = await RequestAdapter.SendCollectionAsync<global::Info.Subscription.Dotnet.Models.SubscriptionView>(requestInfo, global::Info.Subscription.Dotnet.Models.SubscriptionView.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
             return collectionResult?.AsList();
         }
-        /// <summary>
-        /// Creates a new subscription for a subscriber.Note: For most purposes new subscriptions should be created using the Order flow asthat handles more than just the raw subscription period.This will create a new subscription period based on the parameters of the given package andthe given PaymentAgreementId.Other subscriptions will continue to exist parallel to this one. In case a replacement isneeded changing the package instead.
-        /// </summary>
-        /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.SubscriptionView"/></returns>
+        /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.IdResult"/></returns>
         /// <param name="body">A subscription create.</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::Info.Subscription.Dotnet.Models.ValidationResultModel">When receiving a 400 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::Info.Subscription.Dotnet.Models.SubscriptionView?> PostAsync(global::Info.Subscription.Dotnet.Models.SubscriptionCreate body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::Info.Subscription.Dotnet.Models.IdResult?> PostAsync(global::Info.Subscription.Dotnet.Models.SubscriptionCreate body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::Info.Subscription.Dotnet.Models.SubscriptionView> PostAsync(global::Info.Subscription.Dotnet.Models.SubscriptionCreate body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::Info.Subscription.Dotnet.Models.IdResult> PostAsync(global::Info.Subscription.Dotnet.Models.SubscriptionCreate body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
-            _ = body ?? throw new ArgumentNullException(nameof(body));
+            if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
             var requestInfo = ToPostRequestInformation(body, requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
                 { "400", global::Info.Subscription.Dotnet.Models.ValidationResultModel.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendAsync<global::Info.Subscription.Dotnet.Models.SubscriptionView>(requestInfo, global::Info.Subscription.Dotnet.Models.SubscriptionView.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::Info.Subscription.Dotnet.Models.IdResult>(requestInfo, global::Info.Subscription.Dotnet.Models.IdResult.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
         /// Get all subscriptions.
@@ -96,9 +93,6 @@ namespace Info.Subscription.Dotnet.Subscription
             requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
         }
-        /// <summary>
-        /// Creates a new subscription for a subscriber.Note: For most purposes new subscriptions should be created using the Order flow asthat handles more than just the raw subscription period.This will create a new subscription period based on the parameters of the given package andthe given PaymentAgreementId.Other subscriptions will continue to exist parallel to this one. In case a replacement isneeded changing the package instead.
-        /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="body">A subscription create.</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
@@ -111,11 +105,11 @@ namespace Info.Subscription.Dotnet.Subscription
         public RequestInformation ToPostRequestInformation(global::Info.Subscription.Dotnet.Models.SubscriptionCreate body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
         {
 #endif
-            _ = body ?? throw new ArgumentNullException(nameof(body));
+            if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
             var requestInfo = new RequestInformation(Method.POST, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
             requestInfo.Headers.TryAdd("Accept", "application/json");
-            requestInfo.SetContentFromParsable(RequestAdapter, "application/json-patch+json", body);
+            requestInfo.SetContentFromParsable(RequestAdapter, "application/json", body);
             return requestInfo;
         }
         /// <summary>
