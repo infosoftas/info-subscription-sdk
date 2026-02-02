@@ -43,7 +43,7 @@ stages:
         arguments: 'install --global Microsoft.OpenApi.Kiota'
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated-temp
+        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated-temp
       displayName: 'Generate C# SDK'
 
     - script: |
@@ -55,7 +55,7 @@ stages:
           git config user.email "azure-pipelines-bot@users.noreply.github.com"
           # Regenerates onto the old one. Not idealy, but simple!
           git checkout -b dotnet-$(branchname)
-          kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated
+          kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated
           git add dotnet-sdk/src/generated
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin dotnet-$(branchname)
@@ -100,7 +100,7 @@ stages:
         arguments: 'install --global Microsoft.OpenApi.Kiota'
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated-temp
+        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated-temp
       displayName: 'Generate TS SDK'
 
     - script: |
@@ -112,7 +112,7 @@ stages:
 #         git config user.email "azure-pipelines-bot@users.noreply.github.com"
 #         # Regenerates onto the old one. Not idealy, but simple!
 #         git checkout -b typescript-$(branchname)
-#         kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated
+#         kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated
 #         git add typescript-sdk/src/generated
 #         git commit -m "Update SDK from latest OpenAPI spec"
 #         git push --set-upstream origin typescript-$(branchname)
@@ -157,7 +157,7 @@ stages:
         arguments: 'install --global Microsoft.OpenApi.Kiota'
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l python -c InfoSubscription -n info.subscription.ts --output python-sdk/src/generated-temp
+        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l python -c InfoSubscription -n info.subscription.ts --output python-sdk/src/generated-temp
       displayName: 'Generate TS SDK'
 
     - script: |
@@ -169,7 +169,7 @@ stages:
 #         git config user.email "azure-pipelines-bot@users.noreply.github.com"
 #         # Regenerates onto the old one. Not idealy, but simple!
 #         git checkout -b python-$(branchname)
-#         kiota generate --co --openapi https://api.info-subscription.com/swagger/v1/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l python -c InfoSubscription -n info.subscription.ts --output python-sdk/src/generated
+#         kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l python -c InfoSubscription -n info.subscription.ts --output python-sdk/src/generated
 #         git add python-sdk/src/generated
 #         git commit -m "Update SDK from latest OpenAPI spec"
 #         git push --set-upstream origin python-$(branchname)
