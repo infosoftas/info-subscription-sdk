@@ -23,7 +23,11 @@ One secret must be configured on the **Python** ADO pipeline (`package-python.ym
 |---|---|
 | `PYPI_TOKEN` | API token for the `infosoft-info-subscription` package on PyPI |
 
-The internal Azure Artifacts feeds (`S4/Internal`) use the build agent's identity — no additional secret needed for the NuGet or npm pipelines.
+The internal Azure Artifacts feeds (`S4/Internal`) use the build agent's identity — no additional secrets needed for internal publishing.
+
+### Internal feed publishing
+
+Preview packages are published to `S4/Internal` automatically by `azure-pipeline.yml` whenever API changes are detected (i.e., whenever a PR is created). Versions follow the pattern `0.0.0-preview.{BuildId}` (NuGet/npm) and `0.0.0.dev{BuildId}` (Python). These are not tagged releases — they reflect the current API shape after each Kiota regeneration run.
 
 ## Releasing a new version
 
@@ -51,15 +55,13 @@ git push origin 1.2.3
 
 A single tag triggers **all three** pipelines simultaneously. All SDKs share the same version number.
 
-**`package-nuget.yml`** (3 stages):
+**`package-nuget.yml`** (2 stages):
 1. **Pack** — validate tag, `dotnet pack` (MinVer reads version from tag), publish artifact
-2. **PublishInternal** — push to `S4/Internal` Azure Artifacts NuGet feed via `DotNetCoreCLI@2`
-3. **Deploy** — push to [NuGet.org](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes
+2. **Deploy** — push to [NuGet.org](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes
 
-**`package-npm.yml`** (3 stages):
+**`package-npm.yml`** (2 stages):
 1. **Pack** — validate tag, `npm ci`, `npm run build`, inject version via `npm version`, `npm pack`, publish artifact
-2. **PublishInternal** — push to `S4/Internal` Azure Artifacts npm feed via `Npm@1`
-3. **Deploy** — push to [npmjs.org](https://www.npmjs.com/package/@infosoft/info-subscription-ts)
+2. **Deploy** — push to [npmjs.org](https://www.npmjs.com/package/@infosoft/info-subscription-ts)
 
 **`package-python.yml`** (2 stages):
 1. **Pack** — validate tag, inject version into `pyproject.toml` via `sed`, `python -m build`, publish artifact

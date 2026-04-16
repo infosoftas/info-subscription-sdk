@@ -118,13 +118,15 @@ Use the `create_info_subscription_client(settings)` factory function from the `i
 ### Versioning and releasing
 [MinVer](https://github.com/adamralph/minver) (.NET), `npm version` (TypeScript), and `sed` on `pyproject.toml` (Python) all derive the package version from git tags. All SDKs share the same version — pushing a single semver tag (e.g. `1.2.3`) to `main` triggers all three pipelines simultaneously.
 
-`package-nuget.yml`: **Pack → PublishInternal (ADO NuGet feed) → Deploy (NuGet.org + GitHub Release)**
+`package-nuget.yml`: **Pack → Deploy (NuGet.org + GitHub Release)**
 
-`package-npm.yml`: **Pack → PublishInternal (ADO npm feed) → Deploy (npmjs.org)**
+`package-npm.yml`: **Pack → Deploy (npmjs.org)**
 
 `package-python.yml`: **Pack → Deploy (PyPI)**
 
-See `RELEASE.md` for the full process and required pipeline secrets (`NUGET_APIKEY`, `GITHUB_TOKEN`, `NPM_TOKEN`, `PYPI_TOKEN`). Internal NuGet and npm feeds (`S4/Internal`) authenticate via the build agent identity.
+**Internal feed publishing** is handled by `azure-pipeline.yml` — preview packages (`0.0.0-preview.{BuildId}` / `0.0.0.dev{BuildId}`) are pushed to `S4/Internal` automatically whenever API changes are detected (i.e., a PR is also created). No internal stages in the release pipelines.
+
+See `RELEASE.md` for the full process and required pipeline secrets (`NUGET_APIKEY`, `GITHUB_TOKEN`, `NPM_TOKEN`, `PYPI_TOKEN`). Internal feeds (`S4/Internal`) authenticate via the build agent identity.
 
 ### Target framework (.NET)
 `net10.0` — see `dotnet-sdk/global.json` for the pinned SDK version.
