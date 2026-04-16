@@ -99,7 +99,10 @@ stages:
         command: 'push'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/nuget/*.nupkg'
         publishVstsFeed: 'S4/Internal'
+
+- stage: generate_ts
   displayName: 'Generate TypeScript sdk'
+  dependsOn: []
   variables:
     changeDetected: true
   jobs:
@@ -178,7 +181,10 @@ stages:
         workingDir: '$(Build.ArtifactStagingDirectory)/npm'
         publishRegistry: 'useFeed'
         publishFeed: 'S4/Internal'
+
+- stage: generate_python
   displayName: 'Generate Python sdk'
+  dependsOn: []
   variables:
     changeDetected: true
   jobs:
