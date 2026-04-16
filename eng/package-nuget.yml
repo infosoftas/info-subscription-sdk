@@ -49,39 +49,9 @@ stages:
     - publish: $(NuGetDirectory)
       artifact: nuget
 
-- stage: PublishInternal
-  displayName: 'Publish to Azure Artifacts'
-  dependsOn: CreateNuget
-  condition: succeeded()
-  jobs:
-  - job: publish_internal
-    displayName: 'Push to ADO feed'
-    steps:
-    - download: current
-      artifact: nuget
-
-    - task: UseDotNet@2
-      displayName: 'Setup .NET'
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-
-    # Uncomment if the agent does not have implicit access to the feed
-    # - task: NuGetAuthenticate@1
-    #   displayName: 'Authenticate with Azure Artifacts'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Push to Azure Artifacts feed'
-      inputs:
-        command: 'push'
-        packagesToPush: '$(Pipeline.Workspace)/nuget/*.nupkg'
-        publishVstsFeed: 'S4/Internal'
-
 - stage: Deploy
   displayName: 'Publish to NuGet.org'
-  dependsOn:
-  - CreateNuget
-  - PublishInternal
+  dependsOn: CreateNuget
   condition: succeeded()
   jobs:
   - job: deploy

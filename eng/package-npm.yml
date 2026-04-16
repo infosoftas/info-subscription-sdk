@@ -55,41 +55,9 @@ stages:
     - publish: $(PackageDirectory)
       artifact: npm
 
-- stage: PublishInternal
-  displayName: 'Publish to Azure Artifacts'
-  dependsOn: Pack
-  condition: succeeded()
-  jobs:
-  - job: publish_internal
-    displayName: 'Push to ADO npm feed'
-    steps:
-    - download: current
-      artifact: npm
-
-    - task: NodeTool@0
-      displayName: 'Setup Node.js'
-      inputs:
-        versionSpec: $(NODE_VERSION)
-
-    # Uncomment if the agent does not have implicit access to the feed
-    # - task: npmAuthenticate@0
-    #   displayName: 'Authenticate with Azure Artifacts'
-    #   inputs:
-    #     workingFile: '$(Pipeline.Workspace)/npm/.npmrc'
-
-    - task: Npm@1
-      displayName: 'Push to Azure Artifacts npm feed'
-      inputs:
-        command: 'publish'
-        workingDir: '$(Pipeline.Workspace)/npm'
-        publishRegistry: 'useFeed'
-        publishFeed: 'S4/Internal'
-
 - stage: Deploy
   displayName: 'Publish to npmjs.org'
-  dependsOn:
-  - Pack
-  - PublishInternal
+  dependsOn: Pack
   condition: succeeded()
   jobs:
   - job: deploy_npm
