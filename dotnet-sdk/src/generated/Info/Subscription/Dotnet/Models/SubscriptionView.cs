@@ -83,6 +83,14 @@ namespace Info.Subscription.Dotnet.Models
         public Guid? PreviousSubscription { get; set; }
         /// <summary>Gets or sets the price.</summary>
         public double? Price { get; set; }
+        /// <summary>The purchasedAdditionalProducts property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Info.Subscription.Dotnet.Models.AdditionalProductView>? PurchasedAdditionalProducts { get; set; }
+#nullable restore
+#else
+        public List<global::Info.Subscription.Dotnet.Models.AdditionalProductView> PurchasedAdditionalProducts { get; set; }
+#endif
         /// <summary>The time the subscription was renewed.</summary>
         public DateTimeOffset? RenewedOn { get; set; }
         /// <summary>Gets or sets the type of the source.</summary>
@@ -139,6 +147,7 @@ namespace Info.Subscription.Dotnet.Models
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
                 { "previousSubscription", n => { PreviousSubscription = n.GetGuidValue(); } },
                 { "price", n => { Price = n.GetDoubleValue(); } },
+                { "purchasedAdditionalProducts", n => { PurchasedAdditionalProducts = n.GetCollectionOfObjectValues<global::Info.Subscription.Dotnet.Models.AdditionalProductView>(global::Info.Subscription.Dotnet.Models.AdditionalProductView.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "renewedOn", n => { RenewedOn = n.GetDateTimeOffsetValue(); } },
                 { "sourceType", n => { SourceType = n.GetStringValue(); } },
                 { "startTime", n => { StartTime = n.GetDateTimeOffsetValue(); } },
@@ -174,6 +183,7 @@ namespace Info.Subscription.Dotnet.Models
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);
             writer.WriteGuidValue("previousSubscription", PreviousSubscription);
             writer.WriteDoubleValue("price", Price);
+            writer.WriteCollectionOfObjectValues<global::Info.Subscription.Dotnet.Models.AdditionalProductView>("purchasedAdditionalProducts", PurchasedAdditionalProducts);
             writer.WriteDateTimeOffsetValue("renewedOn", RenewedOn);
             writer.WriteStringValue("sourceType", SourceType);
             writer.WriteDateTimeOffsetValue("startTime", StartTime);
