@@ -1,0 +1,80 @@
+# Triggered automatically when a semver tag (e.g. 1.2.3) is pushed to GitHub.
+# See RELEASE.md for the full release process.
+trigger:
+  tags:
+    include:
+      - '[0-9]*'
+pr: none
+
+variables:
+  PYTHON_VERSION: '3.12'
+  PackageDirectory: '$(Build.ArtifactStagingDirectory)/python'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Pack
+  displayName: 'Build and Pack Python Package'
+  jobs:
+  - job: pack_python
+    displayName: 'Build and Pack'
+    steps:
+    - checkout: self
+      fetchDepth: 0
+
+    - script: |
+        TAG=$(git tag --points-at HEAD)
+        if [ -z "$TAG" ]; then
+          echo "##vso[task.logissue type=error]No tag found on HEAD. Create and push a semver tag (e.g. 1.2.3) before releasing."
+          exit 1
+        fi
+        echo "Releasing version: $TAG"
+        echo "##vso[task.setvariable variable=ReleaseTag]$TAG"
+      displayName: 'Validate tag on HEAD'
+
+    - task: UsePythonVersion@0
+      displayName: 'Setup Python'
+      inputs:
+        versionSpec: $(PYTHON_VERSION)
+
+    - script: pip install build
+      displayName: 'Install build tools'
+
+    - script: |
+        sed -i "s/^version = \".*\"/version = \"$(ReleaseTag)\"/" pyproject.toml
+        python -m build --outdir $(PackageDirectory)
+      displayName: 'Inject version and build wheel + sdist'
+      workingDirectory: python-sdk
+
+    - publish: $(PackageDirectory)
+      artifact: python
+
+- stage: Deploy
+  displayName: 'Publish to PyPI'
+  dependsOn: Pack
+  condition: succeeded()
+  jobs:
+  - job: deploy_pypi
+    displayName: 'Push to PyPI'
+    steps:
+    - download: current
+      artifact: python
+
+    - task: UsePythonVersion@0
+      displayName: 'Setup Python'
+      inputs:
+        versionSpec: $(PYTHON_VERSION)
+
+    - script: pip install twine
+      displayName: 'Install twine'
+
+    - script: |
+        twine upload $(Pipeline.Workspace)/python/* \
+          --repository-url https://upload.pypi.org/legacy/ \
+          --username __token__ \
+          --password $(PYPI_TOKEN) \
+          --skip-existing
+      displayName: 'Publish to PyPI'
+      env:
+        PYPI_TOKEN: $(PYPI_TOKEN)
