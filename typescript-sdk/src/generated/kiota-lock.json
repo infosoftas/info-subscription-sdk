@@ -1,0 +1,42 @@
+{
+  "descriptionHash": "EF347D1236F031C805D8FEFAB5958B8670E94E97E34C77788BB211823F4F2A14C9202B618C6E1A0026ACF973012682F6D6E3B6A7ACB80D75FDC5553AFF3ADAEA",
+  "descriptionLocation": "https://api.info-subscription.com/swagger/latest/swagger.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.30.0",
+  "clientClassName": "InfoSubscription",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "info.subscription.ts",
+  "language": "TypeScript",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": false,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [
+    "/subscription",
+    "/product",
+    "/package",
+    "/order",
+    "/order/**",
+    "/subscriber",
+    "/vippsmobilepay/agreement**/remote"
+  ],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}

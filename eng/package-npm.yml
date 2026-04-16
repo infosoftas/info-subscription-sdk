@@ -1,0 +1,112 @@
+# Triggered automatically when a semver tag (e.g. 1.2.3) is pushed to GitHub.
+# See RELEASE.md for the full release process.
+trigger:
+  tags:
+    include:
+      - '[0-9]*'
+pr: none
+
+variables:
+  NODE_VERSION: '20.x'
+  PackageDirectory: '$(Build.ArtifactStagingDirectory)/npm'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Pack
+  displayName: 'Build and Pack npm Package'
+  jobs:
+  - job: pack_npm
+    displayName: 'Build and Pack'
+    steps:
+    - checkout: self
+      fetchDepth: 0
+
+    - script: |
+        TAG=$(git tag --points-at HEAD)
+        if [ -z "$TAG" ]; then
+          echo "##vso[task.logissue type=error]No tag found on HEAD. Create and push a semver tag (e.g. 1.2.3) before releasing."
+          exit 1
+        fi
+        echo "Releasing version: $TAG"
+        echo "##vso[task.setvariable variable=ReleaseTag]$TAG"
+      displayName: 'Validate tag on HEAD'
+
+    - task: NodeTool@0
+      displayName: 'Setup Node.js'
+      inputs:
+        versionSpec: $(NODE_VERSION)
+
+    - script: npm ci
+      displayName: 'Install dependencies'
+      workingDirectory: typescript-sdk
+
+    - script: npm run build
+      displayName: 'Build TypeScript'
+      workingDirectory: typescript-sdk
+
+    - script: |
+        npm version $(ReleaseTag) --no-git-tag-version
+        npm pack --pack-destination $(PackageDirectory)
+      displayName: 'Pack npm package'
+      workingDirectory: typescript-sdk
+
+    - publish: $(PackageDirectory)
+      artifact: npm
+
+- stage: PublishInternal
+  displayName: 'Publish to Azure Artifacts'
+  dependsOn: Pack
+  condition: succeeded()
+  jobs:
+  - job: publish_internal
+    displayName: 'Push to ADO npm feed'
+    steps:
+    - download: current
+      artifact: npm
+
+    - task: NodeTool@0
+      displayName: 'Setup Node.js'
+      inputs:
+        versionSpec: $(NODE_VERSION)
+
+    # Uncomment if the agent does not have implicit access to the feed
+    # - task: npmAuthenticate@0
+    #   displayName: 'Authenticate with Azure Artifacts'
+    #   inputs:
+    #     workingFile: '$(Pipeline.Workspace)/npm/.npmrc'
+
+    - task: Npm@1
+      displayName: 'Push to Azure Artifacts npm feed'
+      inputs:
+        command: 'publish'
+        workingDir: '$(Pipeline.Workspace)/npm'
+        publishRegistry: 'useFeed'
+        publishFeed: 'S4/Internal'
+
+- stage: Deploy
+  displayName: 'Publish to npmjs.org'
+  dependsOn:
+  - Pack
+  - PublishInternal
+  condition: succeeded()
+  jobs:
+  - job: deploy_npm
+    displayName: 'Push to npmjs.org'
+    steps:
+    - download: current
+      artifact: npm
+
+    - task: NodeTool@0
+      displayName: 'Setup Node.js'
+      inputs:
+        versionSpec: $(NODE_VERSION)
+
+    - script: |
+        echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)" > .npmrc
+        npm publish *.tgz --registry https://registry.npmjs.org/
+      displayName: 'Publish to npmjs.org'
+      workingDirectory: '$(Pipeline.Workspace)/npm'
+      env:
+        NPM_TOKEN: $(NPM_TOKEN)
