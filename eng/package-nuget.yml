@@ -118,7 +118,7 @@ stages:
           -d "{
             \"tag_name\": \"$(ReleaseTag)\",
             \"name\": \"$(ReleaseTag)\",
-            \"body\": \"## Packages\n- NuGet: [Infosoft.Info.Subscription.Dotnet@$(ReleaseTag)](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet/$(ReleaseTag))\n- npm: [@infosoft/info-subscription-ts@$(ReleaseTag)](https://www.npmjs.com/package/@infosoft/info-subscription-ts/v/$(ReleaseTag))\",
+            \"body\": \"## Packages\n- NuGet: [Infosoft.Info.Subscription.Dotnet@$(ReleaseTag)](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet/$(ReleaseTag))\n- npm: [@infosoft/info-subscription-ts@$(ReleaseTag)](https://www.npmjs.com/package/@infosoft/info-subscription-ts/v/$(ReleaseTag))\n- PyPI: [infosoft-info-subscription@$(ReleaseTag)](https://pypi.org/project/infosoft-info-subscription/$(ReleaseTag)/)\",
             \"generate_release_notes\": true,
             \"make_latest\": \"true\"
           }"
