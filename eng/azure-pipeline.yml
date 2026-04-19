@@ -23,7 +23,7 @@ resources:
 
 variables:
   #githubToken: ${{ secrets.GITHUB_TOKEN }}
-  branchName: 'sdk-update-$(Build.BuildId)'
+  branchName: 'sdk-update-$(today)-$(Build.BuildId)'
   buildId: '$(Build.BuildId)'
   today: $[ format('{0:yyyy}{0:MM}{0:dd}', pipeline.startTime) ]
 
@@ -55,7 +55,7 @@ stages:
       displayName: 'Generate C# SDK'
 
     - script: |
-        diff -qr dotnet-sdk/src/generated-temp dotnet-sdk/src/generated -x .kiota.log || echo "##vso[task.setvariable variable=changeDetected;isOutput=true]false"
+        diff -qr dotnet-sdk/src/generated-temp dotnet-sdk/src/generated -x .kiota.log && echo "##vso[task.setvariable variable=changeDetected]false"
       displayName: 'Compare SDK with existing'
 
     - script: |
@@ -68,6 +68,7 @@ stages:
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin dotnet-$(branchName)
           sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          rm -rf dotnet-sdk/src/generated-temp
       displayName: 'Create feature branch'
       condition: eq(variables['changeDetected'], 'true')
 
@@ -136,7 +137,7 @@ stages:
       displayName: 'Generate TS SDK'
 
     - script: |
-        diff -qr typescript-sdk/src/generated-temp typescript-sdk/src/generated -x .kiota.log || echo "##vso[task.setvariable variable=changeDetected;isOutput=true]false"
+        diff -qr typescript-sdk/src/generated-temp typescript-sdk/src/generated -x .kiota.log && echo "##vso[task.setvariable variable=changeDetected]false"
       displayName: 'Compare SDK with existing'
 
     - script: |
@@ -149,6 +150,7 @@ stages:
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin typescript-$(branchName)
           sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          rm -rf typescript-sdk/src/generated-temp
       displayName: 'Create feature branch'
       condition: eq(variables['changeDetected'], 'true')
 
@@ -218,7 +220,7 @@ stages:
       displayName: 'Generate Python SDK'
 
     - script: |
-        diff -qr python-sdk/src/info_subscription_sdk/generated-temp python-sdk/src/info_subscription_sdk/generated -x .kiota.log || echo "##vso[task.setvariable variable=changeDetected;isOutput=true]false"
+        diff -qr python-sdk/src/info_subscription_sdk/generated-temp python-sdk/src/info_subscription_sdk/generated -x .kiota.log && echo "##vso[task.setvariable variable=changeDetected]false"
       displayName: 'Compare SDK with existing'
 
     - script: |
@@ -231,6 +233,7 @@ stages:
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin python-$(branchName)
           sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          rm -rf python-sdk/src/info_subscription_sdk/generated-temp
       displayName: 'Create feature branch'
       condition: eq(variables['changeDetected'], 'true')
 
