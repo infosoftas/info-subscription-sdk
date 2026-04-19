@@ -23,7 +23,7 @@ resources:
 
 variables:
   #githubToken: ${{ secrets.GITHUB_TOKEN }}
-  branchName: 'sdk-update-$(Build.BuildId)'
+  branchName: 'sdk-update-$(today)-$(Build.BuildId)'
   buildId: '$(Build.BuildId)'
   today: $[ format('{0:yyyy}{0:MM}{0:dd}', pipeline.startTime) ]
 
@@ -68,6 +68,7 @@ stages:
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin dotnet-$(branchName)
           sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          rm -rf dotnet-sdk/src/generated-temp
       displayName: 'Create feature branch'
       condition: eq(variables['changeDetected'], 'true')
 
@@ -149,6 +150,7 @@ stages:
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin typescript-$(branchName)
           sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          rm -rf typescript-sdk/src/generated-temp
       displayName: 'Create feature branch'
       condition: eq(variables['changeDetected'], 'true')
 
@@ -231,6 +233,7 @@ stages:
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin python-$(branchName)
           sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          rm -rf python-sdk/src/info_subscription_sdk/generated-temp
       displayName: 'Create feature branch'
       condition: eq(variables['changeDetected'], 'true')
 
