@@ -173,6 +173,7 @@ stages:
         npm ci
         npm run build
         npm version 0.0.0-preview.$(Build.BuildId) --no-git-tag-version
+        mkdir -p $(Build.ArtifactStagingDirectory)/npm
         npm pack --pack-destination $(Build.ArtifactStagingDirectory)/npm
       displayName: 'Build and pack npm (preview)'
       condition: eq(variables['changeDetected'], 'true')
