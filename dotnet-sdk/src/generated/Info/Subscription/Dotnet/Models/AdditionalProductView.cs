@@ -13,7 +13,7 @@ namespace Info.Subscription.Dotnet.Models
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class AdditionalProductView : IParsable
     {
-        /// <summary>A value indicating if this product is included in the subscription plan or not.</summary>
+        /// <summary>A value indicating if this product is included in the subscription plan or not. Separately purchased products are always false, even if the price is zero.</summary>
         public bool? IncludedInPlan { get; set; }
         /// <summary>The product identifier.</summary>
         public Guid? ProductId { get; set; }
