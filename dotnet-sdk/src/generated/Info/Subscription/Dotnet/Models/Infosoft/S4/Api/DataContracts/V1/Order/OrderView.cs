@@ -97,7 +97,7 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
 #else
         public string TerminalRedirectUrl { get; set; }
 #endif
-        /// <summary>Gets or sets the payex transaction if one is associated with the order.</summary>
+        /// <summary>Gets or sets the payment provider transaction if one is associated with the order.</summary>
         public Guid? TransactionId { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
