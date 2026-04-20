@@ -100,7 +100,8 @@ stages:
       inputs:
         command: 'push'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/nuget/*.nupkg'
-        publishVstsFeed: 'S4/Internal'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'aeefa1b4-7b70-48a5-910f-324156d70b86'
 
 - stage: generate_ts
   displayName: 'Generate TypeScript sdk'
@@ -183,7 +184,7 @@ stages:
         command: 'publish'
         workingDir: '$(Build.ArtifactStagingDirectory)/npm'
         publishRegistry: 'useFeed'
-        publishFeed: 'S4/Internal'
+        publishFeed: 'aeefa1b4-7b70-48a5-910f-324156d70b86'
 
 - stage: generate_python
   displayName: 'Generate Python sdk'
@@ -262,10 +263,10 @@ stages:
       displayName: 'Authenticate with ADO Python feed'
       condition: eq(variables['changeDetected'], 'true')
       inputs:
-        artifactFeed: 'S4/Internal'
+        artifactFeed: 'Internal'
 
     - script: |
         pip install twine
-        twine upload -r 'S4/Internal' --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/python/*
+        twine upload -r 'Internal' --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/python/*
       displayName: 'Push preview package to ADO Python feed'
       condition: eq(variables['changeDetected'], 'true')
