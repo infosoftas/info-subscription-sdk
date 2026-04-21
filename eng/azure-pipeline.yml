@@ -26,6 +26,7 @@ variables:
   branchName: 'sdk-update-$(today)-$(Build.BuildId)'
   buildId: '$(Build.BuildId)'
   today: $[ format('{0:yyyy}{0:MM}{0:dd}', pipeline.startTime) ]
+  python.version: '3.12'
 
 stages:
 - stage: generate_dotnet
@@ -168,14 +169,26 @@ stages:
       inputs:
         versionSpec: '20.x'
 
+    - task: Cache@2
+      displayName: 'Cache npm packages'
+      condition: eq(variables['changeDetected'], 'true')
+      inputs:
+        key: 'npm | "$(Agent.OS)" | typescript-sdk/package-lock.json'
+        path: 'typescript-sdk/node_modules'
+        cacheHitVar: 'NPM_CACHE_RESTORED'
+
+    - script: npm ci
+      displayName: 'Install npm dependencies'
+      condition: and(eq(variables['changeDetected'], 'true'), ne(variables['NPM_CACHE_RESTORED'], 'true'))
+      workingDirectory: typescript-sdk
+
     - script: |
-        cd typescript-sdk
-        npm ci
         npm run build
         npm version 0.0.0-preview.$(Build.BuildId) --no-git-tag-version
         npm pack --pack-destination $(Build.ArtifactStagingDirectory)/npm
       displayName: 'Build and pack npm (preview)'
       condition: eq(variables['changeDetected'], 'true')
+      workingDirectory: typescript-sdk
 
     - task: Npm@1
       displayName: 'Push preview package to ADO npm feed'
@@ -246,13 +259,38 @@ stages:
         githubrestapiurl: https://api.github.com/repos/infosoftas/didactic-octo-chainsaw/pulls
 
     - task: UsePythonVersion@0
-      displayName: 'Setup Python for pack'
+      displayName: 'Use Python $(python.version)'
       condition: eq(variables['changeDetected'], 'true')
       inputs:
-        versionSpec: '3.12'
+        versionSpec: '$(python.version)'
+
+    - task: Cache@2
+      displayName: 'Cache pip packages'
+      condition: eq(variables['changeDetected'], 'true')
+      inputs:
+        key: 'pip | "$(Agent.OS)" | "$(python.version)" | python-sdk/requirements.txt | python-sdk/requirements-dev.txt'
+        path: 'python-sdk/.venv'
+        cacheHitVar: 'PYTHON_CACHE_RESTORED'
+        restoreKeys: |
+          pip | "$(Agent.OS)" | "$(python.version)"
 
     - script: |
-        pip install build
+        python -m venv python-sdk/.venv
+        source python-sdk/.venv/bin/activate
+        python -m pip install --upgrade pip setuptools wheel
+      displayName: 'Create virtual environment'
+      condition: and(eq(variables['changeDetected'], 'true'), ne(variables['PYTHON_CACHE_RESTORED'], 'true'))
+
+    - script: |
+        source python-sdk/.venv/bin/activate
+        pip install -r python-sdk/requirements.txt
+        pip install -r python-sdk/requirements-dev.txt
+        pip install -e python-sdk/.
+      displayName: 'Install dependencies'
+      condition: and(eq(variables['changeDetected'], 'true'), ne(variables['PYTHON_CACHE_RESTORED'], 'true'))
+
+    - script: |
+        source python-sdk/.venv/bin/activate
         cd python-sdk
         sed -i "s/^version = \".*\"/version = \"0.0.0.dev$(Build.BuildId)\"/" pyproject.toml
         python -m build --outdir $(Build.ArtifactStagingDirectory)/python
@@ -266,7 +304,7 @@ stages:
         artifactFeed: 'Internal'
 
     - script: |
-        pip install twine
+        source python-sdk/.venv/bin/activate
         twine upload -r 'Internal' --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/python/*
       displayName: 'Push preview package to ADO Python feed'
       condition: eq(variables['changeDetected'], 'true')
