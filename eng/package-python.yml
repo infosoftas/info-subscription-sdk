@@ -7,7 +7,11 @@ trigger:
 pr: none
 
 variables:
+  python.version: '3.12'
   PackageDirectory: '$(Build.ArtifactStagingDirectory)/python'
+
+pool:
+  vmImage: 'ubuntu-latest'
 
 stages:
 - stage: Pack
@@ -15,10 +19,6 @@ stages:
   jobs:
   - job: pack_python
     displayName: 'Build and Pack'
-    pool:
-      vmImage: 'ubuntu-latest'
-      demands:
-      - python3
     steps:
     - checkout: self
       fetchDepth: 0
@@ -33,12 +33,41 @@ stages:
         echo "##vso[task.setvariable variable=ReleaseTag]$TAG"
       displayName: 'Validate tag on HEAD'
 
-    - script: pip3 install build
-      displayName: 'Install build tools'
+    - task: UsePythonVersion@0
+      displayName: 'Use Python $(python.version)'
+      inputs:
+        versionSpec: '$(python.version)'
+
+    - task: Cache@2
+      displayName: 'Cache pip packages'
+      inputs:
+        key: 'pip | "$(Agent.OS)" | "$(python.version)" | python-sdk/requirements.txt | python-sdk/requirements-dev.txt'
+        path: 'python-sdk/.venv'
+        cacheHitVar: 'PYTHON_CACHE_RESTORED'
+        restoreKeys: |
+          pip | "$(Agent.OS)" | "$(python.version)"
 
     - script: |
+        python -m venv .venv
+        source .venv/bin/activate
+        python -m pip install --upgrade pip setuptools wheel
+      displayName: 'Create virtual environment'
+      condition: ne(variables['PYTHON_CACHE_RESTORED'], 'true')
+      workingDirectory: python-sdk
+
+    - script: |
+        source .venv/bin/activate
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install -e .
+      displayName: 'Install dependencies'
+      condition: ne(variables['PYTHON_CACHE_RESTORED'], 'true')
+      workingDirectory: python-sdk
+
+    - script: |
+        source .venv/bin/activate
         sed -i "s/^version = \".*\"/version = \"$(ReleaseTag)\"/" pyproject.toml
-        python3 -m build --outdir $(PackageDirectory)
+        python -m build --outdir $(PackageDirectory)
       displayName: 'Inject version and build wheel + sdist'
       workingDirectory: python-sdk
 
@@ -52,18 +81,37 @@ stages:
   jobs:
   - job: deploy_pypi
     displayName: 'Push to PyPI'
-    pool:
-      vmImage: 'ubuntu-latest'
-      demands:
-      - python3
     steps:
     - download: current
       artifact: python
 
-    - script: pip3 install twine
-      displayName: 'Install twine'
+    - task: UsePythonVersion@0
+      displayName: 'Use Python $(python.version)'
+      inputs:
+        versionSpec: '$(python.version)'
+
+    - task: Cache@2
+      displayName: 'Cache pip packages'
+      inputs:
+        key: 'pip | "$(Agent.OS)" | "$(python.version)" | twine'
+        path: '.venv'
+        cacheHitVar: 'TWINE_CACHE_RESTORED'
 
     - script: |
+        python -m venv .venv
+        source .venv/bin/activate
+        python -m pip install --upgrade pip setuptools wheel
+      displayName: 'Create virtual environment'
+      condition: ne(variables['TWINE_CACHE_RESTORED'], 'true')
+
+    - script: |
+        source .venv/bin/activate
+        pip install twine
+      displayName: 'Install twine'
+      condition: ne(variables['TWINE_CACHE_RESTORED'], 'true')
+
+    - script: |
+        source .venv/bin/activate
         twine upload $(Pipeline.Workspace)/python/* \
           --repository-url https://upload.pypi.org/legacy/ \
           --username __token__ \
