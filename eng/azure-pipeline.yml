@@ -267,6 +267,12 @@ stages:
       inputs:
         versionSpec: '$(python.version)'
 
+    - script: |
+        python -m ensurepip --upgrade
+        python -m pip install --upgrade pip
+      displayName: 'Bootstrap pip on base Python'
+      condition: eq(variables['changeDetected'], 'true')
+
     - task: Cache@2
       displayName: 'Cache pip download cache'
       condition: eq(variables['changeDetected'], 'true')
