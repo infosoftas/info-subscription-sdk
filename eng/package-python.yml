@@ -7,7 +7,6 @@ trigger:
 pr: none
 
 variables:
-  PYTHON_VERSION: '3.12'
   PackageDirectory: '$(Build.ArtifactStagingDirectory)/python'
 
 pool:
@@ -33,15 +32,46 @@ stages:
         echo "##vso[task.setvariable variable=ReleaseTag]$TAG"
       displayName: 'Validate tag on HEAD'
 
-    - task: UsePythonVersion@0
-      displayName: 'Setup Python'
-      inputs:
-        versionSpec: $(PYTHON_VERSION)
+    - script: |
+        if command -v python3 &>/dev/null; then
+          PYTHON_BIN=python3
+        elif command -v python &>/dev/null; then
+          PYTHON_BIN=python
+        else
+          echo "##vso[task.logissue type=error]No Python binary found on PATH"
+          exit 1
+        fi
+        PYTHON_VERSION=$($PYTHON_BIN --version 2>&1 | awk '{print $2}')
+        echo "Detected: $PYTHON_BIN ($PYTHON_VERSION)"
+        echo "##vso[task.setvariable variable=PYTHON_BIN]$PYTHON_BIN"
+        echo "##vso[task.setvariable variable=python.version]$PYTHON_VERSION"
+      displayName: 'Detect Python binary'
 
-    - script: pip install build
-      displayName: 'Install build tools'
+    - task: Cache@2
+      displayName: 'Cache pip download cache'
+      inputs:
+        key: 'pip | "$(Agent.OS)" | "$(python.version)" | python-sdk/requirements.txt | python-sdk/requirements-dev.txt'
+        path: '$(HOME)/.cache/pip'
+        restoreKeys: |
+          pip | "$(Agent.OS)" | "$(python.version)"
 
     - script: |
+        $(PYTHON_BIN) -m venv .venv
+        source .venv/bin/activate
+        python -m pip install --upgrade pip setuptools wheel
+      displayName: 'Create virtual environment'
+      workingDirectory: python-sdk
+
+    - script: |
+        source .venv/bin/activate
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install -e .
+      displayName: 'Install dependencies'
+      workingDirectory: python-sdk
+
+    - script: |
+        source .venv/bin/activate
         sed -i "s/^version = \".*\"/version = \"$(ReleaseTag)\"/" pyproject.toml
         python -m build --outdir $(PackageDirectory)
       displayName: 'Inject version and build wheel + sdist'
@@ -61,15 +91,40 @@ stages:
     - download: current
       artifact: python
 
-    - task: UsePythonVersion@0
-      displayName: 'Setup Python'
-      inputs:
-        versionSpec: $(PYTHON_VERSION)
+    - script: |
+        if command -v python3 &>/dev/null; then
+          PYTHON_BIN=python3
+        elif command -v python &>/dev/null; then
+          PYTHON_BIN=python
+        else
+          echo "##vso[task.logissue type=error]No Python binary found on PATH"
+          exit 1
+        fi
+        PYTHON_VERSION=$($PYTHON_BIN --version 2>&1 | awk '{print $2}')
+        echo "Detected: $PYTHON_BIN ($PYTHON_VERSION)"
+        echo "##vso[task.setvariable variable=PYTHON_BIN]$PYTHON_BIN"
+        echo "##vso[task.setvariable variable=python.version]$PYTHON_VERSION"
+      displayName: 'Detect Python binary'
 
-    - script: pip install twine
+    - task: Cache@2
+      displayName: 'Cache pip download cache'
+      inputs:
+        key: 'pip | "$(Agent.OS)" | "$(python.version)" | twine'
+        path: '$(HOME)/.cache/pip'
+
+    - script: |
+        $(PYTHON_BIN) -m venv .venv
+        source .venv/bin/activate
+        python -m pip install --upgrade pip setuptools wheel
+      displayName: 'Create virtual environment'
+
+    - script: |
+        source .venv/bin/activate
+        pip install twine
       displayName: 'Install twine'
 
     - script: |
+        source .venv/bin/activate
         twine upload $(Pipeline.Workspace)/python/* \
           --repository-url https://upload.pypi.org/legacy/ \
           --username __token__ \
