@@ -263,15 +263,8 @@ stages:
     - task: UsePythonVersion@0
       displayName: 'Use Python $(python.version)'
       condition: eq(variables['changeDetected'], 'true')
-      continueOnError: true  # setup.sh pip upgrade may fail on self-hosted agents where base Python has no pip module; the venv bootstraps its own pip via ensurepip
       inputs:
         versionSpec: '$(python.version)'
-
-    - script: |
-        python -m ensurepip --upgrade
-        python -m pip install --upgrade pip
-      displayName: 'Bootstrap pip on base Python'
-      condition: eq(variables['changeDetected'], 'true')
 
     - task: Cache@2
       displayName: 'Cache pip download cache'
