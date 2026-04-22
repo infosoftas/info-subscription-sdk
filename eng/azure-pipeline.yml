@@ -119,7 +119,7 @@ stages:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
-        version: '9.x'
+        version: '10.x'
 
     - task: DotNetCoreCLI@2
       displayName: 'Install kiota as a dotnet tool'
@@ -164,11 +164,11 @@ stages:
   #       }
   #     githubrestapiurl: https://api.github.com/repos/infosoftas/didactic-octo-chainsaw/pulls
 
-    - task: UseNodeVersion@1
+    - task: UseNode@1
       displayName: 'Setup Node.js for pack'
       condition: eq(variables['changeDetected'], 'true')
       inputs:
-        versionSpec: '$(node.version)'
+        version: '$(node.version)'
 
     - task: Cache@2
       displayName: 'Cache npm packages'
