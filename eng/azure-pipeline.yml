@@ -27,6 +27,7 @@ variables:
   buildId: '$(Build.BuildId)'
   today: $[ format('{0:yyyy}{0:MM}{0:dd}', pipeline.startTime) ]
   python.version: '3.12'
+  node.version: '20.x'
 
 stages:
 - stage: generate_dotnet
@@ -167,13 +168,13 @@ stages:
       displayName: 'Setup Node.js for pack'
       condition: eq(variables['changeDetected'], 'true')
       inputs:
-        versionSpec: '20.x'
+        versionSpec: '$(node.version)'
 
     - task: Cache@2
       displayName: 'Cache npm packages'
       condition: eq(variables['changeDetected'], 'true')
       inputs:
-        key: 'npm | "$(Agent.OS)" | typescript-sdk/package-lock.json'
+        key: 'npm | "$(Agent.OS)" | "$(node.version)" | typescript-sdk/package-lock.json'
         path: 'typescript-sdk/node_modules'
         cacheHitVar: 'NPM_CACHE_RESTORED'
 
@@ -265,12 +266,11 @@ stages:
         versionSpec: '$(python.version)'
 
     - task: Cache@2
-      displayName: 'Cache pip packages'
+      displayName: 'Cache pip download cache'
       condition: eq(variables['changeDetected'], 'true')
       inputs:
         key: 'pip | "$(Agent.OS)" | "$(python.version)" | python-sdk/requirements.txt | python-sdk/requirements-dev.txt'
-        path: 'python-sdk/.venv'
-        cacheHitVar: 'PYTHON_CACHE_RESTORED'
+        path: '$(HOME)/.cache/pip'
         restoreKeys: |
           pip | "$(Agent.OS)" | "$(python.version)"
 
@@ -279,7 +279,7 @@ stages:
         source python-sdk/.venv/bin/activate
         python -m pip install --upgrade pip setuptools wheel
       displayName: 'Create virtual environment'
-      condition: and(eq(variables['changeDetected'], 'true'), ne(variables['PYTHON_CACHE_RESTORED'], 'true'))
+      condition: eq(variables['changeDetected'], 'true')
 
     - script: |
         source python-sdk/.venv/bin/activate
@@ -287,7 +287,7 @@ stages:
         pip install -r python-sdk/requirements-dev.txt
         pip install -e python-sdk/.
       displayName: 'Install dependencies'
-      condition: and(eq(variables['changeDetected'], 'true'), ne(variables['PYTHON_CACHE_RESTORED'], 'true'))
+      condition: eq(variables['changeDetected'], 'true')
 
     - script: |
         source python-sdk/.venv/bin/activate

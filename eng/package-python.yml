@@ -39,11 +39,10 @@ stages:
         versionSpec: '$(python.version)'
 
     - task: Cache@2
-      displayName: 'Cache pip packages'
+      displayName: 'Cache pip download cache'
       inputs:
         key: 'pip | "$(Agent.OS)" | "$(python.version)" | python-sdk/requirements.txt | python-sdk/requirements-dev.txt'
-        path: 'python-sdk/.venv'
-        cacheHitVar: 'PYTHON_CACHE_RESTORED'
+        path: '$(HOME)/.cache/pip'
         restoreKeys: |
           pip | "$(Agent.OS)" | "$(python.version)"
 
@@ -52,7 +51,6 @@ stages:
         source .venv/bin/activate
         python -m pip install --upgrade pip setuptools wheel
       displayName: 'Create virtual environment'
-      condition: ne(variables['PYTHON_CACHE_RESTORED'], 'true')
       workingDirectory: python-sdk
 
     - script: |
@@ -61,7 +59,6 @@ stages:
         pip install -r requirements-dev.txt
         pip install -e .
       displayName: 'Install dependencies'
-      condition: ne(variables['PYTHON_CACHE_RESTORED'], 'true')
       workingDirectory: python-sdk
 
     - script: |
@@ -91,24 +88,21 @@ stages:
         versionSpec: '$(python.version)'
 
     - task: Cache@2
-      displayName: 'Cache pip packages'
+      displayName: 'Cache pip download cache'
       inputs:
         key: 'pip | "$(Agent.OS)" | "$(python.version)" | twine'
-        path: '.venv'
-        cacheHitVar: 'TWINE_CACHE_RESTORED'
+        path: '$(HOME)/.cache/pip'
 
     - script: |
         python -m venv .venv
         source .venv/bin/activate
         python -m pip install --upgrade pip setuptools wheel
       displayName: 'Create virtual environment'
-      condition: ne(variables['TWINE_CACHE_RESTORED'], 'true')
 
     - script: |
         source .venv/bin/activate
         pip install twine
       displayName: 'Install twine'
-      condition: ne(variables['TWINE_CACHE_RESTORED'], 'true')
 
     - script: |
         source .venv/bin/activate
