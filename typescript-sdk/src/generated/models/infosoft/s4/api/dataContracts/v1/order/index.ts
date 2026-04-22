@@ -4,7 +4,7 @@
 // @ts-ignore
 import { createTemplatePackageChoicesFromDiscriminatorValue, serializeTemplatePackageChoices, type TemplatePackageChoices } from '../../../../../../index.js';
 // @ts-ignore
-import { PaymentMethods, PaymentMethodsObject } from '../index.js';
+import { PaymentMethodsObject, type PaymentMethods } from '../index.js';
 // @ts-ignore
 import { type Guid, type Parsable, type ParseNode, type SerializationWriter } from '@microsoft/kiota-abstractions';
 

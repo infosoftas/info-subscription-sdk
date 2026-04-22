@@ -2,7 +2,7 @@
   "descriptionHash": "EF347D1236F031C805D8FEFAB5958B8670E94E97E34C77788BB211823F4F2A14C9202B618C6E1A0026ACF973012682F6D6E3B6A7ACB80D75FDC5553AFF3ADAEA",
   "descriptionLocation": "https://api.info-subscription.com/swagger/latest/swagger.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.30.0",
+  "kiotaVersion": "1.31.1",
   "clientClassName": "InfoSubscription",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "info.subscription.ts",
