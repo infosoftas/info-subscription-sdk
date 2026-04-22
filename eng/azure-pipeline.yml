@@ -186,6 +186,7 @@ stages:
     - script: |
         npm run build
         npm version 0.0.0-preview.$(Build.BuildId) --no-git-tag-version
+        mkdir -p $(Build.ArtifactStagingDirectory)/npm
         npm pack --pack-destination $(Build.ArtifactStagingDirectory)/npm
       displayName: 'Build and pack npm (preview)'
       condition: eq(variables['changeDetected'], 'true')
@@ -262,6 +263,7 @@ stages:
     - task: UsePythonVersion@0
       displayName: 'Use Python $(python.version)'
       condition: eq(variables['changeDetected'], 'true')
+      continueOnError: true  # setup.sh pip upgrade may fail on self-hosted agents where base Python has no pip module; the venv bootstraps its own pip via ensurepip
       inputs:
         versionSpec: '$(python.version)'
 
