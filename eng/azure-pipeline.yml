@@ -186,9 +186,7 @@ stages:
     - script: |
         npm run build
         npm version 0.0.0-preview.$(Build.BuildId) --no-git-tag-version
-        mkdir -p $(Build.ArtifactStagingDirectory)/npm
-        npm pack --pack-destination $(Build.ArtifactStagingDirectory)/npm
-      displayName: 'Build and pack npm (preview)'
+      displayName: 'Build npm (preview)'
       condition: eq(variables['changeDetected'], 'true')
       workingDirectory: typescript-sdk
 
@@ -196,11 +194,10 @@ stages:
       displayName: 'Push preview package to ADO npm feed'
       condition: eq(variables['changeDetected'], 'true')
       inputs:
-        command: 'custom'
-        workingDir: '$(Build.ArtifactStagingDirectory)/npm'
-        customCommand: 'publish *.tgz'
-        customRegistry: 'useFeed'
-        customFeed: 'aeefa1b4-7b70-48a5-910f-324156d70b86'
+        command: 'publish'
+        workingDir: 'typescript-sdk'
+        publishRegistry: 'useFeed'
+        publishFeed: 'aeefa1b4-7b70-48a5-910f-324156d70b86'
 
 - stage: generate_python
   displayName: 'Generate Python sdk'
