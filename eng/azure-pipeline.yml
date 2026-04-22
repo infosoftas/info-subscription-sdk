@@ -26,7 +26,6 @@ variables:
   branchName: 'sdk-update-$(today)-$(Build.BuildId)'
   buildId: '$(Build.BuildId)'
   today: $[ format('{0:yyyy}{0:MM}{0:dd}', pipeline.startTime) ]
-  python.version: '3.12'
   node.version: '20.x'
 
 stages:
@@ -268,11 +267,21 @@ stages:
   #        }
   #      githubrestapiurl: https://api.github.com/repos/infosoftas/didactic-octo-chainsaw/pulls
 
-    - task: UsePythonVersion@0
-      displayName: 'Use Python $(python.version)'
+    - script: |
+        if command -v python3 &>/dev/null; then
+          PYTHON_BIN=python3
+        elif command -v python &>/dev/null; then
+          PYTHON_BIN=python
+        else
+          echo "##vso[task.logissue type=error]No Python binary found on PATH"
+          exit 1
+        fi
+        PYTHON_VERSION=$($PYTHON_BIN --version 2>&1 | awk '{print $2}')
+        echo "Detected: $PYTHON_BIN ($PYTHON_VERSION)"
+        echo "##vso[task.setvariable variable=PYTHON_BIN]$PYTHON_BIN"
+        echo "##vso[task.setvariable variable=python.version]$PYTHON_VERSION"
+      displayName: 'Detect Python binary'
       condition: eq(variables['changeDetected'], 'true')
-      inputs:
-        versionSpec: '$(python.version)'
 
     - task: Cache@2
       displayName: 'Cache pip download cache'
@@ -284,7 +293,7 @@ stages:
           pip | "$(Agent.OS)" | "$(python.version)"
 
     - script: |
-        python -m venv python-sdk/.venv
+        $(PYTHON_BIN) -m venv python-sdk/.venv
         source python-sdk/.venv/bin/activate
         python -m pip install --upgrade pip setuptools wheel
       displayName: 'Create virtual environment'
