@@ -186,6 +186,7 @@ stages:
     - script: |
         npm run build
         npm version 0.0.0-preview.$(Build.BuildId) --no-git-tag-version
+        git restore package-lock.json
       displayName: 'Build npm (preview)'
       condition: eq(variables['changeDetected'], 'true')
       workingDirectory: typescript-sdk
