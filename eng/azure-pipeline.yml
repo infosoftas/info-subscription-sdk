@@ -196,10 +196,11 @@ stages:
       displayName: 'Push preview package to ADO npm feed'
       condition: eq(variables['changeDetected'], 'true')
       inputs:
-        command: 'publish'
+        command: 'custom'
         workingDir: '$(Build.ArtifactStagingDirectory)/npm'
-        publishRegistry: 'useFeed'
-        publishFeed: 'aeefa1b4-7b70-48a5-910f-324156d70b86'
+        customCommand: 'publish *.tgz'
+        customRegistry: 'useFeed'
+        customFeed: 'aeefa1b4-7b70-48a5-910f-324156d70b86'
 
 - stage: generate_python
   displayName: 'Generate Python sdk'
