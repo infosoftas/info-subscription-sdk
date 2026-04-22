@@ -164,7 +164,7 @@ stages:
   #       }
   #     githubrestapiurl: https://api.github.com/repos/infosoftas/didactic-octo-chainsaw/pulls
 
-    - task: NodeTool@0
+    - task: UseNodeVersion@1
       displayName: 'Setup Node.js for pack'
       condition: eq(variables['changeDetected'], 'true')
       inputs:

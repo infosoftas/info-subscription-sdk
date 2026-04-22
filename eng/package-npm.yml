@@ -33,7 +33,7 @@ stages:
         echo "##vso[task.setvariable variable=ReleaseTag]$TAG"
       displayName: 'Validate tag on HEAD'
 
-    - task: NodeTool@0
+    - task: UseNodeVersion@1
       displayName: 'Setup Node.js'
       inputs:
         versionSpec: $(NODE_VERSION)
@@ -74,7 +74,7 @@ stages:
     - download: current
       artifact: npm
 
-    - task: NodeTool@0
+    - task: UseNodeVersion@1
       displayName: 'Setup Node.js'
       inputs:
         versionSpec: $(NODE_VERSION)
