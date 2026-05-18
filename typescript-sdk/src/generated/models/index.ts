@@ -384,6 +384,24 @@ export function createPaymentAgreementParametersFromDiscriminatorValue(parseNode
 /**
  * Creates a new instance of the appropriate class based on discriminator value
  * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {PlanProduct}
+ */
+// @ts-ignore
+export function createPlanProductFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoPlanProduct;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {PlanSelection}
+ */
+// @ts-ignore
+export function createPlanSelectionFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoPlanSelection;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
  * @returns {Price}
  */
 // @ts-ignore
@@ -519,6 +537,42 @@ export function createSubscriptionPackageViewFromDiscriminatorValue(parseNode: P
 /**
  * Creates a new instance of the appropriate class based on discriminator value
  * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {SubscriptionPlanDraftAdditionalProduct}
+ */
+// @ts-ignore
+export function createSubscriptionPlanDraftAdditionalProductFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoSubscriptionPlanDraftAdditionalProduct;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {SubscriptionPlanDraftChain}
+ */
+// @ts-ignore
+export function createSubscriptionPlanDraftChainFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoSubscriptionPlanDraftChain;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {SubscriptionPlanDraftChainStep}
+ */
+// @ts-ignore
+export function createSubscriptionPlanDraftChainStepFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoSubscriptionPlanDraftChainStep;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {SubscriptionPlanDraft}
+ */
+// @ts-ignore
+export function createSubscriptionPlanDraftFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoSubscriptionPlanDraft;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
  * @returns {SubscriptionView}
  */
 // @ts-ignore
@@ -596,6 +650,15 @@ export function createTemplatePackageRuleFromDiscriminatorValue(parseNode: Parse
 // @ts-ignore
 export function createTemplatePackageViewFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
     return deserializeIntoTemplatePackageView;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {TemplatePlanReference}
+ */
+// @ts-ignore
+export function createTemplatePlanReferenceFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoTemplatePlanReference;
 }
 /**
  * Creates a new instance of the appropriate class based on discriminator value
@@ -844,13 +907,12 @@ export function deserializeIntoOrderCreate(orderCreate: Partial<OrderCreate> | u
         "organizationId": n => { orderCreate.organizationId = n.getGuidValue(); },
         "paymentAgreementId": n => { orderCreate.paymentAgreementId = n.getGuidValue(); },
         "paymentAgreementParameters": n => { orderCreate.paymentAgreementParameters = n.getObjectValue<PaymentAgreementParameters>(createPaymentAgreementParametersFromDiscriminatorValue); },
+        "planSelection": n => { orderCreate.planSelection = n.getObjectValue<PlanSelection>(createPlanSelectionFromDiscriminatorValue); },
         "settleAccountBalance": n => { orderCreate.settleAccountBalance = n.getBooleanValue(); },
         "subscriberAccount": n => { orderCreate.subscriberAccount = n.getGuidValue(); },
         "subscriberId": n => { orderCreate.subscriberId = n.getGuidValue(); },
         "subscriberNumber": n => { orderCreate.subscriberNumber = n.getNumberValue(); },
         "tag": n => { orderCreate.tag = n.getObjectValue<I738a2645b55c7dc6ddd8472293d32e3cc5f3e2d282e85caf161ef56349315c99>(Ia90640766c3ae465a5973bc8b857a92dfb99a442ac207613d8a1abd0aba711a3); },
-        "templatePackageChoices": n => { orderCreate.templatePackageChoices = n.getObjectValue<TemplatePackageChoices>(createTemplatePackageChoicesFromDiscriminatorValue); },
-        "templatePackageId": n => { orderCreate.templatePackageId = n.getGuidValue(); },
     }
 }
 /**
@@ -885,12 +947,14 @@ export function deserializeIntoOrderView(orderView: Partial<OrderView> | undefin
         "paymentAgreementId": n => { orderView.paymentAgreementId = n.getGuidValue(); },
         "paymentId": n => { orderView.paymentId = n.getGuidValue(); },
         "paymentMethod": n => { orderView.paymentMethod = n.getEnumValue<PaymentMethods>(PaymentMethodsObject); },
+        "planSourceType": n => { orderView.planSourceType = n.getEnumValue<OrderPlanSourceType>(OrderPlanSourceTypeObject); },
         "settleAccountBalance": n => { orderView.settleAccountBalance = n.getBooleanValue(); },
         "status": n => { orderView.status = n.getEnumValue<OrderStatus>(OrderStatusObject); },
         "subscriberAccount": n => { orderView.subscriberAccount = n.getGuidValue(); },
         "subscriberId": n => { orderView.subscriberId = n.getGuidValue(); },
         "subscriberNumber": n => { orderView.subscriberNumber = n.getNumberValue(); },
         "subscriptionId": n => { orderView.subscriptionId = n.getGuidValue(); },
+        "subscriptionPlanId": n => { orderView.subscriptionPlanId = n.getGuidValue(); },
         "tag": n => { orderView.tag = n.getObjectValue<OrderTag>(createOrderTagFromDiscriminatorValue); },
         "templatePackageId": n => { orderView.templatePackageId = n.getGuidValue(); },
         "terminalRedirectUrl": n => { orderView.terminalRedirectUrl = n.getStringValue(); },
@@ -953,6 +1017,32 @@ export function deserializeIntoPaymentAgreementParameters(paymentAgreementParame
         "payExEcommerceParameters": n => { paymentAgreementParameters.payExEcommerceParameters = n.getObjectValue<PayExEcommerceOrderParameters>(createPayExEcommerceOrderParametersFromDiscriminatorValue); },
         "paymentMethod": n => { paymentAgreementParameters.paymentMethod = n.getEnumValue<PaymentMethods>(PaymentMethodsObject); },
         "vippsMobilePayParameters": n => { paymentAgreementParameters.vippsMobilePayParameters = n.getObjectValue<VippsMobilePayOrderParameters>(createVippsMobilePayOrderParametersFromDiscriminatorValue); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param PlanProduct The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoPlanProduct(planProduct: Partial<PlanProduct> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "productId": n => { planProduct.productId = n.getGuidValue(); },
+        "quantity": n => { planProduct.quantity = n.getNumberValue(); },
+        "unitPrice": n => { planProduct.unitPrice = n.getObjectValue<Price>(createPriceFromDiscriminatorValue); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param PlanSelection The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoPlanSelection(planSelection: Partial<PlanSelection> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "plan": n => { planSelection.plan = n.getObjectValue<SubscriptionPlanDraft>(createSubscriptionPlanDraftFromDiscriminatorValue); },
+        "subscriptionPlanId": n => { planSelection.subscriptionPlanId = n.getGuidValue(); },
+        "template": n => { planSelection.template = n.getObjectValue<TemplatePlanReference>(createTemplatePlanReferenceFromDiscriminatorValue); },
     }
 }
 /**
@@ -1157,10 +1247,10 @@ export function deserializeIntoSubscriptionCreate(subscriptionCreate: Partial<Su
         "organizationId": n => { subscriptionCreate.organizationId = n.getGuidValue(); },
         "paymentAgreementId": n => { subscriptionCreate.paymentAgreementId = n.getGuidValue(); },
         "permanentDiscountId": n => { subscriptionCreate.permanentDiscountId = n.getGuidValue(); },
+        "planSelection": n => { subscriptionCreate.planSelection = n.getObjectValue<PlanSelection>(createPlanSelectionFromDiscriminatorValue); },
         "startTime": n => { subscriptionCreate.startTime = n.getDateValue(); },
         "subscriberAccount": n => { subscriptionCreate.subscriberAccount = n.getGuidValue(); },
         "subscriberId": n => { subscriptionCreate.subscriberId = n.getGuidValue(); },
-        "templatePackageId": n => { subscriptionCreate.templatePackageId = n.getGuidValue(); },
         "units": n => { subscriptionCreate.units = n.getNumberValue(); },
     }
 }
@@ -1222,6 +1312,89 @@ export function deserializeIntoSubscriptionPackageView(subscriptionPackageView: 
         "tax": n => { subscriptionPackageView.tax = n.getNumberValue(); },
         "totalAdditionalProducts": n => { subscriptionPackageView.totalAdditionalProducts = n.getCollectionOfObjectValues<AdditionalProductView>(createAdditionalProductViewFromDiscriminatorValue); },
         "units": n => { subscriptionPackageView.units = n.getNumberValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param SubscriptionPlanDraft The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoSubscriptionPlanDraft(subscriptionPlanDraft: Partial<SubscriptionPlanDraft> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "additionalProducts": n => { subscriptionPlanDraft.additionalProducts = n.getCollectionOfObjectValues<SubscriptionPlanDraftAdditionalProduct>(createSubscriptionPlanDraftAdditionalProductFromDiscriminatorValue); },
+        "automaticStop": n => { subscriptionPlanDraft.automaticStop = n.getBooleanValue(); },
+        "billingFrequencyId": n => { subscriptionPlanDraft.billingFrequencyId = n.getNumberValue(); },
+        "billingPlanId": n => { subscriptionPlanDraft.billingPlanId = n.getGuidValue(); },
+        "currency": n => { subscriptionPlanDraft.currency = n.getStringValue(); },
+        "description": n => { subscriptionPlanDraft.description = n.getStringValue(); },
+        "initialTermPrice": n => { subscriptionPlanDraft.initialTermPrice = n.getNumberValue(); },
+        "initialTermType": n => { subscriptionPlanDraft.initialTermType = n.getNumberValue(); },
+        "initialTermValue": n => { subscriptionPlanDraft.initialTermValue = n.getStringValue(); },
+        "name": n => { subscriptionPlanDraft.name = n.getStringValue(); },
+        "numberOfEditions": n => { subscriptionPlanDraft.numberOfEditions = n.getNumberValue(); },
+        "packageChain": n => { subscriptionPlanDraft.packageChain = n.getObjectValue<SubscriptionPlanDraftChain>(createSubscriptionPlanDraftChainFromDiscriminatorValue); },
+        "permanentDiscount": n => { subscriptionPlanDraft.permanentDiscount = n.getObjectValue<PermanentDiscount>(createPermanentDiscountFromDiscriminatorValue); },
+        "price": n => { subscriptionPlanDraft.price = n.getNumberValue(); },
+        "productItems": n => { subscriptionPlanDraft.productItems = n.getCollectionOfObjectValues<PlanProduct>(createPlanProductFromDiscriminatorValue); },
+        "renewalDescription": n => { subscriptionPlanDraft.renewalDescription = n.getStringValue(); },
+        "renewalName": n => { subscriptionPlanDraft.renewalName = n.getStringValue(); },
+        "units": n => { subscriptionPlanDraft.units = n.getNumberValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param SubscriptionPlanDraftAdditionalProduct The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoSubscriptionPlanDraftAdditionalProduct(subscriptionPlanDraftAdditionalProduct: Partial<SubscriptionPlanDraftAdditionalProduct> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "includedInPlan": n => { subscriptionPlanDraftAdditionalProduct.includedInPlan = n.getBooleanValue(); },
+        "productId": n => { subscriptionPlanDraftAdditionalProduct.productId = n.getGuidValue(); },
+        "renewalAtListPrice": n => { subscriptionPlanDraftAdditionalProduct.renewalAtListPrice = n.getBooleanValue(); },
+        "unitPrice": n => { subscriptionPlanDraftAdditionalProduct.unitPrice = n.getObjectValue<Price>(createPriceFromDiscriminatorValue); },
+        "units": n => { subscriptionPlanDraftAdditionalProduct.units = n.getNumberValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param SubscriptionPlanDraftChain The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoSubscriptionPlanDraftChain(subscriptionPlanDraftChain: Partial<SubscriptionPlanDraftChain> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "description": n => { subscriptionPlanDraftChain.description = n.getStringValue(); },
+        "name": n => { subscriptionPlanDraftChain.name = n.getStringValue(); },
+        "stepPosition": n => { subscriptionPlanDraftChain.stepPosition = n.getNumberValue(); },
+        "steps": n => { subscriptionPlanDraftChain.steps = n.getCollectionOfObjectValues<SubscriptionPlanDraftChainStep>(createSubscriptionPlanDraftChainStepFromDiscriminatorValue); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param SubscriptionPlanDraftChainStep The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoSubscriptionPlanDraftChainStep(subscriptionPlanDraftChainStep: Partial<SubscriptionPlanDraftChainStep> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "additionalProducts": n => { subscriptionPlanDraftChainStep.additionalProducts = n.getCollectionOfObjectValues<SubscriptionPlanDraftAdditionalProduct>(createSubscriptionPlanDraftAdditionalProductFromDiscriminatorValue); },
+        "automaticStop": n => { subscriptionPlanDraftChainStep.automaticStop = n.getBooleanValue(); },
+        "billingFrequencyId": n => { subscriptionPlanDraftChainStep.billingFrequencyId = n.getNumberValue(); },
+        "billingPlanId": n => { subscriptionPlanDraftChainStep.billingPlanId = n.getGuidValue(); },
+        "currency": n => { subscriptionPlanDraftChainStep.currency = n.getStringValue(); },
+        "description": n => { subscriptionPlanDraftChainStep.description = n.getStringValue(); },
+        "name": n => { subscriptionPlanDraftChainStep.name = n.getStringValue(); },
+        "nextSubscriptionPackageId": n => { subscriptionPlanDraftChainStep.nextSubscriptionPackageId = n.getGuidValue(); },
+        "numberOfEditions": n => { subscriptionPlanDraftChainStep.numberOfEditions = n.getNumberValue(); },
+        "price": n => { subscriptionPlanDraftChainStep.price = n.getNumberValue(); },
+        "productItems": n => { subscriptionPlanDraftChainStep.productItems = n.getCollectionOfObjectValues<PlanProduct>(createPlanProductFromDiscriminatorValue); },
+        "renewalDescription": n => { subscriptionPlanDraftChainStep.renewalDescription = n.getStringValue(); },
+        "renewalName": n => { subscriptionPlanDraftChainStep.renewalName = n.getStringValue(); },
+        "retain": n => { subscriptionPlanDraftChainStep.retain = n.getBooleanValue(); },
+        "step": n => { subscriptionPlanDraftChainStep.step = n.getNumberValue(); },
+        "units": n => { subscriptionPlanDraftChainStep.units = n.getNumberValue(); },
     }
 }
 /**
@@ -1411,6 +1584,18 @@ export function deserializeIntoTemplatePackageView(templatePackageView: Partial<
         "templatePackageRules": n => { templatePackageView.templatePackageRules = n.getCollectionOfObjectValues<I50c444bf1e59d7ebb68be4e598cbcfe8ce919610175e0dd97cf518afe81891eb>(I8adf8b32464015befcd45d4729f63b7f083e9c661023271c5e24f71b27ae9f9c); },
         "validFrom": n => { templatePackageView.validFrom = n.getDateValue(); },
         "validUntil": n => { templatePackageView.validUntil = n.getDateValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param TemplatePlanReference The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoTemplatePlanReference(templatePlanReference: Partial<TemplatePlanReference> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "choices": n => { templatePlanReference.choices = n.getObjectValue<OrderChoices>(createOrderChoicesFromDiscriminatorValue); },
+        "templatePlanId": n => { templatePlanReference.templatePlanId = n.getGuidValue(); },
     }
 }
 /**
@@ -1613,11 +1798,15 @@ export interface OrderCreate extends Parsable {
      */
     paymentAgreementParameters?: PaymentAgreementParameters | null;
     /**
+     * Defines how a subscription plan is sourced. Exactly one of the three properties must be provided.
+     */
+    planSelection?: PlanSelection | null;
+    /**
      * Should this order settle existing account balance when when billed.
      */
     settleAccountBalance?: boolean | null;
     /**
-     * The subscriber account the order should be associated with. If not given it will be automatically determined based on the current system state.
+     * The subscriber account the order (and subsequent subscription) should be associated with.             If not given it will be automatically determined based on the current system state.
      */
     subscriberAccount?: Guid | null;
     /**
@@ -1632,15 +1821,8 @@ export interface OrderCreate extends Parsable {
      * The order tag.The entity that is used to store various types (TagType) of values ​​in a reporting service.
      */
     tag?: I738a2645b55c7dc6ddd8472293d32e3cc5f3e2d282e85caf161ef56349315c99 | null;
-    /**
-     * A template package choices.
-     */
-    templatePackageChoices?: TemplatePackageChoices | null;
-    /**
-     * The identifier of the template subscription plan the order should derive from.
-     */
-    templatePackageId?: Guid | null;
 }
+export type OrderPlanSourceType = (typeof OrderPlanSourceTypeObject)[keyof typeof OrderPlanSourceTypeObject];
 export type OrderStatus = (typeof OrderStatusObject)[keyof typeof OrderStatusObject];
 /**
  * The order tag.The entity that is used to store various types (TagType) of values in a reporting service.
@@ -1652,27 +1834,27 @@ export interface OrderTag extends Parsable {
     values?: string[] | null;
 }
 /**
- * An order view.
+ * Represents a read model of an order returned by the API. This classcontains the identifiers and metadata produced by order processing suchas status, related subscription/payment ids, timestamps and resolved planinformation.
  */
 export interface OrderView extends Parsable {
     /**
-     * Gets or sets the agreement reference.
+     * Reference returned by the payment provider or agreement creation step.Useful for reconcilliation with external systems.
      */
     agreementReference?: string | null;
     /**
-     * Gets or sets the external identifier of the subscriber.
+     * External identifier for the subscriber (for example CRM or billingsystem id) used for correlation.
      */
     externalSubscriberId?: string | null;
     /**
-     * Gets or sets the identifier of the order.
+     * Unique identifier of the order record.
      */
     id?: Guid | null;
     /**
-     * Gets or sets the identifier of the invoice contact.
+     * Identifier of the invoice contact used for billing documents.
      */
     invoiceContactId?: Guid | null;
     /**
-     * Gets or sets the Date/Time of the order cancelled.
+     * Timestamp when the order was cancelled, if applicable.
      */
     orderCancelled?: Date | null;
     /**
@@ -1680,27 +1862,27 @@ export interface OrderView extends Parsable {
      */
     orderChoices?: OrderChoices | null;
     /**
-     * Gets or sets the Date/Time of the order completed.
+     * Timestamp when the order completed processing, if available.
      */
     orderCompleted?: Date | null;
     /**
-     * Gets or sets the Date/Time of the order created.
+     * Timestamp when the order was created.
      */
     orderCreated?: Date | null;
     /**
-     * An optional order reference.
+     * Optional external reference supplied with the order for correlation withexternal systems.
      */
     orderReference?: string | null;
     /**
-     * Gets or sets the identifier of the organization.
+     * Organization that owns the subscription created by this order.
      */
     organizationId?: Guid | null;
     /**
-     * Gets or sets the identifier of the payment agreement.
+     * Identifier of the payment agreement used for the order, if any.
      */
     paymentAgreementId?: Guid | null;
     /**
-     * Gets or sets the identifier of the related payment.
+     * Identifier of the payment produced by the order processing flow.
      */
     paymentId?: Guid | null;
     /**
@@ -1708,7 +1890,11 @@ export interface OrderView extends Parsable {
      */
     paymentMethod?: PaymentMethods | null;
     /**
-     * Should this order settle existing account balance when when billed.
+     * Identifies the source/type of the subscription plan associated with an order.Stored in the order event and read model to drive code-path branching at completion and cancellation.
+     */
+    planSourceType?: OrderPlanSourceType | null;
+    /**
+     * When true indicates the order processing attempted to settle existingaccount balance as part of billing.
      */
     settleAccountBalance?: boolean | null;
     /**
@@ -1716,35 +1902,39 @@ export interface OrderView extends Parsable {
      */
     status?: OrderStatus | null;
     /**
-     * Gets or sets the subscriber account.
+     * Subscriber account identifier associated with the order.
      */
     subscriberAccount?: Guid | null;
     /**
-     * Gets or sets the identifier of the subscriber.
+     * Identifier of the subscriber the order is associated with, if any.
      */
     subscriberId?: Guid | null;
     /**
-     * Gets or sets the subscriber number.
+     * Optional numeric subscriber number from the source system.
      */
     subscriberNumber?: number | null;
     /**
-     * Gets or sets the identifier of the resulting subscription.
+     * Identifier of the subscription created as a result of this order, if any.
      */
     subscriptionId?: Guid | null;
+    /**
+     * Subscription plan identifier when the plan was resolved to an existingor persisted inline plan.
+     */
+    subscriptionPlanId?: Guid | null;
     /**
      * The order tag.The entity that is used to store various types (TagType) of values in a reporting service.
      */
     tag?: OrderTag | null;
     /**
-     * Gets or sets the identifier of the template package.
+     * Template package id from ProductService used when the order was created(if a template was the source of the plan).
      */
     templatePackageId?: Guid | null;
     /**
-     * Gets or sets URL of the terminal redirect.
+     * If the payment flow requires a terminal redirect (for example to athird-party payment provider), this property contains the URL to redirectthe client to.
      */
     terminalRedirectUrl?: string | null;
     /**
-     * Gets or sets the identifier of the transaction.
+     * Identifier of the payment transaction created during order processing.
      */
     transactionId?: Guid | null;
 }
@@ -1842,6 +2032,40 @@ export interface PaymentAgreementParameters extends Parsable {
     vippsMobilePayParameters?: VippsMobilePayOrderParameters | null;
 }
 export type PaymentMethods = (typeof PaymentMethodsObject)[keyof typeof PaymentMethodsObject];
+/**
+ * Specifies a product with quantity and optional unit price for a subscription plan.
+ */
+export interface PlanProduct extends Parsable {
+    /**
+     * Gets or sets the identifier of the product.
+     */
+    productId?: Guid | null;
+    /**
+     * Gets or sets the quantity.
+     */
+    quantity?: number | null;
+    /**
+     * Represents a flattened DTO version of the Price class.
+     */
+    unitPrice?: Price | null;
+}
+/**
+ * Defines how a subscription plan is sourced. Exactly one of the three properties must be provided.
+ */
+export interface PlanSelection extends Parsable {
+    /**
+     * An inline subscription plan definition to be created during order processing.
+     */
+    plan?: SubscriptionPlanDraft | null;
+    /**
+     * Identifier of an existing subscription plan in the SubscriptionService.
+     */
+    subscriptionPlanId?: Guid | null;
+    /**
+     * Holds a reference to a centralized template plan together with anychoice overrides that should be applied when creating the subscription.This bundles the template identifier and the override choices into asingle object for clarity when selecting template-based plans.
+     */
+    template?: TemplatePlanReference | null;
+}
 /**
  * Represents a flattened DTO version of the Price class.
  */
@@ -2274,13 +2498,12 @@ export function serializeOrderCreate(writer: SerializationWriter, orderCreate: P
     writer.writeGuidValue("organizationId", orderCreate.organizationId);
     writer.writeGuidValue("paymentAgreementId", orderCreate.paymentAgreementId);
     writer.writeObjectValue<PaymentAgreementParameters>("paymentAgreementParameters", orderCreate.paymentAgreementParameters, serializePaymentAgreementParameters);
+    writer.writeObjectValue<PlanSelection>("planSelection", orderCreate.planSelection, serializePlanSelection);
     writer.writeBooleanValue("settleAccountBalance", orderCreate.settleAccountBalance);
     writer.writeGuidValue("subscriberAccount", orderCreate.subscriberAccount);
     writer.writeGuidValue("subscriberId", orderCreate.subscriberId);
     writer.writeNumberValue("subscriberNumber", orderCreate.subscriberNumber);
     writer.writeObjectValue<I738a2645b55c7dc6ddd8472293d32e3cc5f3e2d282e85caf161ef56349315c99>("tag", orderCreate.tag, I0088a68ecff76714439e1213bdd60750e462688357f49fe27a2baf6b72aceac6);
-    writer.writeObjectValue<TemplatePackageChoices>("templatePackageChoices", orderCreate.templatePackageChoices, serializeTemplatePackageChoices);
-    writer.writeGuidValue("templatePackageId", orderCreate.templatePackageId);
 }
 /**
  * Serializes information the current object
@@ -2315,12 +2538,14 @@ export function serializeOrderView(writer: SerializationWriter, orderView: Parti
     writer.writeGuidValue("paymentAgreementId", orderView.paymentAgreementId);
     writer.writeGuidValue("paymentId", orderView.paymentId);
     writer.writeEnumValue<PaymentMethods>("paymentMethod", orderView.paymentMethod);
+    writer.writeEnumValue<OrderPlanSourceType>("planSourceType", orderView.planSourceType);
     writer.writeBooleanValue("settleAccountBalance", orderView.settleAccountBalance);
     writer.writeEnumValue<OrderStatus>("status", orderView.status);
     writer.writeGuidValue("subscriberAccount", orderView.subscriberAccount);
     writer.writeGuidValue("subscriberId", orderView.subscriberId);
     writer.writeNumberValue("subscriberNumber", orderView.subscriberNumber);
     writer.writeGuidValue("subscriptionId", orderView.subscriptionId);
+    writer.writeGuidValue("subscriptionPlanId", orderView.subscriptionPlanId);
     writer.writeObjectValue<OrderTag>("tag", orderView.tag, serializeOrderTag);
     writer.writeGuidValue("templatePackageId", orderView.templatePackageId);
     writer.writeStringValue("terminalRedirectUrl", orderView.terminalRedirectUrl);
@@ -2383,6 +2608,32 @@ export function serializePaymentAgreementParameters(writer: SerializationWriter,
     writer.writeObjectValue<PayExEcommerceOrderParameters>("payExEcommerceParameters", paymentAgreementParameters.payExEcommerceParameters, serializePayExEcommerceOrderParameters);
     writer.writeEnumValue<PaymentMethods>("paymentMethod", paymentAgreementParameters.paymentMethod);
     writer.writeObjectValue<VippsMobilePayOrderParameters>("vippsMobilePayParameters", paymentAgreementParameters.vippsMobilePayParameters, serializeVippsMobilePayOrderParameters);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param PlanProduct The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializePlanProduct(writer: SerializationWriter, planProduct: Partial<PlanProduct> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!planProduct || isSerializingDerivedType) { return; }
+    writer.writeGuidValue("productId", planProduct.productId);
+    writer.writeNumberValue("quantity", planProduct.quantity);
+    writer.writeObjectValue<Price>("unitPrice", planProduct.unitPrice, serializePrice);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param PlanSelection The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializePlanSelection(writer: SerializationWriter, planSelection: Partial<PlanSelection> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!planSelection || isSerializingDerivedType) { return; }
+    writer.writeObjectValue<SubscriptionPlanDraft>("plan", planSelection.plan, serializeSubscriptionPlanDraft);
+    writer.writeGuidValue("subscriptionPlanId", planSelection.subscriptionPlanId);
+    writer.writeObjectValue<TemplatePlanReference>("template", planSelection.template, serializeTemplatePlanReference);
 }
 /**
  * Serializes information the current object
@@ -2587,10 +2838,10 @@ export function serializeSubscriptionCreate(writer: SerializationWriter, subscri
     writer.writeGuidValue("organizationId", subscriptionCreate.organizationId);
     writer.writeGuidValue("paymentAgreementId", subscriptionCreate.paymentAgreementId);
     writer.writeGuidValue("permanentDiscountId", subscriptionCreate.permanentDiscountId);
+    writer.writeObjectValue<PlanSelection>("planSelection", subscriptionCreate.planSelection, serializePlanSelection);
     writer.writeDateValue("startTime", subscriptionCreate.startTime);
     writer.writeGuidValue("subscriberAccount", subscriptionCreate.subscriberAccount);
     writer.writeGuidValue("subscriberId", subscriptionCreate.subscriberId);
-    writer.writeGuidValue("templatePackageId", subscriptionCreate.templatePackageId);
     writer.writeNumberValue("units", subscriptionCreate.units);
 }
 /**
@@ -2652,6 +2903,89 @@ export function serializeSubscriptionPackageView(writer: SerializationWriter, su
     writer.writeNumberValue("tax", subscriptionPackageView.tax);
     writer.writeCollectionOfObjectValues<AdditionalProductView>("totalAdditionalProducts", subscriptionPackageView.totalAdditionalProducts, serializeAdditionalProductView);
     writer.writeNumberValue("units", subscriptionPackageView.units);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param SubscriptionPlanDraft The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeSubscriptionPlanDraft(writer: SerializationWriter, subscriptionPlanDraft: Partial<SubscriptionPlanDraft> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!subscriptionPlanDraft || isSerializingDerivedType) { return; }
+    writer.writeCollectionOfObjectValues<SubscriptionPlanDraftAdditionalProduct>("additionalProducts", subscriptionPlanDraft.additionalProducts, serializeSubscriptionPlanDraftAdditionalProduct);
+    writer.writeBooleanValue("automaticStop", subscriptionPlanDraft.automaticStop);
+    writer.writeNumberValue("billingFrequencyId", subscriptionPlanDraft.billingFrequencyId);
+    writer.writeGuidValue("billingPlanId", subscriptionPlanDraft.billingPlanId);
+    writer.writeStringValue("currency", subscriptionPlanDraft.currency);
+    writer.writeStringValue("description", subscriptionPlanDraft.description);
+    writer.writeNumberValue("initialTermPrice", subscriptionPlanDraft.initialTermPrice);
+    writer.writeNumberValue("initialTermType", subscriptionPlanDraft.initialTermType);
+    writer.writeStringValue("initialTermValue", subscriptionPlanDraft.initialTermValue);
+    writer.writeStringValue("name", subscriptionPlanDraft.name);
+    writer.writeNumberValue("numberOfEditions", subscriptionPlanDraft.numberOfEditions);
+    writer.writeObjectValue<SubscriptionPlanDraftChain>("packageChain", subscriptionPlanDraft.packageChain, serializeSubscriptionPlanDraftChain);
+    writer.writeObjectValue<PermanentDiscount>("permanentDiscount", subscriptionPlanDraft.permanentDiscount, serializePermanentDiscount);
+    writer.writeNumberValue("price", subscriptionPlanDraft.price);
+    writer.writeCollectionOfObjectValues<PlanProduct>("productItems", subscriptionPlanDraft.productItems, serializePlanProduct);
+    writer.writeStringValue("renewalDescription", subscriptionPlanDraft.renewalDescription);
+    writer.writeStringValue("renewalName", subscriptionPlanDraft.renewalName);
+    writer.writeNumberValue("units", subscriptionPlanDraft.units);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param SubscriptionPlanDraftAdditionalProduct The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeSubscriptionPlanDraftAdditionalProduct(writer: SerializationWriter, subscriptionPlanDraftAdditionalProduct: Partial<SubscriptionPlanDraftAdditionalProduct> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!subscriptionPlanDraftAdditionalProduct || isSerializingDerivedType) { return; }
+    writer.writeBooleanValue("includedInPlan", subscriptionPlanDraftAdditionalProduct.includedInPlan);
+    writer.writeGuidValue("productId", subscriptionPlanDraftAdditionalProduct.productId);
+    writer.writeBooleanValue("renewalAtListPrice", subscriptionPlanDraftAdditionalProduct.renewalAtListPrice);
+    writer.writeObjectValue<Price>("unitPrice", subscriptionPlanDraftAdditionalProduct.unitPrice, serializePrice);
+    writer.writeNumberValue("units", subscriptionPlanDraftAdditionalProduct.units);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param SubscriptionPlanDraftChain The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeSubscriptionPlanDraftChain(writer: SerializationWriter, subscriptionPlanDraftChain: Partial<SubscriptionPlanDraftChain> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!subscriptionPlanDraftChain || isSerializingDerivedType) { return; }
+    writer.writeStringValue("description", subscriptionPlanDraftChain.description);
+    writer.writeStringValue("name", subscriptionPlanDraftChain.name);
+    writer.writeNumberValue("stepPosition", subscriptionPlanDraftChain.stepPosition);
+    writer.writeCollectionOfObjectValues<SubscriptionPlanDraftChainStep>("steps", subscriptionPlanDraftChain.steps, serializeSubscriptionPlanDraftChainStep);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param SubscriptionPlanDraftChainStep The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeSubscriptionPlanDraftChainStep(writer: SerializationWriter, subscriptionPlanDraftChainStep: Partial<SubscriptionPlanDraftChainStep> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!subscriptionPlanDraftChainStep || isSerializingDerivedType) { return; }
+    writer.writeCollectionOfObjectValues<SubscriptionPlanDraftAdditionalProduct>("additionalProducts", subscriptionPlanDraftChainStep.additionalProducts, serializeSubscriptionPlanDraftAdditionalProduct);
+    writer.writeBooleanValue("automaticStop", subscriptionPlanDraftChainStep.automaticStop);
+    writer.writeNumberValue("billingFrequencyId", subscriptionPlanDraftChainStep.billingFrequencyId);
+    writer.writeGuidValue("billingPlanId", subscriptionPlanDraftChainStep.billingPlanId);
+    writer.writeStringValue("currency", subscriptionPlanDraftChainStep.currency);
+    writer.writeStringValue("description", subscriptionPlanDraftChainStep.description);
+    writer.writeStringValue("name", subscriptionPlanDraftChainStep.name);
+    writer.writeGuidValue("nextSubscriptionPackageId", subscriptionPlanDraftChainStep.nextSubscriptionPackageId);
+    writer.writeNumberValue("numberOfEditions", subscriptionPlanDraftChainStep.numberOfEditions);
+    writer.writeNumberValue("price", subscriptionPlanDraftChainStep.price);
+    writer.writeCollectionOfObjectValues<PlanProduct>("productItems", subscriptionPlanDraftChainStep.productItems, serializePlanProduct);
+    writer.writeStringValue("renewalDescription", subscriptionPlanDraftChainStep.renewalDescription);
+    writer.writeStringValue("renewalName", subscriptionPlanDraftChainStep.renewalName);
+    writer.writeBooleanValue("retain", subscriptionPlanDraftChainStep.retain);
+    writer.writeNumberValue("step", subscriptionPlanDraftChainStep.step);
+    writer.writeNumberValue("units", subscriptionPlanDraftChainStep.units);
 }
 /**
  * Serializes information the current object
@@ -2841,6 +3175,18 @@ export function serializeTemplatePackageView(writer: SerializationWriter, templa
     writer.writeCollectionOfObjectValues<I50c444bf1e59d7ebb68be4e598cbcfe8ce919610175e0dd97cf518afe81891eb>("templatePackageRules", templatePackageView.templatePackageRules, I4c8cf9c8caf194fe2a86eb91f808de696d449f548bc20d31677ef0fc020ff379);
     writer.writeDateValue("validFrom", templatePackageView.validFrom);
     writer.writeDateValue("validUntil", templatePackageView.validUntil);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param TemplatePlanReference The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeTemplatePlanReference(writer: SerializationWriter, templatePlanReference: Partial<TemplatePlanReference> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!templatePlanReference || isSerializingDerivedType) { return; }
+    writer.writeObjectValue<OrderChoices>("choices", templatePlanReference.choices, serializeOrderChoices);
+    writer.writeGuidValue("templatePlanId", templatePlanReference.templatePlanId);
 }
 /**
  * Serializes information the current object
@@ -3066,6 +3412,10 @@ export interface SubscriptionCreate extends Parsable {
      */
     permanentDiscountId?: Guid | null;
     /**
+     * Defines how a subscription plan is sourced. Exactly one of the three properties must be provided.
+     */
+    planSelection?: PlanSelection | null;
+    /**
      * The start time of the subscription, defaults to Now if not set.
      */
     startTime?: Date | null;
@@ -3077,10 +3427,6 @@ export interface SubscriptionCreate extends Parsable {
      * Identifier of the subscriber that owns/consumes this subscription.
      */
     subscriberId?: Guid | null;
-    /**
-     * The identifier of the template package/subscription plan.
-     */
-    templatePackageId?: Guid | null;
     /**
      * Gets or sets the units.
      */
@@ -3218,6 +3564,198 @@ export interface SubscriptionPackageView extends Parsable {
     totalAdditionalProducts?: AdditionalProductView[] | null;
     /**
      * Gets or sets the units.
+     */
+    units?: number | null;
+}
+/**
+ * An inline subscription plan definition to be created during order processing.
+ */
+export interface SubscriptionPlanDraft extends Parsable {
+    /**
+     * Additional products included in this plan.
+     */
+    additionalProducts?: SubscriptionPlanDraftAdditionalProduct[] | null;
+    /**
+     * When true the subscription is automatically stopped after the initial term.
+     */
+    automaticStop?: boolean | null;
+    /**
+     * Identifier of the billing frequency.
+     */
+    billingFrequencyId?: number | null;
+    /**
+     * Identifier of the billing plan.
+     */
+    billingPlanId?: Guid | null;
+    /**
+     * ISO 4217 currency code.
+     */
+    currency?: string | null;
+    /**
+     * Description of the plan.
+     */
+    description?: string | null;
+    /**
+     * Price for the initial term.
+     */
+    initialTermPrice?: number | null;
+    /**
+     * Initial term type identifier.
+     */
+    initialTermType?: number | null;
+    /**
+     * Initial term value.
+     */
+    initialTermValue?: string | null;
+    /**
+     * Display name of the plan.
+     */
+    name?: string | null;
+    /**
+     * Number of editions.
+     */
+    numberOfEditions?: number | null;
+    /**
+     * A package chain definition for an inline subscription plan draft.
+     */
+    packageChain?: SubscriptionPlanDraftChain | null;
+    /**
+     * A permanent discount.
+     */
+    permanentDiscount?: PermanentDiscount | null;
+    /**
+     * Price of the plan including tax.
+     */
+    price?: number | null;
+    /**
+     * Product items with quantities and optional unit prices.
+     */
+    productItems?: PlanProduct[] | null;
+    /**
+     * Description of the package used after renewal.
+     */
+    renewalDescription?: string | null;
+    /**
+     * Display name of the package used after renewal.
+     */
+    renewalName?: string | null;
+    /**
+     * Number of units.
+     */
+    units?: number | null;
+}
+/**
+ * An additional product to include in an inline subscription plan draft.
+ */
+export interface SubscriptionPlanDraftAdditionalProduct extends Parsable {
+    /**
+     * When true the product is included in the plan price and cannot be removed from a running subscription.
+     */
+    includedInPlan?: boolean | null;
+    /**
+     * Identifier of the product.
+     */
+    productId?: Guid | null;
+    /**
+     * When true the unit price is recalculated from the list price at renewal.
+     */
+    renewalAtListPrice?: boolean | null;
+    /**
+     * Represents a flattened DTO version of the Price class.
+     */
+    unitPrice?: Price | null;
+    /**
+     * Number of units of this product.
+     */
+    units?: number | null;
+}
+/**
+ * A package chain definition for an inline subscription plan draft.
+ */
+export interface SubscriptionPlanDraftChain extends Parsable {
+    /**
+     * Description of the chain.
+     */
+    description?: string | null;
+    /**
+     * Display name of the chain.
+     */
+    name?: string | null;
+    /**
+     * Position of the first step within the chain.
+     */
+    stepPosition?: number | null;
+    /**
+     * Steps that make up this chain.
+     */
+    steps?: SubscriptionPlanDraftChainStep[] | null;
+}
+/**
+ * A step in an inline subscription plan package chain draft.
+ */
+export interface SubscriptionPlanDraftChainStep extends Parsable {
+    /**
+     * Additional products included in this step.
+     */
+    additionalProducts?: SubscriptionPlanDraftAdditionalProduct[] | null;
+    /**
+     * When true the subscription is automatically stopped after the initial term.
+     */
+    automaticStop?: boolean | null;
+    /**
+     * Identifier of the billing frequency.
+     */
+    billingFrequencyId?: number | null;
+    /**
+     * Identifier of the billing plan.
+     */
+    billingPlanId?: Guid | null;
+    /**
+     * ISO 4217 currency code.
+     */
+    currency?: string | null;
+    /**
+     * Description of this step's package.
+     */
+    description?: string | null;
+    /**
+     * Display name of this step's package.
+     */
+    name?: string | null;
+    /**
+     * Identifier of the subscription package to transition to at this step.
+     */
+    nextSubscriptionPackageId?: Guid | null;
+    /**
+     * Number of editions.
+     */
+    numberOfEditions?: number | null;
+    /**
+     * Price of this step's package including tax.
+     */
+    price?: number | null;
+    /**
+     * Product items with quantities and optional unit prices for this step.
+     */
+    productItems?: PlanProduct[] | null;
+    /**
+     * Description of the package used after renewal.
+     */
+    renewalDescription?: string | null;
+    /**
+     * Display name of the package used after renewal.
+     */
+    renewalName?: string | null;
+    /**
+     * When true the subscription is retained (not cancelled) at this step.
+     */
+    retain?: boolean | null;
+    /**
+     * The position increment to the next step.
+     */
+    step?: number | null;
+    /**
+     * Number of units.
      */
     units?: number | null;
 }
@@ -3663,6 +4201,19 @@ export interface TemplatePackageView extends Parsable {
     validUntil?: Date | null;
 }
 /**
+ * Holds a reference to a centralized template plan together with anychoice overrides that should be applied when creating the subscription.This bundles the template identifier and the override choices into asingle object for clarity when selecting template-based plans.
+ */
+export interface TemplatePlanReference extends Parsable {
+    /**
+     * Represents properties/choices that overrides/set options from the Template Subscription Plan.
+     */
+    choices?: OrderChoices | null;
+    /**
+     * Identifier of the template plan.
+     */
+    templatePlanId?: Guid | null;
+}
+/**
  * Represents a validation error.
  */
 export interface ValidationError extends Parsable {
@@ -3759,6 +4310,14 @@ export const InitialPackageTermTypesObject = {
     FixedTimeSpan: "FixedTimeSpan",
     RemainingOfMonth: "RemainingOfMonth",
     RemainingOfYear: "RemainingOfYear",
+} as const;
+/**
+ * Identifies the source/type of the subscription plan associated with an order.Stored in the order event and read model to drive code-path branching at completion and cancellation.
+ */
+export const OrderPlanSourceTypeObject = {
+    TemplatePackage: "TemplatePackage",
+    InlinePlan: "InlinePlan",
+    ExistingPlan: "ExistingPlan",
 } as const;
 /**
  * An enum representing different order statuses.

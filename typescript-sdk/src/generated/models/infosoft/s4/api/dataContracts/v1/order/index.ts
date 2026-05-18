@@ -53,15 +53,18 @@ export function deserializeIntoOrderView(orderView: Partial<OrderView> | undefin
         "orderCompleted": n => { orderView.orderCompleted = n.getDateValue(); },
         "orderCreated": n => { orderView.orderCreated = n.getDateValue(); },
         "orderReference": n => { orderView.orderReference = n.getStringValue(); },
+        "organizationId": n => { orderView.organizationId = n.getGuidValue(); },
         "paymentAgreementId": n => { orderView.paymentAgreementId = n.getGuidValue(); },
         "paymentId": n => { orderView.paymentId = n.getGuidValue(); },
         "paymentMethod": n => { orderView.paymentMethod = n.getEnumValue<PaymentMethods>(PaymentMethodsObject); },
+        "planSourceType": n => { orderView.planSourceType = n.getStringValue(); },
         "settleAccountBalance": n => { orderView.settleAccountBalance = n.getBooleanValue(); },
         "status": n => { orderView.status = n.getStringValue(); },
         "subscriberAccount": n => { orderView.subscriberAccount = n.getGuidValue(); },
         "subscriberId": n => { orderView.subscriberId = n.getGuidValue(); },
         "subscriberNumber": n => { orderView.subscriberNumber = n.getNumberValue(); },
         "subscriptionId": n => { orderView.subscriptionId = n.getGuidValue(); },
+        "subscriptionPlanId": n => { orderView.subscriptionPlanId = n.getGuidValue(); },
         "tag": n => { orderView.tag = n.getObjectValue<OrderTag>(createOrderTagFromDiscriminatorValue); },
         "templatePackageChoices": n => { orderView.templatePackageChoices = n.getObjectValue<TemplatePackageChoices>(createTemplatePackageChoicesFromDiscriminatorValue); },
         "templatePackageId": n => { orderView.templatePackageId = n.getGuidValue(); },
@@ -115,6 +118,10 @@ export interface OrderView extends Parsable {
      */
     orderReference?: string | null;
     /**
+     * Gets or sets the identifier of the organization.
+     */
+    organizationId?: Guid | null;
+    /**
      * Gets or sets the identifier of the payment agreement.
      */
     paymentAgreementId?: Guid | null;
@@ -126,6 +133,10 @@ export interface OrderView extends Parsable {
      * Gets the payment methods.
      */
     paymentMethod?: PaymentMethods | null;
+    /**
+     * Gets or sets the plan source type indicating how the final plan was resolved.
+     */
+    planSourceType?: string | null;
     /**
      * Should this order settle existing account balance when when billed.
      */
@@ -150,6 +161,10 @@ export interface OrderView extends Parsable {
      * Gets or sets the identifier of the resulting subscription.
      */
     subscriptionId?: Guid | null;
+    /**
+     * Gets or sets the identifier of the subscription plan when resolved to an existing or inline plan.
+     */
+    subscriptionPlanId?: Guid | null;
     /**
      * The order tag.The entity that is used to store various types (TagType) of values ​​in a reporting service.
      */
@@ -199,15 +214,18 @@ export function serializeOrderView(writer: SerializationWriter, orderView: Parti
     writer.writeDateValue("orderCompleted", orderView.orderCompleted);
     writer.writeDateValue("orderCreated", orderView.orderCreated);
     writer.writeStringValue("orderReference", orderView.orderReference);
+    writer.writeGuidValue("organizationId", orderView.organizationId);
     writer.writeGuidValue("paymentAgreementId", orderView.paymentAgreementId);
     writer.writeGuidValue("paymentId", orderView.paymentId);
     writer.writeEnumValue<PaymentMethods>("paymentMethod", orderView.paymentMethod);
+    writer.writeStringValue("planSourceType", orderView.planSourceType);
     writer.writeBooleanValue("settleAccountBalance", orderView.settleAccountBalance);
     writer.writeStringValue("status", orderView.status);
     writer.writeGuidValue("subscriberAccount", orderView.subscriberAccount);
     writer.writeGuidValue("subscriberId", orderView.subscriberId);
     writer.writeNumberValue("subscriberNumber", orderView.subscriberNumber);
     writer.writeGuidValue("subscriptionId", orderView.subscriptionId);
+    writer.writeGuidValue("subscriptionPlanId", orderView.subscriptionPlanId);
     writer.writeObjectValue<OrderTag>("tag", orderView.tag, serializeOrderTag);
     writer.writeObjectValue<TemplatePackageChoices>("templatePackageChoices", orderView.templatePackageChoices, serializeTemplatePackageChoices);
     writer.writeGuidValue("templatePackageId", orderView.templatePackageId);
