@@ -60,9 +60,17 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public global::Info.Subscription.Dotnet.Models.PaymentAgreementParameters PaymentAgreementParameters { get; set; }
 #endif
+        /// <summary>Defines how a subscription plan is sourced. Exactly one of the three properties must be provided.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::Info.Subscription.Dotnet.Models.PlanSelection? PlanSelection { get; set; }
+#nullable restore
+#else
+        public global::Info.Subscription.Dotnet.Models.PlanSelection PlanSelection { get; set; }
+#endif
         /// <summary>Should this order settle existing account balance when when billed.</summary>
         public bool? SettleAccountBalance { get; set; }
-        /// <summary>The subscriber account the order should be associated with. If not given it will be automatically determined based on the current system state.</summary>
+        /// <summary>The subscriber account the order (and subsequent subscription) should be associated with.             If not given it will be automatically determined based on the current system state.</summary>
         public Guid? SubscriberAccount { get; set; }
         /// <summary>The identifier of the subscriber.</summary>
         public Guid? SubscriberId { get; set; }
@@ -76,16 +84,6 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order.OrderTag Tag { get; set; }
 #endif
-        /// <summary>A template package choices.</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::Info.Subscription.Dotnet.Models.TemplatePackageChoices? TemplatePackageChoices { get; set; }
-#nullable restore
-#else
-        public global::Info.Subscription.Dotnet.Models.TemplatePackageChoices TemplatePackageChoices { get; set; }
-#endif
-        /// <summary>The identifier of the template subscription plan the order should derive from.</summary>
-        public Guid? TemplatePackageId { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -112,13 +110,12 @@ namespace Info.Subscription.Dotnet.Models
                 { "organizationId", n => { OrganizationId = n.GetGuidValue(); } },
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
                 { "paymentAgreementParameters", n => { PaymentAgreementParameters = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.PaymentAgreementParameters>(global::Info.Subscription.Dotnet.Models.PaymentAgreementParameters.CreateFromDiscriminatorValue); } },
+                { "planSelection", n => { PlanSelection = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.PlanSelection>(global::Info.Subscription.Dotnet.Models.PlanSelection.CreateFromDiscriminatorValue); } },
                 { "settleAccountBalance", n => { SettleAccountBalance = n.GetBoolValue(); } },
                 { "subscriberAccount", n => { SubscriberAccount = n.GetGuidValue(); } },
                 { "subscriberId", n => { SubscriberId = n.GetGuidValue(); } },
                 { "subscriberNumber", n => { SubscriberNumber = n.GetLongValue(); } },
                 { "tag", n => { Tag = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order.OrderTag>(global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order.OrderTag.CreateFromDiscriminatorValue); } },
-                { "templatePackageChoices", n => { TemplatePackageChoices = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.TemplatePackageChoices>(global::Info.Subscription.Dotnet.Models.TemplatePackageChoices.CreateFromDiscriminatorValue); } },
-                { "templatePackageId", n => { TemplatePackageId = n.GetGuidValue(); } },
             };
         }
         /// <summary>
@@ -136,13 +133,12 @@ namespace Info.Subscription.Dotnet.Models
             writer.WriteGuidValue("organizationId", OrganizationId);
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.PaymentAgreementParameters>("paymentAgreementParameters", PaymentAgreementParameters);
+            writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.PlanSelection>("planSelection", PlanSelection);
             writer.WriteBoolValue("settleAccountBalance", SettleAccountBalance);
             writer.WriteGuidValue("subscriberAccount", SubscriberAccount);
             writer.WriteGuidValue("subscriberId", SubscriberId);
             writer.WriteLongValue("subscriberNumber", SubscriberNumber);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order.OrderTag>("tag", Tag);
-            writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.TemplatePackageChoices>("templatePackageChoices", TemplatePackageChoices);
-            writer.WriteGuidValue("templatePackageId", TemplatePackageId);
         }
     }
 }

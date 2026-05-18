@@ -47,12 +47,22 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
 #else
         public string OrderReference { get; set; }
 #endif
+        /// <summary>Gets or sets the identifier of the organization.</summary>
+        public Guid? OrganizationId { get; set; }
         /// <summary>Gets or sets the identifier of the payment agreement.</summary>
         public Guid? PaymentAgreementId { get; set; }
         /// <summary>Gets or sets the identifier of the related payment.</summary>
         public Guid? PaymentId { get; set; }
         /// <summary>Gets the payment methods.</summary>
         public global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.PaymentMethods? PaymentMethod { get; set; }
+        /// <summary>Gets or sets the plan source type indicating how the final plan was resolved.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? PlanSourceType { get; set; }
+#nullable restore
+#else
+        public string PlanSourceType { get; set; }
+#endif
         /// <summary>Should this order settle existing account balance when when billed.</summary>
         public bool? SettleAccountBalance { get; set; }
         /// <summary>Gets or sets the status.</summary>
@@ -71,6 +81,8 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
         public long? SubscriberNumber { get; set; }
         /// <summary>Gets or sets the identifier of the resulting subscription.</summary>
         public Guid? SubscriptionId { get; set; }
+        /// <summary>Gets or sets the identifier of the subscription plan when resolved to an existing or inline plan.</summary>
+        public Guid? SubscriptionPlanId { get; set; }
         /// <summary>The order tag.The entity that is used to store various types (TagType) of values ​​in a reporting service.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -125,15 +137,18 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
                 { "orderCompleted", n => { OrderCompleted = n.GetDateTimeOffsetValue(); } },
                 { "orderCreated", n => { OrderCreated = n.GetDateTimeOffsetValue(); } },
                 { "orderReference", n => { OrderReference = n.GetStringValue(); } },
+                { "organizationId", n => { OrganizationId = n.GetGuidValue(); } },
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
                 { "paymentId", n => { PaymentId = n.GetGuidValue(); } },
                 { "paymentMethod", n => { PaymentMethod = n.GetEnumValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.PaymentMethods>(); } },
+                { "planSourceType", n => { PlanSourceType = n.GetStringValue(); } },
                 { "settleAccountBalance", n => { SettleAccountBalance = n.GetBoolValue(); } },
                 { "status", n => { Status = n.GetStringValue(); } },
                 { "subscriberAccount", n => { SubscriberAccount = n.GetGuidValue(); } },
                 { "subscriberId", n => { SubscriberId = n.GetGuidValue(); } },
                 { "subscriberNumber", n => { SubscriberNumber = n.GetLongValue(); } },
                 { "subscriptionId", n => { SubscriptionId = n.GetGuidValue(); } },
+                { "subscriptionPlanId", n => { SubscriptionPlanId = n.GetGuidValue(); } },
                 { "tag", n => { Tag = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order.OrderTag>(global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order.OrderTag.CreateFromDiscriminatorValue); } },
                 { "templatePackageChoices", n => { TemplatePackageChoices = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.TemplatePackageChoices>(global::Info.Subscription.Dotnet.Models.TemplatePackageChoices.CreateFromDiscriminatorValue); } },
                 { "templatePackageId", n => { TemplatePackageId = n.GetGuidValue(); } },
@@ -156,15 +171,18 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order
             writer.WriteDateTimeOffsetValue("orderCompleted", OrderCompleted);
             writer.WriteDateTimeOffsetValue("orderCreated", OrderCreated);
             writer.WriteStringValue("orderReference", OrderReference);
+            writer.WriteGuidValue("organizationId", OrganizationId);
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);
             writer.WriteGuidValue("paymentId", PaymentId);
             writer.WriteEnumValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.PaymentMethods>("paymentMethod", PaymentMethod);
+            writer.WriteStringValue("planSourceType", PlanSourceType);
             writer.WriteBoolValue("settleAccountBalance", SettleAccountBalance);
             writer.WriteStringValue("status", Status);
             writer.WriteGuidValue("subscriberAccount", SubscriberAccount);
             writer.WriteGuidValue("subscriberId", SubscriberId);
             writer.WriteLongValue("subscriberNumber", SubscriberNumber);
             writer.WriteGuidValue("subscriptionId", SubscriptionId);
+            writer.WriteGuidValue("subscriptionPlanId", SubscriptionPlanId);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.Order.OrderTag>("tag", Tag);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.TemplatePackageChoices>("templatePackageChoices", TemplatePackageChoices);
             writer.WriteGuidValue("templatePackageId", TemplatePackageId);

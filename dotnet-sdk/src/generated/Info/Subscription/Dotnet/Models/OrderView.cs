@@ -8,12 +8,12 @@ using System;
 namespace Info.Subscription.Dotnet.Models
 {
     /// <summary>
-    /// An order view.
+    /// Represents a read model of an order returned by the API. This classcontains the identifiers and metadata produced by order processing suchas status, related subscription/payment ids, timestamps and resolved planinformation.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class OrderView : IParsable
     {
-        /// <summary>Gets or sets the agreement reference.</summary>
+        /// <summary>Reference returned by the payment provider or agreement creation step.Useful for reconcilliation with external systems.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? AgreementReference { get; set; }
@@ -21,7 +21,7 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public string AgreementReference { get; set; }
 #endif
-        /// <summary>Gets or sets the external identifier of the subscriber.</summary>
+        /// <summary>External identifier for the subscriber (for example CRM or billingsystem id) used for correlation.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? ExternalSubscriberId { get; set; }
@@ -29,11 +29,11 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public string ExternalSubscriberId { get; set; }
 #endif
-        /// <summary>Gets or sets the identifier of the order.</summary>
+        /// <summary>Unique identifier of the order record.</summary>
         public Guid? Id { get; set; }
-        /// <summary>Gets or sets the identifier of the invoice contact.</summary>
+        /// <summary>Identifier of the invoice contact used for billing documents.</summary>
         public Guid? InvoiceContactId { get; set; }
-        /// <summary>Gets or sets the Date/Time of the order cancelled.</summary>
+        /// <summary>Timestamp when the order was cancelled, if applicable.</summary>
         public DateTimeOffset? OrderCancelled { get; set; }
         /// <summary>Represents properties/choices that overrides/set options from the Template Subscription Plan.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -43,11 +43,11 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public global::Info.Subscription.Dotnet.Models.OrderChoices OrderChoices { get; set; }
 #endif
-        /// <summary>Gets or sets the Date/Time of the order completed.</summary>
+        /// <summary>Timestamp when the order completed processing, if available.</summary>
         public DateTimeOffset? OrderCompleted { get; set; }
-        /// <summary>Gets or sets the Date/Time of the order created.</summary>
+        /// <summary>Timestamp when the order was created.</summary>
         public DateTimeOffset? OrderCreated { get; set; }
-        /// <summary>An optional order reference.</summary>
+        /// <summary>Optional external reference supplied with the order for correlation withexternal systems.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? OrderReference { get; set; }
@@ -55,26 +55,30 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public string OrderReference { get; set; }
 #endif
-        /// <summary>Gets or sets the identifier of the organization.</summary>
+        /// <summary>Organization that owns the subscription created by this order.</summary>
         public Guid? OrganizationId { get; set; }
-        /// <summary>Gets or sets the identifier of the payment agreement.</summary>
+        /// <summary>Identifier of the payment agreement used for the order, if any.</summary>
         public Guid? PaymentAgreementId { get; set; }
-        /// <summary>Gets or sets the identifier of the related payment.</summary>
+        /// <summary>Identifier of the payment produced by the order processing flow.</summary>
         public Guid? PaymentId { get; set; }
         /// <summary>Gets the payment methods.</summary>
         public global::Info.Subscription.Dotnet.Models.PaymentMethods? PaymentMethod { get; set; }
-        /// <summary>Should this order settle existing account balance when when billed.</summary>
+        /// <summary>Identifies the source/type of the subscription plan associated with an order.Stored in the order event and read model to drive code-path branching at completion and cancellation.</summary>
+        public global::Info.Subscription.Dotnet.Models.OrderPlanSourceType? PlanSourceType { get; set; }
+        /// <summary>When true indicates the order processing attempted to settle existingaccount balance as part of billing.</summary>
         public bool? SettleAccountBalance { get; set; }
         /// <summary>An enum representing different order statuses.</summary>
         public global::Info.Subscription.Dotnet.Models.OrderStatus? Status { get; set; }
-        /// <summary>Gets or sets the subscriber account.</summary>
+        /// <summary>Subscriber account identifier associated with the order.</summary>
         public Guid? SubscriberAccount { get; set; }
-        /// <summary>Gets or sets the identifier of the subscriber.</summary>
+        /// <summary>Identifier of the subscriber the order is associated with, if any.</summary>
         public Guid? SubscriberId { get; set; }
-        /// <summary>Gets or sets the subscriber number.</summary>
+        /// <summary>Optional numeric subscriber number from the source system.</summary>
         public long? SubscriberNumber { get; set; }
-        /// <summary>Gets or sets the identifier of the resulting subscription.</summary>
+        /// <summary>Identifier of the subscription created as a result of this order, if any.</summary>
         public Guid? SubscriptionId { get; set; }
+        /// <summary>Subscription plan identifier when the plan was resolved to an existingor persisted inline plan.</summary>
+        public Guid? SubscriptionPlanId { get; set; }
         /// <summary>The order tag.The entity that is used to store various types (TagType) of values in a reporting service.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -83,9 +87,9 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public global::Info.Subscription.Dotnet.Models.OrderTag Tag { get; set; }
 #endif
-        /// <summary>Gets or sets the identifier of the template package.</summary>
+        /// <summary>Template package id from ProductService used when the order was created(if a template was the source of the plan).</summary>
         public Guid? TemplatePackageId { get; set; }
-        /// <summary>Gets or sets URL of the terminal redirect.</summary>
+        /// <summary>If the payment flow requires a terminal redirect (for example to athird-party payment provider), this property contains the URL to redirectthe client to.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? TerminalRedirectUrl { get; set; }
@@ -93,7 +97,7 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public string TerminalRedirectUrl { get; set; }
 #endif
-        /// <summary>Gets or sets the identifier of the transaction.</summary>
+        /// <summary>Identifier of the payment transaction created during order processing.</summary>
         public Guid? TransactionId { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
@@ -126,12 +130,14 @@ namespace Info.Subscription.Dotnet.Models
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
                 { "paymentId", n => { PaymentId = n.GetGuidValue(); } },
                 { "paymentMethod", n => { PaymentMethod = n.GetEnumValue<global::Info.Subscription.Dotnet.Models.PaymentMethods>(); } },
+                { "planSourceType", n => { PlanSourceType = n.GetEnumValue<global::Info.Subscription.Dotnet.Models.OrderPlanSourceType>(); } },
                 { "settleAccountBalance", n => { SettleAccountBalance = n.GetBoolValue(); } },
                 { "status", n => { Status = n.GetEnumValue<global::Info.Subscription.Dotnet.Models.OrderStatus>(); } },
                 { "subscriberAccount", n => { SubscriberAccount = n.GetGuidValue(); } },
                 { "subscriberId", n => { SubscriberId = n.GetGuidValue(); } },
                 { "subscriberNumber", n => { SubscriberNumber = n.GetLongValue(); } },
                 { "subscriptionId", n => { SubscriptionId = n.GetGuidValue(); } },
+                { "subscriptionPlanId", n => { SubscriptionPlanId = n.GetGuidValue(); } },
                 { "tag", n => { Tag = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.OrderTag>(global::Info.Subscription.Dotnet.Models.OrderTag.CreateFromDiscriminatorValue); } },
                 { "templatePackageId", n => { TemplatePackageId = n.GetGuidValue(); } },
                 { "terminalRedirectUrl", n => { TerminalRedirectUrl = n.GetStringValue(); } },
@@ -158,12 +164,14 @@ namespace Info.Subscription.Dotnet.Models
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);
             writer.WriteGuidValue("paymentId", PaymentId);
             writer.WriteEnumValue<global::Info.Subscription.Dotnet.Models.PaymentMethods>("paymentMethod", PaymentMethod);
+            writer.WriteEnumValue<global::Info.Subscription.Dotnet.Models.OrderPlanSourceType>("planSourceType", PlanSourceType);
             writer.WriteBoolValue("settleAccountBalance", SettleAccountBalance);
             writer.WriteEnumValue<global::Info.Subscription.Dotnet.Models.OrderStatus>("status", Status);
             writer.WriteGuidValue("subscriberAccount", SubscriberAccount);
             writer.WriteGuidValue("subscriberId", SubscriberId);
             writer.WriteLongValue("subscriberNumber", SubscriberNumber);
             writer.WriteGuidValue("subscriptionId", SubscriptionId);
+            writer.WriteGuidValue("subscriptionPlanId", SubscriptionPlanId);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.OrderTag>("tag", Tag);
             writer.WriteGuidValue("templatePackageId", TemplatePackageId);
             writer.WriteStringValue("terminalRedirectUrl", TerminalRedirectUrl);
