@@ -9,6 +9,7 @@ from uuid import UUID
 if TYPE_CHECKING:
     from .billing_options import BillingOptions
     from .infosoft.s4.api.data_contracts.v1.contract import Contract
+    from .plan_selection import PlanSelection
 
 @dataclass
 class SubscriptionCreate(Parsable):
@@ -31,14 +32,14 @@ class SubscriptionCreate(Parsable):
     payment_agreement_id: Optional[UUID] = None
     # Gets or sets the identifier of the permanent discount.
     permanent_discount_id: Optional[UUID] = None
+    # Defines how a subscription plan is sourced. Exactly one of the three properties must be provided.
+    plan_selection: Optional[PlanSelection] = None
     # The start time of the subscription, defaults to Now if not set.
     start_time: Optional[datetime.datetime] = None
     # Gets or sets the subscriber account.
     subscriber_account: Optional[UUID] = None
     # Identifier of the subscriber that owns/consumes this subscription.
     subscriber_id: Optional[UUID] = None
-    # The identifier of the template package/subscription plan.
-    template_package_id: Optional[UUID] = None
     # Gets or sets the units.
     units: Optional[int] = None
     
@@ -60,9 +61,11 @@ class SubscriptionCreate(Parsable):
         """
         from .billing_options import BillingOptions
         from .infosoft.s4.api.data_contracts.v1.contract import Contract
+        from .plan_selection import PlanSelection
 
         from .billing_options import BillingOptions
         from .infosoft.s4.api.data_contracts.v1.contract import Contract
+        from .plan_selection import PlanSelection
 
         fields: dict[str, Callable[[Any], None]] = {
             "billingOptions": lambda n : setattr(self, 'billing_options', n.get_object_value(BillingOptions)),
@@ -73,10 +76,10 @@ class SubscriptionCreate(Parsable):
             "organizationId": lambda n : setattr(self, 'organization_id', n.get_uuid_value()),
             "paymentAgreementId": lambda n : setattr(self, 'payment_agreement_id', n.get_uuid_value()),
             "permanentDiscountId": lambda n : setattr(self, 'permanent_discount_id', n.get_uuid_value()),
+            "planSelection": lambda n : setattr(self, 'plan_selection', n.get_object_value(PlanSelection)),
             "startTime": lambda n : setattr(self, 'start_time', n.get_datetime_value()),
             "subscriberAccount": lambda n : setattr(self, 'subscriber_account', n.get_uuid_value()),
             "subscriberId": lambda n : setattr(self, 'subscriber_id', n.get_uuid_value()),
-            "templatePackageId": lambda n : setattr(self, 'template_package_id', n.get_uuid_value()),
             "units": lambda n : setattr(self, 'units', n.get_int_value()),
         }
         return fields
@@ -97,10 +100,10 @@ class SubscriptionCreate(Parsable):
         writer.write_uuid_value("organizationId", self.organization_id)
         writer.write_uuid_value("paymentAgreementId", self.payment_agreement_id)
         writer.write_uuid_value("permanentDiscountId", self.permanent_discount_id)
+        writer.write_object_value("planSelection", self.plan_selection)
         writer.write_datetime_value("startTime", self.start_time)
         writer.write_uuid_value("subscriberAccount", self.subscriber_account)
         writer.write_uuid_value("subscriberId", self.subscriber_id)
-        writer.write_uuid_value("templatePackageId", self.template_package_id)
         writer.write_int_value("units", self.units)
     
 

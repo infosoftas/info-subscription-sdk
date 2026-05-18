@@ -3,52 +3,49 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from kiota_abstractions.serialization import Parsable, ParseNode, SerializationWriter
 from typing import Any, Optional, TYPE_CHECKING, Union
-from uuid import UUID
+
+if TYPE_CHECKING:
+    from .subscription_plan_draft_chain_step import SubscriptionPlanDraftChainStep
 
 @dataclass
-class SubscriptionPackageProductView(Parsable):
+class SubscriptionPlanDraftChain(Parsable):
     """
-    A subscription package product view.
+    A package chain definition for an inline subscription plan draft.
     """
-    # Gets or sets the description.
+    # Description of the chain.
     description: Optional[str] = None
-    # Gets or sets the full price.
-    full_price: Optional[float] = None
-    # Gets or sets the name.
+    # Display name of the chain.
     name: Optional[str] = None
-    # Gets or sets the identifier of the product.
-    product_id: Optional[UUID] = None
-    # Gets or sets the quantity.
-    quantity: Optional[int] = None
-    # Gets or sets the identifier of the subscription package.
-    subscription_package_id: Optional[UUID] = None
-    # Gets or sets the tax percent.
-    tax_percent: Optional[float] = None
+    # Position of the first step within the chain.
+    step_position: Optional[int] = None
+    # Steps that make up this chain.
+    steps: Optional[list[SubscriptionPlanDraftChainStep]] = None
     
     @staticmethod
-    def create_from_discriminator_value(parse_node: ParseNode) -> SubscriptionPackageProductView:
+    def create_from_discriminator_value(parse_node: ParseNode) -> SubscriptionPlanDraftChain:
         """
         Creates a new instance of the appropriate class based on discriminator value
         param parse_node: The parse node to use to read the discriminator value and create the object
-        Returns: SubscriptionPackageProductView
+        Returns: SubscriptionPlanDraftChain
         """
         if parse_node is None:
             raise TypeError("parse_node cannot be null.")
-        return SubscriptionPackageProductView()
+        return SubscriptionPlanDraftChain()
     
     def get_field_deserializers(self,) -> dict[str, Callable[[ParseNode], None]]:
         """
         The deserialization information for the current model
         Returns: dict[str, Callable[[ParseNode], None]]
         """
+        from .subscription_plan_draft_chain_step import SubscriptionPlanDraftChainStep
+
+        from .subscription_plan_draft_chain_step import SubscriptionPlanDraftChainStep
+
         fields: dict[str, Callable[[Any], None]] = {
             "description": lambda n : setattr(self, 'description', n.get_str_value()),
-            "fullPrice": lambda n : setattr(self, 'full_price', n.get_float_value()),
             "name": lambda n : setattr(self, 'name', n.get_str_value()),
-            "productId": lambda n : setattr(self, 'product_id', n.get_uuid_value()),
-            "quantity": lambda n : setattr(self, 'quantity', n.get_int_value()),
-            "subscriptionPackageId": lambda n : setattr(self, 'subscription_package_id', n.get_uuid_value()),
-            "taxPercent": lambda n : setattr(self, 'tax_percent', n.get_float_value()),
+            "stepPosition": lambda n : setattr(self, 'step_position', n.get_int_value()),
+            "steps": lambda n : setattr(self, 'steps', n.get_collection_of_object_values(SubscriptionPlanDraftChainStep)),
         }
         return fields
     
@@ -61,11 +58,8 @@ class SubscriptionPackageProductView(Parsable):
         if writer is None:
             raise TypeError("writer cannot be null.")
         writer.write_str_value("description", self.description)
-        writer.write_float_value("fullPrice", self.full_price)
         writer.write_str_value("name", self.name)
-        writer.write_uuid_value("productId", self.product_id)
-        writer.write_int_value("quantity", self.quantity)
-        writer.write_uuid_value("subscriptionPackageId", self.subscription_package_id)
-        writer.write_float_value("taxPercent", self.tax_percent)
+        writer.write_int_value("stepPosition", self.step_position)
+        writer.write_collection_of_object_values("steps", self.steps)
     
 
