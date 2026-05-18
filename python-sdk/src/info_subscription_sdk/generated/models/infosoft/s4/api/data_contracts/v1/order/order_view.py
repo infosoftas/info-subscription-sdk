@@ -32,12 +32,16 @@ class OrderView(Parsable):
     order_created: Optional[datetime.datetime] = None
     # An optional order reference.
     order_reference: Optional[str] = None
+    # Gets or sets the identifier of the organization.
+    organization_id: Optional[UUID] = None
     # Gets or sets the identifier of the payment agreement.
     payment_agreement_id: Optional[UUID] = None
     # Gets or sets the identifier of the related payment.
     payment_id: Optional[UUID] = None
     # Gets the payment methods.
     payment_method: Optional[PaymentMethods] = None
+    # Gets or sets the plan source type indicating how the final plan was resolved.
+    plan_source_type: Optional[str] = None
     # Should this order settle existing account balance when when billed.
     settle_account_balance: Optional[bool] = None
     # Gets or sets the status.
@@ -50,6 +54,8 @@ class OrderView(Parsable):
     subscriber_number: Optional[int] = None
     # Gets or sets the identifier of the resulting subscription.
     subscription_id: Optional[UUID] = None
+    # Gets or sets the identifier of the subscription plan when resolved to an existing or inline plan.
+    subscription_plan_id: Optional[UUID] = None
     # The order tag.The entity that is used to store various types (TagType) of values ​​in a reporting service.
     tag: Optional[OrderTag] = None
     # A template package choices.
@@ -94,15 +100,18 @@ class OrderView(Parsable):
             "orderCompleted": lambda n : setattr(self, 'order_completed', n.get_datetime_value()),
             "orderCreated": lambda n : setattr(self, 'order_created', n.get_datetime_value()),
             "orderReference": lambda n : setattr(self, 'order_reference', n.get_str_value()),
+            "organizationId": lambda n : setattr(self, 'organization_id', n.get_uuid_value()),
             "paymentAgreementId": lambda n : setattr(self, 'payment_agreement_id', n.get_uuid_value()),
             "paymentId": lambda n : setattr(self, 'payment_id', n.get_uuid_value()),
             "paymentMethod": lambda n : setattr(self, 'payment_method', n.get_enum_value(PaymentMethods)),
+            "planSourceType": lambda n : setattr(self, 'plan_source_type', n.get_str_value()),
             "settleAccountBalance": lambda n : setattr(self, 'settle_account_balance', n.get_bool_value()),
             "status": lambda n : setattr(self, 'status', n.get_str_value()),
             "subscriberAccount": lambda n : setattr(self, 'subscriber_account', n.get_uuid_value()),
             "subscriberId": lambda n : setattr(self, 'subscriber_id', n.get_uuid_value()),
             "subscriberNumber": lambda n : setattr(self, 'subscriber_number', n.get_int_value()),
             "subscriptionId": lambda n : setattr(self, 'subscription_id', n.get_uuid_value()),
+            "subscriptionPlanId": lambda n : setattr(self, 'subscription_plan_id', n.get_uuid_value()),
             "tag": lambda n : setattr(self, 'tag', n.get_object_value(OrderTag)),
             "templatePackageChoices": lambda n : setattr(self, 'template_package_choices', n.get_object_value(TemplatePackageChoices)),
             "templatePackageId": lambda n : setattr(self, 'template_package_id', n.get_uuid_value()),
@@ -127,15 +136,18 @@ class OrderView(Parsable):
         writer.write_datetime_value("orderCompleted", self.order_completed)
         writer.write_datetime_value("orderCreated", self.order_created)
         writer.write_str_value("orderReference", self.order_reference)
+        writer.write_uuid_value("organizationId", self.organization_id)
         writer.write_uuid_value("paymentAgreementId", self.payment_agreement_id)
         writer.write_uuid_value("paymentId", self.payment_id)
         writer.write_enum_value("paymentMethod", self.payment_method)
+        writer.write_str_value("planSourceType", self.plan_source_type)
         writer.write_bool_value("settleAccountBalance", self.settle_account_balance)
         writer.write_str_value("status", self.status)
         writer.write_uuid_value("subscriberAccount", self.subscriber_account)
         writer.write_uuid_value("subscriberId", self.subscriber_id)
         writer.write_int_value("subscriberNumber", self.subscriber_number)
         writer.write_uuid_value("subscriptionId", self.subscription_id)
+        writer.write_uuid_value("subscriptionPlanId", self.subscription_plan_id)
         writer.write_object_value("tag", self.tag)
         writer.write_object_value("templatePackageChoices", self.template_package_choices)
         writer.write_uuid_value("templatePackageId", self.template_package_id)
