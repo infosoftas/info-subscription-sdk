@@ -5,15 +5,15 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Subscriptions.Contracts
+namespace Info.Subscription.Dotnet.Models
 {
     /// <summary>
-    /// A subscription package product view.
+    /// A package chain definition for an inline subscription plan draft.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SubscriptionPackageProductView : IParsable
+    public partial class SubscriptionPlanDraftChain : IParsable
     {
-        /// <summary>Gets or sets the description.</summary>
+        /// <summary>Description of the chain.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Description { get; set; }
@@ -21,9 +21,7 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Subscriptions.Contracts
 #else
         public string Description { get; set; }
 #endif
-        /// <summary>Gets or sets the full price.</summary>
-        public double? FullPrice { get; set; }
-        /// <summary>Gets or sets the name.</summary>
+        /// <summary>Display name of the chain.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Name { get; set; }
@@ -31,23 +29,25 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Subscriptions.Contracts
 #else
         public string Name { get; set; }
 #endif
-        /// <summary>Gets or sets the identifier of the product.</summary>
-        public Guid? ProductId { get; set; }
-        /// <summary>Gets or sets the quantity.</summary>
-        public long? Quantity { get; set; }
-        /// <summary>Gets or sets the identifier of the subscription package.</summary>
-        public Guid? SubscriptionPackageId { get; set; }
-        /// <summary>Gets or sets the tax percent.</summary>
-        public double? TaxPercent { get; set; }
+        /// <summary>Position of the first step within the chain.</summary>
+        public int? StepPosition { get; set; }
+        /// <summary>Steps that make up this chain.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Info.Subscription.Dotnet.Models.SubscriptionPlanDraftChainStep>? Steps { get; set; }
+#nullable restore
+#else
+        public List<global::Info.Subscription.Dotnet.Models.SubscriptionPlanDraftChainStep> Steps { get; set; }
+#endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.Infosoft.S4.Subscriptions.Contracts.SubscriptionPackageProductView"/></returns>
+        /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.SubscriptionPlanDraftChain"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::Info.Subscription.Dotnet.Models.Infosoft.S4.Subscriptions.Contracts.SubscriptionPackageProductView CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::Info.Subscription.Dotnet.Models.SubscriptionPlanDraftChain CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::Info.Subscription.Dotnet.Models.Infosoft.S4.Subscriptions.Contracts.SubscriptionPackageProductView();
+            return new global::Info.Subscription.Dotnet.Models.SubscriptionPlanDraftChain();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -58,12 +58,9 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Subscriptions.Contracts
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "fullPrice", n => { FullPrice = n.GetDoubleValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "productId", n => { ProductId = n.GetGuidValue(); } },
-                { "quantity", n => { Quantity = n.GetLongValue(); } },
-                { "subscriptionPackageId", n => { SubscriptionPackageId = n.GetGuidValue(); } },
-                { "taxPercent", n => { TaxPercent = n.GetDoubleValue(); } },
+                { "stepPosition", n => { StepPosition = n.GetIntValue(); } },
+                { "steps", n => { Steps = n.GetCollectionOfObjectValues<global::Info.Subscription.Dotnet.Models.SubscriptionPlanDraftChainStep>(global::Info.Subscription.Dotnet.Models.SubscriptionPlanDraftChainStep.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -74,12 +71,9 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Subscriptions.Contracts
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("description", Description);
-            writer.WriteDoubleValue("fullPrice", FullPrice);
             writer.WriteStringValue("name", Name);
-            writer.WriteGuidValue("productId", ProductId);
-            writer.WriteLongValue("quantity", Quantity);
-            writer.WriteGuidValue("subscriptionPackageId", SubscriptionPackageId);
-            writer.WriteDoubleValue("taxPercent", TaxPercent);
+            writer.WriteIntValue("stepPosition", StepPosition);
+            writer.WriteCollectionOfObjectValues<global::Info.Subscription.Dotnet.Models.SubscriptionPlanDraftChainStep>("steps", Steps);
         }
     }
 }
