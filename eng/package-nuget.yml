@@ -43,8 +43,10 @@ stages:
         useGlobalJson: true
 
     - script: |
-        dotnet pack --configuration Release --output $(NuGetDirectory)
+        dotnet pack --configuration Release --output $(NuGetDirectory) -p:Version=$RELEASE_TAG
       displayName: 'Pack NuGet'
+      env:
+        RELEASE_TAG: $(validateTag.ReleaseTag)
 
     - publish: $(NuGetDirectory)
       artifact: nuget

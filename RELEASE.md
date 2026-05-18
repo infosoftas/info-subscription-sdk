@@ -56,7 +56,7 @@ git push origin 1.2.3
 A single tag triggers **all three** pipelines simultaneously. All SDKs share the same version number.
 
 **`package-nuget.yml`** (2 stages):
-1. **Pack** — validate tag, `dotnet pack` (MinVer reads version from tag), publish artifact
+1. **Pack** — validate tag on HEAD, `dotnet pack` with `-p:Version=<tag>` (version injected explicitly from the git tag), publish artifact
 2. **Deploy** — push to [NuGet.org](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes
 
 **`package-npm.yml`** (2 stages):
@@ -85,7 +85,7 @@ git tag 1.2.0-beta.1
 git push origin 1.2.0-beta.1
 ```
 
-MinVer will produce the NuGet pre-release version `1.2.0-beta.1` automatically. npm and PyPI will receive the same tag string as their version.
+All three pipelines inject the version explicitly from the git tag string — NuGet via `-p:Version=<tag>`, npm via `npm version <tag>`, and PyPI via `sed` on `pyproject.toml`. The tag string is used verbatim, so a tag of `1.2.0-beta.1` will produce pre-release packages on all three registries.
 
 ## Hotfixes
 

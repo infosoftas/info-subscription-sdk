@@ -48,6 +48,7 @@ export function deserializeIntoSubscriptionPackageProductView(subscriptionPackag
         "fullPrice": n => { subscriptionPackageProductView.fullPrice = n.getNumberValue(); },
         "name": n => { subscriptionPackageProductView.name = n.getStringValue(); },
         "productId": n => { subscriptionPackageProductView.productId = n.getGuidValue(); },
+        "quantity": n => { subscriptionPackageProductView.quantity = n.getNumberValue(); },
         "subscriptionPackageId": n => { subscriptionPackageProductView.subscriptionPackageId = n.getGuidValue(); },
         "taxPercent": n => { subscriptionPackageProductView.taxPercent = n.getNumberValue(); },
     }
@@ -100,6 +101,7 @@ export function serializeSubscriptionPackageProductView(writer: SerializationWri
     writer.writeNumberValue("fullPrice", subscriptionPackageProductView.fullPrice);
     writer.writeStringValue("name", subscriptionPackageProductView.name);
     writer.writeGuidValue("productId", subscriptionPackageProductView.productId);
+    writer.writeNumberValue("quantity", subscriptionPackageProductView.quantity);
     writer.writeGuidValue("subscriptionPackageId", subscriptionPackageProductView.subscriptionPackageId);
     writer.writeNumberValue("taxPercent", subscriptionPackageProductView.taxPercent);
 }
@@ -123,6 +125,10 @@ export interface SubscriptionPackageProductView extends Parsable {
      * Gets or sets the identifier of the product.
      */
     productId?: Guid | null;
+    /**
+     * Gets or sets the quantity.
+     */
+    quantity?: number | null;
     /**
      * Gets or sets the identifier of the subscription package.
      */
