@@ -30,7 +30,7 @@
     Kiota tooling release.
   -->
   <PropertyGroup>
-    <KiotaVersion>[1.22.1, 2.0.0)</KiotaVersion>
+    <KiotaVersion>[1.22.2, 2.0.0)</KiotaVersion>
   </PropertyGroup>
 
   <ItemGroup>
