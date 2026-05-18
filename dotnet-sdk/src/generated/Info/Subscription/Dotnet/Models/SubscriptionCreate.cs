@@ -48,14 +48,20 @@ namespace Info.Subscription.Dotnet.Models
         public Guid? PaymentAgreementId { get; set; }
         /// <summary>Gets or sets the identifier of the permanent discount.</summary>
         public Guid? PermanentDiscountId { get; set; }
+        /// <summary>Defines how a subscription plan is sourced. Exactly one of the three properties must be provided.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::Info.Subscription.Dotnet.Models.PlanSelection? PlanSelection { get; set; }
+#nullable restore
+#else
+        public global::Info.Subscription.Dotnet.Models.PlanSelection PlanSelection { get; set; }
+#endif
         /// <summary>The start time of the subscription, defaults to Now if not set.</summary>
         public DateTimeOffset? StartTime { get; set; }
         /// <summary>Gets or sets the subscriber account.</summary>
         public Guid? SubscriberAccount { get; set; }
         /// <summary>Identifier of the subscriber that owns/consumes this subscription.</summary>
         public Guid? SubscriberId { get; set; }
-        /// <summary>The identifier of the template package/subscription plan.</summary>
-        public Guid? TemplatePackageId { get; set; }
         /// <summary>Gets or sets the units.</summary>
         public int? Units { get; set; }
         /// <summary>
@@ -84,10 +90,10 @@ namespace Info.Subscription.Dotnet.Models
                 { "organizationId", n => { OrganizationId = n.GetGuidValue(); } },
                 { "paymentAgreementId", n => { PaymentAgreementId = n.GetGuidValue(); } },
                 { "permanentDiscountId", n => { PermanentDiscountId = n.GetGuidValue(); } },
+                { "planSelection", n => { PlanSelection = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.PlanSelection>(global::Info.Subscription.Dotnet.Models.PlanSelection.CreateFromDiscriminatorValue); } },
                 { "startTime", n => { StartTime = n.GetDateTimeOffsetValue(); } },
                 { "subscriberAccount", n => { SubscriberAccount = n.GetGuidValue(); } },
                 { "subscriberId", n => { SubscriberId = n.GetGuidValue(); } },
-                { "templatePackageId", n => { TemplatePackageId = n.GetGuidValue(); } },
                 { "units", n => { Units = n.GetIntValue(); } },
             };
         }
@@ -106,10 +112,10 @@ namespace Info.Subscription.Dotnet.Models
             writer.WriteGuidValue("organizationId", OrganizationId);
             writer.WriteGuidValue("paymentAgreementId", PaymentAgreementId);
             writer.WriteGuidValue("permanentDiscountId", PermanentDiscountId);
+            writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.PlanSelection>("planSelection", PlanSelection);
             writer.WriteDateTimeOffsetValue("startTime", StartTime);
             writer.WriteGuidValue("subscriberAccount", SubscriberAccount);
             writer.WriteGuidValue("subscriberId", SubscriberId);
-            writer.WriteGuidValue("templatePackageId", TemplatePackageId);
             writer.WriteIntValue("units", Units);
         }
     }
