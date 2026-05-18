@@ -24,9 +24,9 @@
 
   <!--
     Allow any Kiota 1.x release at or above the version we were generated against.
-    A version range is used so that consumers are not locked to exactly 1.22.1, but
+    A version range is used so that consumers are not locked to exactly 1.22.2, but
     a major-version upper bound prevents silent breakage if Kiota ships a 2.0 with
-    breaking API changes.  Update KiotaMinVersion when regenerating against a newer
+    breaking API changes.  Update KiotaVersion when regenerating against a newer
     Kiota tooling release.
   -->
   <PropertyGroup>
