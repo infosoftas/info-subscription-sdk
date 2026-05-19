@@ -35,7 +35,21 @@
     "/order",
     "/order/**",
     "/subscriber",
-    "/vippsmobilepay/agreement**/remote"
+    "/vippsmobilepay/agreement**/remote",
+    "/invoice",
+    "/invoice/**",
+    "/reminder",
+    "/reminder/**",
+    "/creditnote",
+    "/creditnote/**",
+    "/paymentdemand",
+    "/paymentdemand/**",
+    "/billingfrequency",
+    "/billingfrequency/**",
+    "/organization",
+    "/organization/**",
+    "/payment",
+    "/payment/**"
   ],
   "excludePatterns": [],
   "disabledValidationRules": []

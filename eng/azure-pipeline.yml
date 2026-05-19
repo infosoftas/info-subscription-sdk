@@ -27,6 +27,28 @@ variables:
   buildId: '$(Build.BuildId)'
   today: $[ format('{0:yyyy}{0:MM}{0:dd}', pipeline.startTime) ]
   node.version: '20.x'
+  kiotaIncludePaths: >-
+    --include-path /subscription
+    --include-path /product
+    --include-path /package
+    --include-path /order
+    --include-path /order/**
+    --include-path /subscriber
+    --include-path /vippsmobilepay/agreement**/remote
+    --include-path /invoice
+    --include-path /invoice/**
+    --include-path /reminder
+    --include-path /reminder/**
+    --include-path /creditnote
+    --include-path /creditnote/**
+    --include-path /paymentdemand
+    --include-path /paymentdemand/**
+    --include-path /billingfrequency
+    --include-path /billingfrequency/**
+    --include-path /organization
+    --include-path /organization/**
+    --include-path /payment
+    --include-path /payment/**
 
 stages:
 - stage: generate_dotnet
@@ -52,7 +74,7 @@ stages:
         arguments: 'install --global Microsoft.OpenApi.Kiota'
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated-temp
+        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated-temp
       displayName: 'Generate C# SDK'
 
     - script: |
@@ -67,7 +89,7 @@ stages:
           git config user.email "azure-pipelines-bot@users.noreply.github.com"
           # Regenerates onto the old one. Not idealy, but simple!
           git checkout -b dotnet-$(branchName)
-          kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated
+          kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated
           git add dotnet-sdk/src/generated
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin dotnet-$(branchName)
@@ -131,7 +153,7 @@ stages:
         arguments: 'install --global Microsoft.OpenApi.Kiota'
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated-temp
+        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated-temp
       displayName: 'Generate TS SDK'
 
     - script: |
@@ -146,7 +168,7 @@ stages:
           git config user.email "azure-pipelines-bot@users.noreply.github.com"
           # Regenerates onto the old one. Not idealy, but simple!
           git checkout -b typescript-$(branchName)
-          kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated
+          kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated
           git add typescript-sdk/src/generated
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin typescript-$(branchName)
@@ -229,7 +251,7 @@ stages:
         arguments: 'install --global Microsoft.OpenApi.Kiota'
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l python -c InfoSubscription -n info_subscription --output python-sdk/src/info_subscription_sdk/generated-temp
+        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l python -c InfoSubscription -n info_subscription --output python-sdk/src/info_subscription_sdk/generated-temp
       displayName: 'Generate Python SDK'
 
     - script: |
@@ -244,7 +266,7 @@ stages:
           git config user.email "azure-pipelines-bot@users.noreply.github.com"
           # Regenerates onto the old one. Not idealy, but simple!
           git checkout -b python-$(branchName)
-          kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json --include-path /subscription --include-path /product --include-path /package --include-path /order --include-path /order/** --include-path /subscriber --include-path /vippsmobilepay/agreement**/remote -l python -c InfoSubscription -n info_subscription --output python-sdk/src/info_subscription_sdk/generated
+          kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l python -c InfoSubscription -n info_subscription --output python-sdk/src/info_subscription_sdk/generated
           git add python-sdk/src/info_subscription_sdk/generated
           git commit -m "Update SDK from latest OpenAPI spec"
           git push --set-upstream origin python-$(branchName)

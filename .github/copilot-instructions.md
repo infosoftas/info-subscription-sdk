@@ -130,3 +130,32 @@ See `RELEASE.md` for the full process and required pipeline secrets (`NUGET_APIK
 
 ### Target framework (.NET)
 `net10.0` — see `dotnet-sdk/global.json` for the pinned SDK version.
+
+## Kiota `--include-path` pattern behaviour
+
+### Segment-based prefix matching (not string prefix)
+
+A pattern such as `/subscription` matches **all paths whose first URL segment is `subscription`** — not all paths whose string representation starts with the characters "subscription". Concretely:
+
+| Pattern         | Matched                                                               | NOT matched                                |
+|-----------------|-----------------------------------------------------------------------|--------------------------------------------|
+| `/subscription` | `/subscription`, `/subscription/{id}`, `/subscription/{id}/contact`  | `/subscriptionplan`                        |
+| `/invoice`      | `/invoice`, `/invoice/{id}`, `/invoice/{id}/file`                    | `/invoiceexport/…`, `/invoiceidentifier/…` |
+| `/package`      | `/package`, `/package/{id}`, `/package/{id}/validate`                | `/packagechain`, `/packagerule`            |
+
+The bare segment pattern already covers the full sub-tree — **no wildcard is required** to include by-ID routes and nested sub-resources.
+
+### Why `/order` AND `/order/**` both appear
+
+Both `/order` and `/order/**` exist in the lock files and pipeline. Based on observed behaviour, the bare `/order` alone is sufficient (same segment-prefix rule as above), so the `/**` sibling is **redundant but harmless** — added defensively. Other resources (`/product`, `/package`, `/subscriber`, `/subscription`) rely on the bare pattern alone and generate sub-resource code correctly.
+
+**Safe convention:** use **both** `/resource` and `/resource/**` when adding a new resource, matching the established `/order` + `/order/**` style. This guards against any future Kiota version tightening the bare pattern to an exact-match only.
+
+### Adding new API paths
+
+1. Add both `--include-path /newresource` and `--include-path /newresource/**` to the `kiotaIncludePaths` variable in `eng/azure-pipeline.yml` — that single variable is shared by all three SDK stages (C#, TypeScript, Python).
+2. Add the same two patterns to `includePatterns` in each `kiota-lock.json`:
+   - `dotnet-sdk/src/generated/kiota-lock.json`
+   - `typescript-sdk/src/generated/kiota-lock.json`
+   - `python-sdk/src/info_subscription_sdk/generated/kiota-lock.json`
+3. The `descriptionHash` in those files will be refreshed automatically on the next pipeline run; do not compute it manually.
