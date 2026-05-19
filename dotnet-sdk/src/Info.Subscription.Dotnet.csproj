@@ -23,11 +23,11 @@
   </PropertyGroup>
 
   <!--
-    Allow any Kiota 1.x release at or above the version we were generated against.
+    Allow any Kiota 1.x release at or above version 1.22.2 we generated against.
     A version range is used so that consumers are not locked to exactly 1.22.2, but
     a major-version upper bound prevents silent breakage if Kiota ships a 2.0 with
-    breaking API changes.  Update KiotaVersion when regenerating against a newer
-    Kiota tooling release.
+    breaking API changes. 
+    Update KiotaVersion when regenerating against a newer Kiota tooling release.
   -->
   <PropertyGroup>
     <KiotaVersion>[1.22.2, 2.0.0)</KiotaVersion>
@@ -46,9 +46,9 @@
       <PackageReference Include="Microsoft.Kiota.Serialization.Json" Version="$(KiotaVersion)" />
       <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" Version="$(KiotaVersion)" />
       <PackageReference Include="Microsoft.Kiota.Serialization.Text" Version="$(KiotaVersion)" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
-      <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.6" />
-      <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="10.0.6" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.8" />
+      <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="10.0.8" />
       <PackageReference Include="Azure.Identity" Version="1.21.0" />
   </ItemGroup>
   
