@@ -1,0 +1,54 @@
+from __future__ import annotations
+import datetime
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from kiota_abstractions.serialization import Parsable, ParseNode, SerializationWriter
+from typing import Any, Optional, TYPE_CHECKING, Union
+
+@dataclass
+class Period(Parsable):
+    """
+    Defines a time period, where both Start and End are inclusive. If only start is given, the period represents and instant in time (useful for instance defining single transactions with no time component).
+    """
+    # The end property
+    end: Optional[datetime.datetime] = None
+    # Gets a value indicating whether this is an instant.
+    is_instant: Optional[bool] = None
+    # The start property
+    start: Optional[datetime.datetime] = None
+    
+    @staticmethod
+    def create_from_discriminator_value(parse_node: ParseNode) -> Period:
+        """
+        Creates a new instance of the appropriate class based on discriminator value
+        param parse_node: The parse node to use to read the discriminator value and create the object
+        Returns: Period
+        """
+        if parse_node is None:
+            raise TypeError("parse_node cannot be null.")
+        return Period()
+    
+    def get_field_deserializers(self,) -> dict[str, Callable[[ParseNode], None]]:
+        """
+        The deserialization information for the current model
+        Returns: dict[str, Callable[[ParseNode], None]]
+        """
+        fields: dict[str, Callable[[Any], None]] = {
+            "end": lambda n : setattr(self, 'end', n.get_datetime_value()),
+            "isInstant": lambda n : setattr(self, 'is_instant', n.get_bool_value()),
+            "start": lambda n : setattr(self, 'start', n.get_datetime_value()),
+        }
+        return fields
+    
+    def serialize(self,writer: SerializationWriter) -> None:
+        """
+        Serializes information the current object
+        param writer: Serialization writer to use to serialize this model
+        Returns: None
+        """
+        if writer is None:
+            raise TypeError("writer cannot be null.")
+        writer.write_datetime_value("end", self.end)
+        writer.write_datetime_value("start", self.start)
+    
+
