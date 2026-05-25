@@ -8,20 +8,20 @@ using System;
 namespace Info.Subscription.Dotnet.Models
 {
     /// <summary>
-    /// A container for optional values, specifically designed to be used in the contextserialization in an HTTP API using JSON.
+    /// The person/subscriber that has purchased something which the Invoice represtens
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class OptionalOfBuyer : global::Info.Subscription.Dotnet.Models.Buyer, IParsable
+    public partial class Buyer : global::Info.Subscription.Dotnet.Models.Recipient, IParsable
     {
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.OptionalOfBuyer"/></returns>
+        /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.Buyer"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static new global::Info.Subscription.Dotnet.Models.OptionalOfBuyer CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static new global::Info.Subscription.Dotnet.Models.Buyer CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::Info.Subscription.Dotnet.Models.OptionalOfBuyer();
+            return new global::Info.Subscription.Dotnet.Models.Buyer();
         }
         /// <summary>
         /// The deserialization information for the current model
