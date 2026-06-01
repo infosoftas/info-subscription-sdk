@@ -186,6 +186,11 @@ export interface BillingOptions extends Parsable {
     recurring?: RecurringOptions | null;
 }
 /**
+ * The person/subscriber that has purchased something which the Invoice represtens
+ */
+export interface Buyer extends Parsable, Recipient {
+}
+/**
  * Represents a cost to be paid on an invoice.
  */
 export interface Charge extends LineDetail, Parsable {
@@ -393,6 +398,15 @@ export function createBillingFrequencyViewFromDiscriminatorValue(parseNode: Pars
 // @ts-ignore
 export function createBillingOptionsFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
     return deserializeIntoBillingOptions;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {Buyer}
+ */
+// @ts-ignore
+export function createBuyerFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoBuyer;
 }
 /**
  * Creates a new instance of the appropriate class based on discriminator value
@@ -2100,6 +2114,17 @@ export function deserializeIntoBillingOptions(billingOptions: Partial<BillingOpt
 }
 /**
  * The deserialization information for the current model
+ * @param Buyer The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoBuyer(buyer: Partial<Buyer> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        ...deserializeIntoRecipient(buyer),
+    }
+}
+/**
+ * The deserialization information for the current model
  * @param Charge The instance to deserialize into.
  * @returns {Record<string, (node: ParseNode) => void>}
  */
@@ -2775,7 +2800,7 @@ export function deserializeIntoObserverOptions(observerOptions: Partial<Observer
 // @ts-ignore
 export function deserializeIntoOptionalOfBuyer(optionalOfBuyer: Partial<OptionalOfBuyer> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        ...deserializeIntoRecipient(optionalOfBuyer),
+        ...deserializeIntoBuyer(optionalOfBuyer),
     }
 }
 /**
@@ -4492,9 +4517,9 @@ export interface ObserverOptions extends Parsable {
     disableVippsCompletion?: boolean | null;
 }
 /**
- * The person/subscriber that has purchased something which the Invoice represtens
+ * A container for optional values, specifically designed to be used in the contextserialization in an HTTP API using JSON.
  */
-export interface OptionalOfBuyer extends Parsable, Recipient {
+export interface OptionalOfBuyer extends Buyer, Parsable {
 }
 /**
  * A container for optional values, specifically designed to be used in the contextserialization in an HTTP API using JSON.
@@ -5844,6 +5869,17 @@ export function serializeBillingOptions(writer: SerializationWriter, billingOpti
 }
 /**
  * Serializes information the current object
+ * @param Buyer The instance to serialize from.
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeBuyer(writer: SerializationWriter, buyer: Partial<Buyer> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!buyer || isSerializingDerivedType) { return; }
+    serializeRecipient(writer, buyer, isSerializingDerivedType)
+}
+/**
+ * Serializes information the current object
  * @param Charge The instance to serialize from.
  * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
  * @param writer Serialization writer to use to serialize this model
@@ -6520,7 +6556,7 @@ export function serializeObserverOptions(writer: SerializationWriter, observerOp
 // @ts-ignore
 export function serializeOptionalOfBuyer(writer: SerializationWriter, optionalOfBuyer: Partial<OptionalOfBuyer> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
     if (!optionalOfBuyer || isSerializingDerivedType) { return; }
-    serializeRecipient(writer, optionalOfBuyer, isSerializingDerivedType)
+    serializeBuyer(writer, optionalOfBuyer, isSerializingDerivedType)
 }
 /**
  * Serializes information the current object
