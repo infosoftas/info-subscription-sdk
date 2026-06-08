@@ -148,7 +148,7 @@ stages:
       displayName: 'Create Pull Request'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
       env:
-        GH_TOKEN: $(getGitHubToken.GitHub.InstallationToken)
+        GH_TOKEN: $(GitHub.InstallationToken)
     
         # task: jikuma.devops-github-extension.custom-build-release-task.azuredevopsgithub@0
     # displayName: 'Create Pull Request'
