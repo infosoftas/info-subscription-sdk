@@ -10,7 +10,7 @@ class OrderCompletionProcessOptions(Parsable):
     Options for adjusting/controlling the order completion process.
     """
     # The maximum wait/polling timeout, in milliseconds before the API will no longer wait and produce a synchronous result. Set to 0 or negative to disable polling entirely.                         The system max timeout takes precedence over this setting.             The completion process may timeout before this setting is reached.             The max timeout is currently aproximately 60 seconds, but is subject to change.             Waiting for this long is NOT recommended.
-    max_polling_timeout: Optional[int] = None
+    max_polling_timeout: Optional[int] = 30000
     
     @staticmethod
     def create_from_discriminator_value(parse_node: ParseNode) -> OrderCompletionProcessOptions:

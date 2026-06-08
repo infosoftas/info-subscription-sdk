@@ -17,6 +17,8 @@ class TemplatePackageCreate(Parsable):
     """
     A template package create.
     """
+    # Availability of the package.
+    disabled: Optional[bool] = False
     # A list ov available billing plan identifiers.
     billing_plans: Optional[list[UUID]] = None
     # Values that represent contract.
@@ -25,8 +27,6 @@ class TemplatePackageCreate(Parsable):
     currency: Optional[str] = None
     # An optional description.
     description: Optional[str] = None
-    # Availability of the package.
-    disabled: Optional[bool] = None
     # A list of included additional products.
     included_additional_products: Optional[list[IncludedAdditionalProduct]] = None
     # An initial package term.

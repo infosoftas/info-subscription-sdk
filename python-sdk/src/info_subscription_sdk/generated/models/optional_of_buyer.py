@@ -5,14 +5,14 @@ from kiota_abstractions.serialization import Parsable, ParseNode, SerializationW
 from typing import Any, Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
-    from .buyer import Buyer
+    from .recipient import Recipient
 
-from .buyer import Buyer
+from .recipient import Recipient
 
 @dataclass
-class OptionalOfBuyer(Buyer, Parsable):
+class OptionalOfBuyer(Recipient, Parsable):
     """
-    A container for optional values, specifically designed to be used in the contextserialization in an HTTP API using JSON.
+    The person/subscriber that has purchased something which the Invoice represtens
     """
     
     @staticmethod
@@ -31,9 +31,9 @@ class OptionalOfBuyer(Buyer, Parsable):
         The deserialization information for the current model
         Returns: dict[str, Callable[[ParseNode], None]]
         """
-        from .buyer import Buyer
+        from .recipient import Recipient
 
-        from .buyer import Buyer
+        from .recipient import Recipient
 
         fields: dict[str, Callable[[Any], None]] = {
         }
