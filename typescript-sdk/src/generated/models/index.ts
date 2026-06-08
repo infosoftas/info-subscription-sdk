@@ -2817,7 +2817,7 @@ export function deserializeIntoOrderChoices(orderChoices: Partial<OrderChoices> 
 // @ts-ignore
 export function deserializeIntoOrderCompletionProcessOptions(orderCompletionProcessOptions: Partial<OrderCompletionProcessOptions> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        "maxPollingTimeout": n => { orderCompletionProcessOptions.maxPollingTimeout = n.getNumberValue(); },
+        "maxPollingTimeout": n => { orderCompletionProcessOptions.maxPollingTimeout = n.getNumberValue() ?? 30000; },
     }
 }
 /**
@@ -3920,7 +3920,7 @@ export function deserializeIntoTemplatePackageCreate(templatePackageCreate: Part
         "contract": n => { templatePackageCreate.contract = n.getObjectValue<I9469839e58400adcae3c5e4b7dc46c01916904811c5e44b25dbffb99262d943f>(I435507a247f4256ce4bcf131f57433cf4ffbbfa7e42cf71ed8388798e103fc9f); },
         "currency": n => { templatePackageCreate.currency = n.getStringValue(); },
         "description": n => { templatePackageCreate.description = n.getStringValue(); },
-        "disabled": n => { templatePackageCreate.disabled = n.getBooleanValue(); },
+        "disabled": n => { templatePackageCreate.disabled = n.getBooleanValue() ?? false; },
         "includedAdditionalProducts": n => { templatePackageCreate.includedAdditionalProducts = n.getCollectionOfObjectValues<IncludedAdditionalProduct>(createIncludedAdditionalProductFromDiscriminatorValue); },
         "initialTerm": n => { templatePackageCreate.initialTerm = n.getObjectValue<InitialPackageTerm>(createInitialPackageTermFromDiscriminatorValue); },
         "name": n => { templatePackageCreate.name = n.getStringValue(); },
@@ -6562,7 +6562,7 @@ export function serializeOrderChoices(writer: SerializationWriter, orderChoices:
 // @ts-ignore
 export function serializeOrderCompletionProcessOptions(writer: SerializationWriter, orderCompletionProcessOptions: Partial<OrderCompletionProcessOptions> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
     if (!orderCompletionProcessOptions || isSerializingDerivedType) { return; }
-    writer.writeNumberValue("maxPollingTimeout", orderCompletionProcessOptions.maxPollingTimeout);
+    writer.writeNumberValue("maxPollingTimeout", orderCompletionProcessOptions.maxPollingTimeout ?? 30000);
 }
 /**
  * Serializes information the current object
@@ -7665,7 +7665,7 @@ export function serializeTemplatePackageCreate(writer: SerializationWriter, temp
     writer.writeObjectValue<I9469839e58400adcae3c5e4b7dc46c01916904811c5e44b25dbffb99262d943f>("contract", templatePackageCreate.contract, I6bfb28a1132dfe9805f0ecc944db12107b1062332dd102dd229d08f4fb363118);
     writer.writeStringValue("currency", templatePackageCreate.currency);
     writer.writeStringValue("description", templatePackageCreate.description);
-    writer.writeBooleanValue("disabled", templatePackageCreate.disabled);
+    writer.writeBooleanValue("disabled", templatePackageCreate.disabled ?? false);
     writer.writeCollectionOfObjectValues<IncludedAdditionalProduct>("includedAdditionalProducts", templatePackageCreate.includedAdditionalProducts, serializeIncludedAdditionalProduct);
     writer.writeObjectValue<InitialPackageTerm>("initialTerm", templatePackageCreate.initialTerm, serializeInitialPackageTerm);
     writer.writeStringValue("name", templatePackageCreate.name);
