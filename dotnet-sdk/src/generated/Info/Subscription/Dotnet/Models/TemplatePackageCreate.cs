@@ -123,6 +123,13 @@ namespace Info.Subscription.Dotnet.Models
         /// <summary>An optional until date for validity.</summary>
         public DateTimeOffset? ValidUntil { get; set; }
         /// <summary>
+        /// Instantiates a new <see cref="global::Info.Subscription.Dotnet.Models.TemplatePackageCreate"/> and sets the default values.
+        /// </summary>
+        public TemplatePackageCreate()
+        {
+            Disabled = false;
+        }
+        /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
         /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.TemplatePackageCreate"/></returns>
