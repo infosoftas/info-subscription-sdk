@@ -101,7 +101,7 @@ stages:
     - script: |
         dotnet pack dotnet-sdk/src/Info.Subscription.Dotnet.csproj \
           --configuration Release \
-          -p:Version=0.0.0-preview.$(Build.BuildId) \
+          -p:Version=0.0.$(today)-preview.$(Build.BuildId) \
           --output $(Build.ArtifactStagingDirectory)/nuget
       displayName: 'Pack NuGet (preview)'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
