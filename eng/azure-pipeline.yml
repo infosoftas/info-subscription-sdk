@@ -116,7 +116,7 @@ stages:
         publishVstsFeed: 'aeefa1b4-7b70-48a5-910f-324156d70b86'
     
     - task: get-github-token-task@1
-      displayName: Get GitHUb token
+      displayName: Get GitHub token
       name: getGitHubToken
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
       inputs:
