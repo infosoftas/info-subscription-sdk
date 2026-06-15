@@ -16,6 +16,13 @@ namespace Info.Subscription.Dotnet.Models
         /// <summary>The maximum wait/polling timeout, in milliseconds before the API will no longer wait and produce a synchronous result. Set to 0 or negative to disable polling entirely.                         The system max timeout takes precedence over this setting.             The completion process may timeout before this setting is reached.             The max timeout is currently aproximately 60 seconds, but is subject to change.             Waiting for this long is NOT recommended.</summary>
         public int? MaxPollingTimeout { get; set; }
         /// <summary>
+        /// Instantiates a new <see cref="global::Info.Subscription.Dotnet.Models.OrderCompletionProcessOptions"/> and sets the default values.
+        /// </summary>
+        public OrderCompletionProcessOptions()
+        {
+            MaxPollingTimeout = 30000;
+        }
+        /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
         /// <returns>A <see cref="global::Info.Subscription.Dotnet.Models.OrderCompletionProcessOptions"/></returns>
