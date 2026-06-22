@@ -8468,15 +8468,15 @@ export interface SubscriptionPlanDraftChainStep extends Parsable {
      */
     productItems?: PlanProduct[] | null;
     /**
-     * Description of the package used after renewal.
+     * Description of the package used after renewal if not retained.
      */
     renewalDescription?: string | null;
     /**
-     * Display name of the package used after renewal.
+     * Display name of the package used after renewal if not retained.
      */
     renewalName?: string | null;
     /**
-     * When true the subscription is retained (not cancelled) at this step.
+     * When true the subscription is retained (not cancelled) at this step, and if this is the last step the subscription is retained indefinitely.
      */
     retain?: boolean | null;
     /**
