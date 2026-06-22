@@ -36,11 +36,11 @@ class SubscriptionPlanDraftChainStep(Parsable):
     price: Optional[float] = None
     # Product items with quantities and optional unit prices for this step.
     product_items: Optional[list[PlanProduct]] = None
-    # Description of the package used after renewal.
+    # Description of the package used after renewal if not retained.
     renewal_description: Optional[str] = None
-    # Display name of the package used after renewal.
+    # Display name of the package used after renewal if not retained.
     renewal_name: Optional[str] = None
-    # When true the subscription is retained (not cancelled) at this step.
+    # When true the subscription is retained (not cancelled) at this step, and if this is the last step the subscription is retained indefinitely.
     retain: Optional[bool] = None
     # The position increment to the next step.
     step: Optional[int] = None
