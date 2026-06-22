@@ -65,7 +65,7 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public List<global::Info.Subscription.Dotnet.Models.PlanProduct> ProductItems { get; set; }
 #endif
-        /// <summary>Description of the package used after renewal.</summary>
+        /// <summary>Description of the package used after renewal if not retained.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? RenewalDescription { get; set; }
@@ -73,7 +73,7 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public string RenewalDescription { get; set; }
 #endif
-        /// <summary>Display name of the package used after renewal.</summary>
+        /// <summary>Display name of the package used after renewal if not retained.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? RenewalName { get; set; }
@@ -81,7 +81,7 @@ namespace Info.Subscription.Dotnet.Models
 #else
         public string RenewalName { get; set; }
 #endif
-        /// <summary>When true the subscription is retained (not cancelled) at this step.</summary>
+        /// <summary>When true the subscription is retained (not cancelled) at this step, and if this is the last step the subscription is retained indefinitely.</summary>
         public bool? Retain { get; set; }
         /// <summary>The position increment to the next step.</summary>
         public int? Step { get; set; }

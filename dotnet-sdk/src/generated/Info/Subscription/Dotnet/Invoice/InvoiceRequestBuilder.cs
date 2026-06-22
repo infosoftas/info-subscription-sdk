@@ -171,7 +171,7 @@ namespace Info.Subscription.Dotnet.Invoice
             /// <summary>Gets or sets the start date.</summary>
             [Obsolete("")]
             public DateTimeOffset? StartDate { get; set; }
-            /// <summary>Filters on the state of the Invoice.</summary>
+            /// <summary>Filters invoices by state. Supports combined flag values for OR-semantics.E.g. `State=Issued,Paid` returns invoices in either the Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState.Issued or Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState.Paid state.Note: invoice states are never combined in storage; each invoice always has exactly one state.The combined flag value is only used as a filter expression.Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState.Open is handled with exact equality and will never be includedwhen filtering on any other state value, even if combined.</summary>
             [Obsolete("This property is deprecated, use StateAsInvoiceState instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -180,7 +180,7 @@ namespace Info.Subscription.Dotnet.Invoice
 #else
             public string State { get; set; }
 #endif
-            /// <summary>Filters on the state of the Invoice.</summary>
+            /// <summary>Filters invoices by state. Supports combined flag values for OR-semantics.E.g. `State=Issued,Paid` returns invoices in either the Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState.Issued or Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState.Paid state.Note: invoice states are never combined in storage; each invoice always has exactly one state.The combined flag value is only used as a filter expression.Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState.Open is handled with exact equality and will never be includedwhen filtering on any other state value, even if combined.</summary>
             [QueryParameter("State")]
             public global::Info.Subscription.Dotnet.Models.Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState? StateAsInvoiceState { get; set; }
             /// <summary>Filters on the subscriber Id.</summary>
