@@ -5,35 +5,35 @@ from kiota_abstractions.serialization import Parsable, ParseNode, SerializationW
 from typing import Any, Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
-    from .buyer import Buyer
+    from .recipient import Recipient
 
-from .buyer import Buyer
+from .recipient import Recipient
 
 @dataclass
-class OptionalOfBuyer(Buyer, Parsable):
+class Buyer(Recipient, Parsable):
     """
-    A container for optional values, specifically designed to be used in the contextserialization in an HTTP API using JSON.
+    The person/subscriber that has purchased something which the Invoice represtens
     """
     
     @staticmethod
-    def create_from_discriminator_value(parse_node: ParseNode) -> OptionalOfBuyer:
+    def create_from_discriminator_value(parse_node: ParseNode) -> Buyer:
         """
         Creates a new instance of the appropriate class based on discriminator value
         param parse_node: The parse node to use to read the discriminator value and create the object
-        Returns: OptionalOfBuyer
+        Returns: Buyer
         """
         if parse_node is None:
             raise TypeError("parse_node cannot be null.")
-        return OptionalOfBuyer()
+        return Buyer()
     
     def get_field_deserializers(self,) -> dict[str, Callable[[ParseNode], None]]:
         """
         The deserialization information for the current model
         Returns: dict[str, Callable[[ParseNode], None]]
         """
-        from .buyer import Buyer
+        from .recipient import Recipient
 
-        from .buyer import Buyer
+        from .recipient import Recipient
 
         fields: dict[str, Callable[[Any], None]] = {
         }

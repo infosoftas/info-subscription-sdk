@@ -174,7 +174,7 @@ class InvoiceRequestBuilder(BaseRequestBuilder):
         # Gets or sets the start date.
         start_date: Optional[datetime.datetime] = None
 
-        # Filters on the state of the Invoice.
+        # Filters invoices by state. Supports combined flag values for OR-semantics.E.g. `State=Issued,Paid` returns invoices in either the Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState.Issued or Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState.Paid state.Note: invoice states are never combined in storage; each invoice always has exactly one state.The combined flag value is only used as a filter expression.Infosoft.S4.Invoice.Contracts.ReadModel.InvoiceState.Open is handled with exact equality and will never be includedwhen filtering on any other state value, even if combined.
         state: Optional[InvoiceState] = None
 
         # Filters on the subscriber Id.
