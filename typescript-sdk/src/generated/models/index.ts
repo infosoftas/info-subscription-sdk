@@ -186,6 +186,11 @@ export interface BillingOptions extends Parsable {
     recurring?: RecurringOptions | null;
 }
 /**
+ * The person/subscriber that has purchased something which the Invoice represtens
+ */
+export interface Buyer extends Parsable, Recipient {
+}
+/**
  * Represents a cost to be paid on an invoice.
  */
 export interface Charge extends LineDetail, Parsable {
@@ -393,6 +398,15 @@ export function createBillingFrequencyViewFromDiscriminatorValue(parseNode: Pars
 // @ts-ignore
 export function createBillingOptionsFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
     return deserializeIntoBillingOptions;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {Buyer}
+ */
+// @ts-ignore
+export function createBuyerFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoBuyer;
 }
 /**
  * Creates a new instance of the appropriate class based on discriminator value
@@ -2100,6 +2114,17 @@ export function deserializeIntoBillingOptions(billingOptions: Partial<BillingOpt
 }
 /**
  * The deserialization information for the current model
+ * @param Buyer The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoBuyer(buyer: Partial<Buyer> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        ...deserializeIntoRecipient(buyer),
+    }
+}
+/**
+ * The deserialization information for the current model
  * @param Charge The instance to deserialize into.
  * @returns {Record<string, (node: ParseNode) => void>}
  */
@@ -2483,7 +2508,7 @@ export function deserializeIntoDocumentNetworkLookupRequest(documentNetworkLooku
 // @ts-ignore
 export function deserializeIntoDocumentNetworkLookupResponse(documentNetworkLookupResponse: Partial<DocumentNetworkLookupResponse> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        "documentTypes": n => { documentNetworkLookupResponse.documentTypes = n.getCollectionOfPrimitiveValues<string>(); },
+        "documentTypes": n => { documentNetworkLookupResponse.documentTypes = n.getCollectionOfPrimitiveValues<string>("string"); },
     }
 }
 /**
@@ -2740,7 +2765,7 @@ export function deserializeIntoIssueCreditNote(issueCreditNote: Partial<IssueCre
 // @ts-ignore
 export function deserializeIntoLineDetail(lineDetail: Partial<LineDetail> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        "additionalTextDescriptions": n => { lineDetail.additionalTextDescriptions = n.getCollectionOfPrimitiveValues<string>(); },
+        "additionalTextDescriptions": n => { lineDetail.additionalTextDescriptions = n.getCollectionOfPrimitiveValues<string>("string"); },
         "amount": n => { lineDetail.amount = n.getObjectValue<Amount>(createAmountFromDiscriminatorValue); },
         "text": n => { lineDetail.text = n.getStringValue(); },
     }
@@ -2775,7 +2800,7 @@ export function deserializeIntoObserverOptions(observerOptions: Partial<Observer
 // @ts-ignore
 export function deserializeIntoOptionalOfBuyer(optionalOfBuyer: Partial<OptionalOfBuyer> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        ...deserializeIntoRecipient(optionalOfBuyer),
+        ...deserializeIntoBuyer(optionalOfBuyer),
     }
 }
 /**
@@ -2804,7 +2829,7 @@ export function deserializeIntoOrderChoices(orderChoices: Partial<OrderChoices> 
         "numberOfEditions": n => { orderChoices.numberOfEditions = n.getNumberValue(); },
         "permanentDiscountId": n => { orderChoices.permanentDiscountId = n.getGuidValue(); },
         "priceOverride": n => { orderChoices.priceOverride = n.getNumberValue(); },
-        "products": n => { orderChoices.products = n.getCollectionOfPrimitiveValues<Guid>(); },
+        "products": n => { orderChoices.products = n.getCollectionOfPrimitiveValues<Guid>("string"); },
         "startTime": n => { orderChoices.startTime = n.getDateValue(); },
         "units": n => { orderChoices.units = n.getNumberValue(); },
     }
@@ -2863,7 +2888,7 @@ export function deserializeIntoOrderPaymentDemandView(orderPaymentDemandView: Pa
 // @ts-ignore
 export function deserializeIntoOrderTag(orderTag: Partial<OrderTag> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        "values": n => { orderTag.values = n.getCollectionOfPrimitiveValues<string>(); },
+        "values": n => { orderTag.values = n.getCollectionOfPrimitiveValues<string>("string"); },
     }
 }
 /**
@@ -3019,7 +3044,7 @@ export function deserializeIntoPayment(payment: Partial<Payment> | undefined = {
         "id": n => { payment.id = n.getGuidValue(); },
         "invoiceId": n => { payment.invoiceId = n.getGuidValue(); },
         "invoiceNumber": n => { payment.invoiceNumber = n.getStringValue(); },
-        "matchingErrors": n => { payment.matchingErrors = n.getCollectionOfPrimitiveValues<string>(); },
+        "matchingErrors": n => { payment.matchingErrors = n.getCollectionOfPrimitiveValues<string>("string"); },
         "organizationId": n => { payment.organizationId = n.getGuidValue(); },
         "paidAmount": n => { payment.paidAmount = n.getNumberValue(); },
         "paymentAgreementId": n => { payment.paymentAgreementId = n.getGuidValue(); },
@@ -3526,7 +3551,7 @@ export function deserializeIntoSubmitPeppolDocumentRequest(submitPeppolDocumentR
 // @ts-ignore
 export function deserializeIntoSubscriberContact(subscriberContact: Partial<SubscriberContact> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        "addressLines": n => { subscriberContact.addressLines = n.getCollectionOfPrimitiveValues<string>(); },
+        "addressLines": n => { subscriberContact.addressLines = n.getCollectionOfPrimitiveValues<string>("string"); },
         "careOf": n => { subscriberContact.careOf = n.getStringValue(); },
         "city": n => { subscriberContact.city = n.getStringValue(); },
         "country": n => { subscriberContact.country = n.getStringValue(); },
@@ -3548,7 +3573,7 @@ export function deserializeIntoSubscriberContact(subscriberContact: Partial<Subs
 // @ts-ignore
 export function deserializeIntoSubscriberContactView(subscriberContactView: Partial<SubscriberContactView> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        "addressLines": n => { subscriberContactView.addressLines = n.getCollectionOfPrimitiveValues<string>(); },
+        "addressLines": n => { subscriberContactView.addressLines = n.getCollectionOfPrimitiveValues<string>("string"); },
         "careOf": n => { subscriberContactView.careOf = n.getStringValue(); },
         "city": n => { subscriberContactView.city = n.getStringValue(); },
         "country": n => { subscriberContactView.country = n.getStringValue(); },
@@ -3830,7 +3855,7 @@ export function deserializeIntoTaxGroupView(taxGroupView: Partial<TaxGroupView> 
         "expiryDate": n => { taxGroupView.expiryDate = n.getDateOnlyValue(); },
         "id": n => { taxGroupView.id = n.getGuidValue(); },
         "name": n => { taxGroupView.name = n.getStringValue(); },
-        "productIds": n => { taxGroupView.productIds = n.getCollectionOfPrimitiveValues<Guid>(); },
+        "productIds": n => { taxGroupView.productIds = n.getCollectionOfPrimitiveValues<Guid>("string"); },
         "startDate": n => { taxGroupView.startDate = n.getDateOnlyValue(); },
         "taxPercent": n => { taxGroupView.taxPercent = n.getNumberValue(); },
     }
@@ -3903,7 +3928,7 @@ export function deserializeIntoTemplatePackageChoices(templatePackageChoices: Pa
         "numberOfEditions": n => { templatePackageChoices.numberOfEditions = n.getNumberValue(); },
         "permanentDiscountId": n => { templatePackageChoices.permanentDiscountId = n.getGuidValue(); },
         "priceOverride": n => { templatePackageChoices.priceOverride = n.getNumberValue(); },
-        "products": n => { templatePackageChoices.products = n.getCollectionOfPrimitiveValues<Guid>(); },
+        "products": n => { templatePackageChoices.products = n.getCollectionOfPrimitiveValues<Guid>("string"); },
         "startTime": n => { templatePackageChoices.startTime = n.getDateValue(); },
         "units": n => { templatePackageChoices.units = n.getNumberValue(); },
     }
@@ -3916,7 +3941,7 @@ export function deserializeIntoTemplatePackageChoices(templatePackageChoices: Pa
 // @ts-ignore
 export function deserializeIntoTemplatePackageCreate(templatePackageCreate: Partial<TemplatePackageCreate> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        "billingPlans": n => { templatePackageCreate.billingPlans = n.getCollectionOfPrimitiveValues<Guid>(); },
+        "billingPlans": n => { templatePackageCreate.billingPlans = n.getCollectionOfPrimitiveValues<Guid>("string"); },
         "contract": n => { templatePackageCreate.contract = n.getObjectValue<I9469839e58400adcae3c5e4b7dc46c01916904811c5e44b25dbffb99262d943f>(I435507a247f4256ce4bcf131f57433cf4ffbbfa7e42cf71ed8388798e103fc9f); },
         "currency": n => { templatePackageCreate.currency = n.getStringValue(); },
         "description": n => { templatePackageCreate.description = n.getStringValue(); },
@@ -3924,11 +3949,11 @@ export function deserializeIntoTemplatePackageCreate(templatePackageCreate: Part
         "includedAdditionalProducts": n => { templatePackageCreate.includedAdditionalProducts = n.getCollectionOfObjectValues<IncludedAdditionalProduct>(createIncludedAdditionalProductFromDiscriminatorValue); },
         "initialTerm": n => { templatePackageCreate.initialTerm = n.getObjectValue<InitialPackageTerm>(createInitialPackageTermFromDiscriminatorValue); },
         "name": n => { templatePackageCreate.name = n.getStringValue(); },
-        "numberOfEditions": n => { templatePackageCreate.numberOfEditions = n.getCollectionOfPrimitiveValues<number>(); },
+        "numberOfEditions": n => { templatePackageCreate.numberOfEditions = n.getCollectionOfPrimitiveValues<number>("number"); },
         "organizationId": n => { templatePackageCreate.organizationId = n.getGuidValue(); },
         "packageChainId": n => { templatePackageCreate.packageChainId = n.getGuidValue(); },
         "price": n => { templatePackageCreate.price = n.getNumberValue(); },
-        "products": n => { templatePackageCreate.products = n.getCollectionOfPrimitiveValues<Guid>(); },
+        "products": n => { templatePackageCreate.products = n.getCollectionOfPrimitiveValues<Guid>("string"); },
         "renewalDescription": n => { templatePackageCreate.renewalDescription = n.getStringValue(); },
         "renewalName": n => { templatePackageCreate.renewalName = n.getStringValue(); },
         "templatePackageRules": n => { templatePackageCreate.templatePackageRules = n.getCollectionOfObjectValues<TemplatePackageRule>(createTemplatePackageRuleFromDiscriminatorValue); },
@@ -4492,9 +4517,9 @@ export interface ObserverOptions extends Parsable {
     disableVippsCompletion?: boolean | null;
 }
 /**
- * The person/subscriber that has purchased something which the Invoice represtens
+ * A container for optional values, specifically designed to be used in the contextserialization in an HTTP API using JSON.
  */
-export interface OptionalOfBuyer extends Parsable, Recipient {
+export interface OptionalOfBuyer extends Buyer, Parsable {
 }
 /**
  * A container for optional values, specifically designed to be used in the contextserialization in an HTTP API using JSON.
@@ -5844,6 +5869,17 @@ export function serializeBillingOptions(writer: SerializationWriter, billingOpti
 }
 /**
  * Serializes information the current object
+ * @param Buyer The instance to serialize from.
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeBuyer(writer: SerializationWriter, buyer: Partial<Buyer> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!buyer || isSerializingDerivedType) { return; }
+    serializeRecipient(writer, buyer, isSerializingDerivedType)
+}
+/**
+ * Serializes information the current object
  * @param Charge The instance to serialize from.
  * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
  * @param writer Serialization writer to use to serialize this model
@@ -6520,7 +6556,7 @@ export function serializeObserverOptions(writer: SerializationWriter, observerOp
 // @ts-ignore
 export function serializeOptionalOfBuyer(writer: SerializationWriter, optionalOfBuyer: Partial<OptionalOfBuyer> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
     if (!optionalOfBuyer || isSerializingDerivedType) { return; }
-    serializeRecipient(writer, optionalOfBuyer, isSerializingDerivedType)
+    serializeBuyer(writer, optionalOfBuyer, isSerializingDerivedType)
 }
 /**
  * Serializes information the current object
