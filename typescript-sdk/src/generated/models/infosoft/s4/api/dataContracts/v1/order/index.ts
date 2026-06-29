@@ -34,7 +34,7 @@ export function createOrderViewFromDiscriminatorValue(parseNode: ParseNode | und
 // @ts-ignore
 export function deserializeIntoOrderTag(orderTag: Partial<OrderTag> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
-        "values": n => { orderTag.values = n.getCollectionOfPrimitiveValues<string>(); },
+        "values": n => { orderTag.values = n.getCollectionOfPrimitiveValues<string>("string"); },
     }
 }
 /**
