@@ -21,7 +21,7 @@
   "author": "Infosoft AS",
   "license": "MIT",
   "dependencies": {
-    "@microsoft/kiota-bundle": "1.0.0-preview.100",
+    "@microsoft/kiota-bundle": "1.0.0-preview.103",
     "@azure/msal-node": "^5.1.5"
   },
   "devDependencies": {

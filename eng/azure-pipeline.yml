@@ -97,13 +97,22 @@ stages:
           if git diff --cached --quiet; then
             echo "No actual changes after regeneration; skipping branch push and downstream steps."
             echo "##vso[task.setvariable variable=changeDetected]false"
-          else
-            git commit -m "Update SDK from latest OpenAPI spec"
-            git push --set-upstream origin dotnet-$(branchName)
-            sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
           fi
           rm -rf dotnet-sdk/src/generated-temp
-      displayName: 'Create feature branch'
+      displayName: 'Regenerate SDK onto feature branch'
+      condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
+
+    - script: |
+        dotnet build dotnet-sdk/src/Info.Subscription.Dotnet.csproj --configuration Release
+      displayName: 'Validate: build regenerated SDK'
+      condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
+
+    - script: |
+        set -e
+        git commit -m "Update SDK from latest OpenAPI spec"
+        git push --set-upstream origin dotnet-$(branchName)
+        sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+      displayName: 'Push feature branch'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
       
     - script: |
@@ -185,17 +194,13 @@ stages:
           if git diff --cached --quiet; then
             echo "No actual changes after regeneration; skipping branch push and downstream steps."
             echo "##vso[task.setvariable variable=changeDetected]false"
-          else
-            git commit -m "Update SDK from latest OpenAPI spec"
-            git push --set-upstream origin typescript-$(branchName)
-            sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
           fi
           rm -rf typescript-sdk/src/generated-temp
-      displayName: 'Create feature branch'
+      displayName: 'Regenerate SDK onto feature branch'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
 
     - task: UseNode@1
-      displayName: 'Setup Node.js for pack'
+      displayName: 'Setup Node.js'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
       inputs:
         version: '$(node.version)'
@@ -214,10 +219,26 @@ stages:
       workingDirectory: typescript-sdk
 
     - script: |
+        set -e
         npm run build
+        # Smoke test: the compiled barrel export must load and expose the public API.
+        node -e "const sdk = require('./dist/index.js'); if (typeof sdk.createInfoSubscriptionClient !== 'function') { throw new Error('createInfoSubscriptionClient missing from package entry point'); }"
+      displayName: 'Validate: build and smoke test regenerated SDK'
+      condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
+      workingDirectory: typescript-sdk
+
+    - script: |
+        set -e
+        git commit -m "Update SDK from latest OpenAPI spec"
+        git push --set-upstream origin typescript-$(branchName)
+        sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+      displayName: 'Push feature branch'
+      condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
+
+    - script: |
         npm version 0.0.0-preview.$(today)$(Build.BuildId) --no-git-tag-version
         git restore package-lock.json
-      displayName: 'Build npm (preview)'
+      displayName: 'Set preview version'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
       workingDirectory: typescript-sdk
 
@@ -291,13 +312,9 @@ stages:
           if git diff --cached --quiet; then
             echo "No actual changes after regeneration; skipping branch push and downstream steps."
             echo "##vso[task.setvariable variable=changeDetected]false"
-          else
-            git commit -m "Update SDK from latest OpenAPI spec"
-            git push --set-upstream origin python-$(branchName)
-            sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
           fi
           rm -rf python-sdk/src/info_subscription_sdk/generated-temp
-      displayName: 'Create feature branch'
+      displayName: 'Regenerate SDK onto feature branch'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
 
     - script: |
@@ -338,6 +355,22 @@ stages:
         pip install -r python-sdk/requirements-dev.txt
         pip install -e python-sdk/.
       displayName: 'Install dependencies'
+      condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
+
+    - script: |
+        set -e
+        source python-sdk/.venv/bin/activate
+        # Smoke test: the package and the generated client must import cleanly.
+        python -c "import info_subscription_sdk as sdk; from info_subscription_sdk.generated.info_subscription import InfoSubscription; assert callable(sdk.create_info_subscription_client)"
+      displayName: 'Validate: import regenerated SDK'
+      condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
+
+    - script: |
+        set -e
+        git commit -m "Update SDK from latest OpenAPI spec"
+        git push --set-upstream origin python-$(branchName)
+        sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+      displayName: 'Push feature branch'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
 
     - script: |
