@@ -1,6 +1,6 @@
 # Release Process
 
-Releases are driven by **git tags**. Pushing a semver tag triggers all three ADO pipelines simultaneously, packing and publishing all SDKs and creating a GitHub Release.
+Releases are driven by **git tags**. Pushing a CalVer tag triggers all three ADO pipelines simultaneously, packing and publishing all SDKs and creating a GitHub Release.
 
 ## Prerequisites (one-time setup)
 
@@ -33,11 +33,13 @@ Preview packages are published to `S4/Internal` automatically by `azure-pipeline
 
 ### 1. Decide the version
 
-Follow [Semantic Versioning](https://semver.org/):
+Versions follow **CalVer**: `YYYY.M.MICRO`
 
-- **Patch** (`1.0.x`) — bug fixes, no API changes
-- **Minor** (`1.x.0`) — new endpoints or non-breaking additions
-- **Major** (`x.0.0`) — breaking changes to the SDK interface
+- **YYYY** — full year (e.g. `2024`)
+- **M** — month, **unpadded**, `1`–`12` (never `01`)
+- **MICRO** — release counter within that month, starting at `1`, incremented for every release published in that month (not tied to day-of-month)
+
+> **No zero-padding, ever.** `2024.08.1` is invalid — npm's SemVer parser rejects leading zeros in any segment. Always use `2024.8.1`.
 
 ### 2. Tag and push
 
@@ -45,8 +47,8 @@ Follow [Semantic Versioning](https://semver.org/):
 git checkout main
 git pull
 
-git tag 1.2.3
-git push origin 1.2.3
+git tag 2024.8.1
+git push origin 2024.8.1
 ```
 
 > The tag must point to a commit on `main`. Do not tag pre-merge commits.
@@ -81,16 +83,16 @@ Release notes are generated automatically from merged PRs and commits since the 
 To publish a pre-release (e.g. a beta), use a pre-release tag suffix:
 
 ```sh
-git tag 1.2.0-beta.1
-git push origin 1.2.0-beta.1
+git tag 2024.8.1-beta.1
+git push origin 2024.8.1-beta.1
 ```
 
-All three pipelines inject the version explicitly from the git tag string — NuGet via `-p:Version=<tag>`, npm via `npm version <tag>`, and PyPI via `sed` on `pyproject.toml`. The tag string is used verbatim, so a tag of `1.2.0-beta.1` will produce pre-release packages on all three registries.
+All three pipelines inject the version explicitly from the git tag string — NuGet via `-p:Version=<tag>`, npm via `npm version <tag>`, and PyPI via `sed` on `pyproject.toml`. The tag string is used verbatim, so a tag of `2024.8.1-beta.1` will produce pre-release packages on all three registries.
 
 ## Hotfixes
 
 For a hotfix to an older release:
 
-1. Create a branch from the relevant release tag: `git checkout -b hotfix/1.1.x 1.1.0`
+1. Create a branch from the relevant release tag: `git checkout -b hotfix/2024.8.x 2024.8.1`
 2. Apply the fix and merge via PR
-3. Tag the tip of the hotfix branch: `git tag 1.1.1 && git push origin 1.1.1`
+3. Tag the tip of the hotfix branch with the next MICRO for that month: `git tag 2024.8.2 && git push origin 2024.8.2`

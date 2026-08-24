@@ -1,4 +1,4 @@
-# Triggered automatically when a semver tag (e.g. 1.2.3) is pushed to GitHub.
+# Triggered automatically when a CalVer tag (e.g. 2024.8.1) is pushed to GitHub.
 # See RELEASE.md for the full release process.
 trigger:
   tags:
@@ -26,7 +26,7 @@ stages:
     - script: |
         TAG=$(git tag --points-at HEAD)
         if [ -z "$TAG" ]; then
-          echo "##vso[task.logissue type=error]No tag found on HEAD. Create and push a semver tag (e.g. 1.2.3) before releasing."
+          echo "##vso[task.logissue type=error]No tag found on HEAD. Create and push a CalVer tag (e.g. 2024.8.1) before releasing."
           exit 1
         fi
         echo "Releasing version: $TAG"
