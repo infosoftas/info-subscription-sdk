@@ -91,9 +91,17 @@ stages:
           git checkout -b dotnet-$(branchName)
           kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated
           git add dotnet-sdk/src/generated
-          git commit -m "Update SDK from latest OpenAPI spec"
-          git push --set-upstream origin dotnet-$(branchName)
-          sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          # kiota isn't guaranteed byte-identical across two runs; this second generation may
+          # end up matching what's already on main even though the first diff found a change.
+          # Guard against pushing a branch with no real commits, which fails PR creation.
+          if git diff --cached --quiet; then
+            echo "No actual changes after regeneration; skipping branch push and downstream steps."
+            echo "##vso[task.setvariable variable=changeDetected]false"
+          else
+            git commit -m "Update SDK from latest OpenAPI spec"
+            git push --set-upstream origin dotnet-$(branchName)
+            sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          fi
           rm -rf dotnet-sdk/src/generated-temp
       displayName: 'Create feature branch'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
@@ -170,9 +178,17 @@ stages:
           git checkout -b typescript-$(branchName)
           kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated
           git add typescript-sdk/src/generated
-          git commit -m "Update SDK from latest OpenAPI spec"
-          git push --set-upstream origin typescript-$(branchName)
-          sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          # kiota isn't guaranteed byte-identical across two runs; this second generation may
+          # end up matching what's already on main even though the first diff found a change.
+          # Guard against pushing a branch with no real commits, which fails PR creation.
+          if git diff --cached --quiet; then
+            echo "No actual changes after regeneration; skipping branch push and downstream steps."
+            echo "##vso[task.setvariable variable=changeDetected]false"
+          else
+            git commit -m "Update SDK from latest OpenAPI spec"
+            git push --set-upstream origin typescript-$(branchName)
+            sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          fi
           rm -rf typescript-sdk/src/generated-temp
       displayName: 'Create feature branch'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
@@ -198,7 +214,7 @@ stages:
 
     - script: |
         npm run build
-        npm version 0.0.0-preview.$(Build.BuildId) --no-git-tag-version
+        npm version 0.0.0-preview.$(today)$(Build.BuildId) --no-git-tag-version
         git restore package-lock.json
       displayName: 'Build npm (preview)'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
@@ -268,9 +284,17 @@ stages:
           git checkout -b python-$(branchName)
           kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l python -c InfoSubscription -n info_subscription --output python-sdk/src/info_subscription_sdk/generated
           git add python-sdk/src/info_subscription_sdk/generated
-          git commit -m "Update SDK from latest OpenAPI spec"
-          git push --set-upstream origin python-$(branchName)
-          sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          # kiota isn't guaranteed byte-identical across two runs; this second generation may
+          # end up matching what's already on main even though the first diff found a change.
+          # Guard against pushing a branch with no real commits, which fails PR creation.
+          if git diff --cached --quiet; then
+            echo "No actual changes after regeneration; skipping branch push and downstream steps."
+            echo "##vso[task.setvariable variable=changeDetected]false"
+          else
+            git commit -m "Update SDK from latest OpenAPI spec"
+            git push --set-upstream origin python-$(branchName)
+            sleep 2 # We wait a bit to avoid issues where the next step happens too fast!
+          fi
           rm -rf python-sdk/src/info_subscription_sdk/generated-temp
       displayName: 'Create feature branch'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
@@ -318,7 +342,7 @@ stages:
     - script: |
         source python-sdk/.venv/bin/activate
         cd python-sdk
-        sed -i "s/^version = \".*\"/version = \"0.0.0.dev$(Build.BuildId)\"/" pyproject.toml
+        sed -i "s/^version = \".*\"/version = \"0.0.0.dev$(today)$(Build.BuildId)\"/" pyproject.toml
         python -m build --outdir $(Build.ArtifactStagingDirectory)/python
       displayName: 'Build Python package (preview)'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
