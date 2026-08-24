@@ -27,7 +27,7 @@ The internal Azure Artifacts feeds (`S4/Internal`) use the build agent's identit
 
 ### Internal feed publishing
 
-Preview packages are published to `S4/Internal` automatically by `azure-pipeline.yml` whenever API changes are detected (i.e., whenever a PR is created). Versions follow the pattern `0.0.0-preview.{BuildId}` (NuGet/npm) and `0.0.0.dev{BuildId}` (Python). These are not tagged releases — they reflect the current API shape after each Kiota regeneration run.
+Preview packages are published to `S4/Internal` automatically by `azure-pipeline.yml` whenever API changes are detected (i.e., whenever a PR is created). Versions follow the pattern `0.0.0-preview{today}{BuildId}` (NuGet), `0.0.0-preview.{today}{BuildId}` (npm), and `0.0.0.dev{today}{BuildId}` (Python), where `{today}` is the `yyyyMMdd` pipeline run date. These are not tagged releases — they reflect the current API shape after each Kiota regeneration run.
 
 ## Releasing a new version
 

@@ -124,7 +124,7 @@ Use the `create_info_subscription_client(settings)` factory function from the `i
 
 `package-python.yml`: **Pack → Deploy (PyPI)**
 
-**Internal feed publishing** is handled by `azure-pipeline.yml` — preview packages (`0.0.0-preview.{BuildId}` / `0.0.0.dev{BuildId}`) are pushed to `S4/Internal` automatically whenever API changes are detected (i.e., a PR is also created). No internal stages in the release pipelines.
+**Internal feed publishing** is handled by `azure-pipeline.yml` — preview packages (`0.0.0-preview{today}{BuildId}` NuGet, `0.0.0-preview.{today}{BuildId}` npm, `0.0.0.dev{today}{BuildId}` Python, where `{today}` is the `yyyyMMdd` pipeline run date) are pushed to `S4/Internal` automatically whenever API changes are detected (i.e., a PR is also created). No internal stages in the release pipelines.
 
 See `RELEASE.md` for the full process and required pipeline secrets (`NUGET_APIKEY`, `GITHUB_TOKEN`, `NPM_TOKEN`, `PYPI_TOKEN`). Internal feeds (`S4/Internal`) authenticate via the build agent identity.
 
