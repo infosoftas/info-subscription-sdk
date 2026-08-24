@@ -110,6 +110,7 @@ stages:
         dotnet pack dotnet-sdk/src/Info.Subscription.Dotnet.csproj \
           --configuration Release \
           -p:Version=0.0.0-preview$(today)$(Build.BuildId) \
+          -p:ContinuousIntegrationBuild=true \
           --output $(Build.ArtifactStagingDirectory)/nuget
       displayName: 'Pack NuGet (preview)'
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
@@ -119,7 +120,7 @@ stages:
       condition: and(succeeded(), eq(variables['changeDetected'], 'true'))
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/nuget/*.nupkg'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/nuget/*.nupkg;$(Build.ArtifactStagingDirectory)/nuget/*.snupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: 'aeefa1b4-7b70-48a5-910f-324156d70b86'
 

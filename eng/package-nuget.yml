@@ -43,7 +43,7 @@ stages:
         useGlobalJson: true
 
     - script: |
-        dotnet pack --configuration Release --output $(NuGetDirectory) -p:Version=$RELEASE_TAG
+        dotnet pack --configuration Release --output $(NuGetDirectory) -p:Version=$RELEASE_TAG -p:ContinuousIntegrationBuild=true
       displayName: 'Pack NuGet'
       env:
         RELEASE_TAG: $(validateTag.ReleaseTag)
@@ -74,6 +74,7 @@ stages:
         useGlobalJson: true
 
     - script: |
+        # nuget.org auto-discovers the matching .snupkg alongside each .nupkg pushed from the same directory
         for file in $(Pipeline.Workspace)/nuget/*.nupkg; do
           dotnet nuget push "$file" --api-key "$(NUGET_APIKEY)" --source https://api.nuget.org/v3/index.json --skip-duplicate
         done

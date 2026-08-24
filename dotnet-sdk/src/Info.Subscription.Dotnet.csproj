@@ -9,6 +9,16 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
+  <!-- Symbol package (snupkg) + SourceLink so consumers can step into real source while debugging -->
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- CI env var is set by Azure Pipelines agents; keeps local dev builds non-deterministic-path -->
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true' or '$(TF_BUILD)' == 'True'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
 
   <!-- NuGet Package Information Metadata -->
   <PropertyGroup>
@@ -36,6 +46,10 @@
   <ItemGroup>
       <!-- The reproducable builds package basically does as this blog post describes, it just does it automatically!: https://devblogs.microsoft.com/dotnet/producing-packages-with-source-link/ -->
       <PackageReference Include="DotNet.ReproducibleBuilds" Version="2.0.2">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
