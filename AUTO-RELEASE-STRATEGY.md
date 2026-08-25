@@ -3,14 +3,14 @@
 Working document describing how this repository moves from *manual* releases (human merges the
 Kiota-generated PR, then hand-tags `main`) to *automated* releases.
 
-Status: **proposal / in progress**. Steps 1–2 are implemented; step 3 (tag bot, dry-run) is
-implemented; steps 4–5 are not started.
+Status: **proposal / in progress**. Steps 1–4 are implemented; step 5 (breaking-change
+classification) is implemented; auto-merge wiring itself is still pending a deliberate go-ahead.
 
 ## Where we are today
 
 | Pipeline | Trigger | What it does |
 |---|---|---|
-| `eng/azure-pipeline.yml` | Weekly cron (Mon 03:00 UTC), `always: true` | Regenerates all three SDKs from the live OpenAPI spec, publishes `0.0.0-preview…` packages to the `S4/Internal` feed, opens **one PR per language** |
+| `eng/azure-pipeline.yml` | Weekly cron (Mon 03:00 UTC), `always: true` | Regenerates all three SDKs from the live OpenAPI spec, classifies the spec diff as breaking/additive via `oasdiff`, publishes `0.0.0-preview…` packages to the `S4/Internal` feed, opens **one PR** labeled `breaking` or `auto-release` |
 | `eng/package-nuget.yml` | CalVer git tag | Pack + push to NuGet.org, create GitHub Release |
 | `eng/package-npm.yml` | CalVer git tag | Pack + push to npmjs.org |
 | `eng/package-python.yml` | CalVer git tag | Build + push to PyPI |
@@ -106,8 +106,22 @@ Kiota regeneration can silently drop or rename operations. Classify the diff bef
   require a human.
 - Additive only → allow auto-merge.
 
-A cheap first heuristic: flag any **file deletion** inside a `generated/` tree, or any removed
-public member. Anything flagged goes to a human.
+> **Implemented — using `oasdiff` against the spec, not the generated code.** Rather than a
+> per-language regex heuristic over generated `.cs`/`.ts`/`.py` (three heuristics, three failure
+> modes), the generator pipeline commits a spec snapshot at `eng/openapi-spec.json` and diffs it
+> against the freshly fetched live spec with `oasdiff breaking --fail-on WARN` right after
+> regeneration. `--fail-on WARN` is required — verified locally that `oasdiff` exits `0` by
+> default even when it reports removed operations, since those are ⚠️-level by default; without
+> that flag every run would look clean. Non-zero exit (breaking, or any oasdiff error) applies the
+> `breaking` label and includes the markdown changelog in the PR body; a clean diff applies
+> `auto-release`. The baseline file is updated to the new spec in the same commit as the code, so
+> the next run's diff always starts from what was actually last shipped. Labels are created
+> on-the-fly (`gh label create ... || true`) so no separate one-time repo setup is needed for this
+> part. As explicitly accepted up front: this only catches API-contract regressions that trace
+> back to the spec — a Kiota/runtime regression with no spec change (like the
+> `@microsoft/kiota-bundle` version-mismatch bug found in step 1) won't be flagged here, but that
+> class of problem is already caught by the build/smoke validation from step 1, which runs
+> regardless of this classification's result.
 
 ## CalVer versus auto-release
 
@@ -136,7 +150,10 @@ No decision made yet.
 2. Merge the three generated PRs into one. ✅ done
 3. Add the tag bot, running in dry-run (log the tag, do not push) for a few cycles. ✅ done
 4. Enable tag push. ✅ done
-5. Enable auto-merge — only once steps 1–4 are trusted.
+5. Enable auto-merge — only once steps 1–4 are trusted. Classification is done (`breaking` /
+   `auto-release` labels via `oasdiff`); actually wiring `gh pr merge --auto` plus the two
+   one-time repo settings (enable auto-merge, require the ADO check on `main`) is still pending a
+   deliberate go-ahead.
 
 > **Step 3 implemented — as a GitHub Actions workflow, not an ADO pipeline.** Unlike steps 1–2,
 > the tag bot doesn't touch ADO-specific resources (agent pools, service connections, internal
