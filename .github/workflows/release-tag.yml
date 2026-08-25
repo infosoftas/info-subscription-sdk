@@ -1,0 +1,85 @@
+# Tag bot: computes the next CalVer version whenever `main` changes under an SDK source tree.
+# Step 3 of AUTO-RELEASE-STRATEGY.md — runs in DRY-RUN by default: it logs the tag it *would*
+# push but does not create or push anything. Flip `dry_run` to false (step 4 of the strategy)
+# once a few dry-run cycles have been reviewed and trusted.
+#
+# Runs as a GitHub Actions workflow (rather than an ADO pipeline) because it only needs to read
+# git tags/history and push a tag back to this same GitHub repo -- no ADO-specific resources
+# (agent pools, service connections, internal feeds) are involved. Pushing the resulting tag is
+# what triggers the three ADO release pipelines (package-nuget.yml, package-npm.yml,
+# package-python.yml), unchanged -- see RELEASE.md.
+name: Release Tag Bot
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dotnet-sdk/src/**'
+      - 'typescript-sdk/src/**'
+      - 'python-sdk/src/**'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Log the computed tag without pushing it'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write # needed once dry_run is disabled, to push the tag
+
+env:
+  # Manual runs can override via the workflow_dispatch input; push-triggered runs always dry-run
+  # until step 4 of AUTO-RELEASE-STRATEGY.md flips this default to 'false'.
+  DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}
+
+jobs:
+  compute-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # need full tag history to find the highest MICRO this month
+
+      - name: Compute next CalVer tag
+        id: compute
+        run: |
+          set -euo pipefail
+
+          HEAD_TAG=$(git tag --points-at HEAD)
+          if [ -n "$HEAD_TAG" ]; then
+            echo "HEAD is already tagged ($HEAD_TAG). Nothing to do."
+            echo "should_tag=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          YEAR=$(date -u +%Y)
+          MONTH=$(date -u +%-m) # unpadded month, per RELEASE.md CalVer rules
+
+          HIGHEST_MICRO=0
+          for t in $(git tag --list "${YEAR}.${MONTH}.*"); do
+            MICRO="${t##*.}"
+            if [[ "$MICRO" =~ ^[0-9]+$ ]] && [ "$MICRO" -gt "$HIGHEST_MICRO" ]; then
+              HIGHEST_MICRO=$MICRO
+            fi
+          done
+
+          NEXT_TAG="${YEAR}.${MONTH}.$((HIGHEST_MICRO + 1))"
+
+          echo "Next release tag would be: $NEXT_TAG"
+          echo "next_tag=$NEXT_TAG" >> "$GITHUB_OUTPUT"
+          echo "should_tag=true" >> "$GITHUB_OUTPUT"
+
+      - name: 'Dry-run: log tag (no push)'
+        if: steps.compute.outputs.should_tag == 'true' && env.DRY_RUN == 'true'
+        run: |
+          echo "[dry-run] Would run: git tag ${{ steps.compute.outputs.next_tag }} && git push origin ${{ steps.compute.outputs.next_tag }}"
+          echo "DRY_RUN is on. No tag was created or pushed."
+
+      - name: Push release tag
+        if: steps.compute.outputs.should_tag == 'true' && env.DRY_RUN != 'true'
+        run: |
+          git config user.name "S4 Release Bot"
+          git config user.email "s4-release-bot@users.noreply.github.com"
+          git tag ${{ steps.compute.outputs.next_tag }}
+          git push origin ${{ steps.compute.outputs.next_tag }}

@@ -14,6 +14,7 @@ implemented; steps 4–5 are not started.
 | `eng/package-nuget.yml` | CalVer git tag | Pack + push to NuGet.org, create GitHub Release |
 | `eng/package-npm.yml` | CalVer git tag | Pack + push to npmjs.org |
 | `eng/package-python.yml` | CalVer git tag | Build + push to PyPI |
+| `.github/workflows/release-tag.yml` | Push to `main` touching SDK `src/` (or manual dispatch) | Computes the next CalVer tag; dry-run only today (step 3) |
 
 Two manual steps sit between "the API changed" and "consumers can install it":
 
@@ -137,17 +138,21 @@ No decision made yet.
 4. Enable tag push.
 5. Enable auto-merge — only once steps 1–4 are trusted.
 
-> **Step 3 implemented.** New pipeline `eng/release-tag.yml`, triggered on pushes to `main` that
-> touch `dotnet-sdk/src`, `typescript-sdk/src`, or `python-sdk/src`. It computes the CalVer tag
-> that *would* be created next (`YYYY.M.<highest existing MICRO this month + 1>`, unpadded per
-> `RELEASE.md`), skips entirely if `HEAD` is already tagged, and — gated by a `dryRun` pipeline
-> variable that defaults to `true` — only logs the tag it would push. No tag is created or pushed
-> yet. `persistCredentials: true` is set on checkout now so that flipping `dryRun` to `false`
-> later (step 4) is a one-line change with no pipeline restructuring. The repo has no tags today,
-> so the first computed tag would be `YYYY.M.1`; confirmed with a standalone simulation of the
-> arithmetic. The multi-tag/multi-month case (highest MICRO within the current month only) was
-> reviewed by hand rather than executed live — a local WSL bash quoting quirk got in the way of a
-> local dry run, and the real pipeline runs on a genuine Linux agent unaffected by it — so this
-> is worth an extra look at the first real dry-run execution in ADO.
+> **Step 3 implemented — as a GitHub Actions workflow, not an ADO pipeline.** Unlike steps 1–2,
+> the tag bot doesn't touch ADO-specific resources (agent pools, service connections, internal
+> feeds) — it only reads git tags/history and pushes a tag back to this repo, so it lives at
+> `.github/workflows/release-tag.yml` instead of under `eng/`. It triggers on pushes to `main`
+> that touch `dotnet-sdk/src`, `typescript-sdk/src`, or `python-sdk/src` (plus a manual
+> `workflow_dispatch` for on-demand runs). It computes the CalVer tag that *would* be created next
+> (`YYYY.M.<highest existing MICRO this month + 1>`, unpadded per `RELEASE.md`), skips entirely if
+> `HEAD` is already tagged, and — gated by a `DRY_RUN` env var that defaults to `true` — only logs
+> the tag it would push. No tag is created or pushed yet. `permissions: contents: write` is
+> already granted so flipping `DRY_RUN` to `false` later (step 4) is a one-line change. Pushing
+> the resulting tag still fires the three existing ADO release pipelines unchanged, since those
+> trigger off tags on the GitHub repo resource. The repo has no tags today, so the first computed
+> tag would be `YYYY.M.1`; confirmed with a standalone simulation of the arithmetic. The
+> multi-tag/multi-month case (highest MICRO within the current month only) was reviewed by hand
+> rather than executed live — a local WSL bash quoting quirk got in the way of a local dry run —
+> so this is worth an extra look at the first real dry-run execution in Actions.
 
 Each step is independently useful and independently revertible.
