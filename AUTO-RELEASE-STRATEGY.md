@@ -3,8 +3,8 @@
 Working document describing how this repository moves from *manual* releases (human merges the
 Kiota-generated PR, then hand-tags `main`) to *automated* releases.
 
-Status: **proposal / in progress**. Steps 1–4 are implemented; step 5 (breaking-change
-classification) is implemented; auto-merge wiring itself is still pending a deliberate go-ahead.
+Status: **all 5 steps implemented.** Auto-merge is wired and the two one-time repo governance
+settings (`allow_auto_merge`, branch protection on `main`) are enabled.
 
 ## Where we are today
 
@@ -14,7 +14,7 @@ classification) is implemented; auto-merge wiring itself is still pending a deli
 | `eng/package-nuget.yml` | CalVer git tag | Pack + push to NuGet.org, create GitHub Release |
 | `eng/package-npm.yml` | CalVer git tag | Pack + push to npmjs.org |
 | `eng/package-python.yml` | CalVer git tag | Build + push to PyPI |
-| `.github/workflows/release-tag.yml` | Push to `main` touching SDK `src/` (or manual dispatch) | Computes the next CalVer tag and pushes it (steps 3–4 done; step 5 auto-merge still pending) |
+| `.github/workflows/release-tag.yml` | Push to `main` touching SDK `src/` (or manual dispatch) | Computes the next CalVer tag and pushes it |
 
 Two manual steps sit between "the API changed" and "consumers can install it":
 
@@ -87,6 +87,23 @@ Do not release directly out of the generator. Instead:
 
 Humans retain a veto by simply not enabling auto-merge on a risky diff.
 
+> **Implemented — with a correction to the original assumption.** The plan above assumed ADO
+> would post a commit status back to GitHub for free, since `resources.repositories.self` is
+> declared as a GitHub-type resource. That's false: checked against a real PR commit created by a
+> full pipeline run and it had `total_count: 0` GitHub commit statuses — only GitHub's own default
+> CodeQL code-scanning checks appeared. Branch protection had nothing real to require. Fixed by
+> having the pipeline explicitly report its own result: right after the shared branch is pushed
+> (i.e. once build/smoke validation and the oasdiff classification have already succeeded), a
+> "Report validation status to GitHub" step calls
+> `gh api repos/.../statuses/{sha} -f state=success -f context=sdk-pipeline/validated`. The PR
+> creation step then calls `gh pr merge --auto --squash` whenever the diff was classified
+> `auto-release`; `breaking`-labeled PRs are left unmerged for a human. Two one-time repo
+> settings were required and are now applied: `allow_auto_merge` on the repo, and branch
+> protection on `main` requiring the `sdk-pipeline/validated` status plus the existing CodeQL
+> checks (`CodeQL`, `Analyze (csharp)`, `Analyze (python)`, `Analyze (javascript-typescript)`) —
+> the latter is a repo-wide policy change (affects human PRs too), applied with the user's
+> explicit sign-off.
+
 ### 4. Tag bot on `main`
 
 New pipeline (`eng/release-tag.yml`), triggered by `main`, path-filtered to the SDK source trees:
@@ -150,10 +167,10 @@ No decision made yet.
 2. Merge the three generated PRs into one. ✅ done
 3. Add the tag bot, running in dry-run (log the tag, do not push) for a few cycles. ✅ done
 4. Enable tag push. ✅ done
-5. Enable auto-merge — only once steps 1–4 are trusted. Classification is done (`breaking` /
-   `auto-release` labels via `oasdiff`); actually wiring `gh pr merge --auto` plus the two
-   one-time repo settings (enable auto-merge, require the ADO check on `main`) is still pending a
-   deliberate go-ahead.
+5. Enable auto-merge — only once steps 1–4 are trusted. ✅ done: `oasdiff` classification labels
+   the PR `breaking`/`auto-release`, the pipeline posts its own `sdk-pipeline/validated` GitHub
+   commit status (ADO does not do this automatically), `gh pr merge --auto --squash` is called for
+   `auto-release` PRs, and `main` now requires that status plus CodeQL before any merge.
 
 > **Step 3 implemented — as a GitHub Actions workflow, not an ADO pipeline.** Unlike steps 1–2,
 > the tag bot doesn't touch ADO-specific resources (agent pools, service connections, internal

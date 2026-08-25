@@ -283,6 +283,30 @@ stages:
       displayName: 'Push shared feature branch'
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'))
 
+    # ADO does not automatically post a commit status back to GitHub just because "self" is a
+    # GitHub-type resource (verified: a real PR commit had total_count=0 statuses, only GitHub's
+    # own CodeQL checks showed up). Branch protection has nothing to require unless we post one
+    # ourselves, so we do that explicitly here, once validation above has already succeeded.
+    - task: get-github-token-task@1
+      displayName: Get GitHub token (status)
+      name: getGitHubTokenStatus
+      condition: and(succeeded(), eq(variables['anyChanged'], 'true'))
+      inputs:
+        githubServiceConnection: 'infosoftas'
+
+    - script: |
+        set -e
+        sha=$(git rev-parse HEAD)
+        gh api "repos/infosoftas/didactic-octo-chainsaw/statuses/$sha" \
+          -f state=success \
+          -f context=sdk-pipeline/validated \
+          -f description="Build, smoke test and oasdiff classification passed" \
+          -f target_url="$(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
+      displayName: 'Report validation status to GitHub'
+      condition: and(succeeded(), eq(variables['anyChanged'], 'true'))
+      env:
+        GH_TOKEN: $(GitHub.InstallationToken)
+
     # --- Publish preview packages only for the languages that changed ---
 
     - script: |
@@ -380,7 +404,14 @@ stages:
         label="auto-release"
         [ "$(breakingChange)" = "true" ] && label="breaking"
 
-        gh pr create --title "S4 SDK Update $(today)" --body-file $(Agent.TempDirectory)/pr-body.md --head "$(branchName)" --base main --repo infosoftas/didactic-octo-chainsaw --reviewer infosoftas/infosoft-devs -a esbenbach --label "$label"
+        pr_url=$(gh pr create --title "S4 SDK Update $(today)" --body-file $(Agent.TempDirectory)/pr-body.md --head "$(branchName)" --base main --repo infosoftas/didactic-octo-chainsaw --reviewer infosoftas/infosoft-devs -a esbenbach --label "$label")
+        echo "Created PR: $pr_url"
+
+        # Additive-only changes merge themselves once required checks (sdk-pipeline/validated,
+        # CodeQL) pass. Breaking changes are left for a human to review and merge manually.
+        if [ "$label" = "auto-release" ]; then
+          gh pr merge "$pr_url" --auto --squash --repo infosoftas/didactic-octo-chainsaw
+        fi
       displayName: 'Create Pull Request'
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'))
       env:
