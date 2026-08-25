@@ -1,13 +1,15 @@
-# Tag bot: computes the next CalVer version whenever `main` changes under an SDK source tree.
-# Step 3 of AUTO-RELEASE-STRATEGY.md — runs in DRY-RUN by default: it logs the tag it *would*
-# push but does not create or push anything. Flip `dry_run` to false (step 4 of the strategy)
-# once a few dry-run cycles have been reviewed and trusted.
+# Tag bot: computes the next CalVer version whenever `main` changes under an SDK source tree,
+# and pushes that tag -- which triggers the three ADO release pipelines (package-nuget.yml,
+# package-npm.yml, package-python.yml), publishing real packages to NuGet.org, npmjs.org and
+# PyPI. See RELEASE.md for the CalVer format and what a pushed tag triggers.
+#
+# Step 4 of AUTO-RELEASE-STRATEGY.md: push-triggered runs are live (DRY_RUN=false) now that
+# steps 1-3 have been verified. A manual workflow_dispatch run still defaults to dry-run unless
+# `dry_run: false` is explicitly passed, as a safety net for on-demand use.
 #
 # Runs as a GitHub Actions workflow (rather than an ADO pipeline) because it only needs to read
 # git tags/history and push a tag back to this same GitHub repo -- no ADO-specific resources
-# (agent pools, service connections, internal feeds) are involved. Pushing the resulting tag is
-# what triggers the three ADO release pipelines (package-nuget.yml, package-npm.yml,
-# package-python.yml), unchanged -- see RELEASE.md.
+# (agent pools, service connections, internal feeds) are involved.
 name: Release Tag Bot
 
 on:
@@ -26,12 +28,13 @@ on:
         default: true
 
 permissions:
-  contents: write # needed once dry_run is disabled, to push the tag
+  contents: write # needed to push the tag
 
 env:
-  # Manual runs can override via the workflow_dispatch input; push-triggered runs always dry-run
-  # until step 4 of AUTO-RELEASE-STRATEGY.md flips this default to 'false'.
-  DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}
+  # Manual runs default to dry-run (safety net) unless dry_run: false is explicitly passed.
+  # Push-triggered runs are live: DRY_RUN=false, so a computed tag is actually pushed.
+  DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+
 
 jobs:
   compute-tag:

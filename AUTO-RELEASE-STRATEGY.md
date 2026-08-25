@@ -14,7 +14,7 @@ implemented; steps 4–5 are not started.
 | `eng/package-nuget.yml` | CalVer git tag | Pack + push to NuGet.org, create GitHub Release |
 | `eng/package-npm.yml` | CalVer git tag | Pack + push to npmjs.org |
 | `eng/package-python.yml` | CalVer git tag | Build + push to PyPI |
-| `.github/workflows/release-tag.yml` | Push to `main` touching SDK `src/` (or manual dispatch) | Computes the next CalVer tag; dry-run only today (step 3) |
+| `.github/workflows/release-tag.yml` | Push to `main` touching SDK `src/` (or manual dispatch) | Computes the next CalVer tag and pushes it (steps 3–4 done; step 5 auto-merge still pending) |
 
 Two manual steps sit between "the API changed" and "consumers can install it":
 
@@ -135,7 +135,7 @@ No decision made yet.
 1. Add build and smoke validation to the generator pipeline. ✅ done
 2. Merge the three generated PRs into one. ✅ done
 3. Add the tag bot, running in dry-run (log the tag, do not push) for a few cycles. ✅ done
-4. Enable tag push.
+4. Enable tag push. ✅ done
 5. Enable auto-merge — only once steps 1–4 are trusted.
 
 > **Step 3 implemented — as a GitHub Actions workflow, not an ADO pipeline.** Unlike steps 1–2,
@@ -154,5 +154,15 @@ No decision made yet.
 > multi-tag/multi-month case (highest MICRO within the current month only) was reviewed by hand
 > rather than executed live — a local WSL bash quoting quirk got in the way of a local dry run —
 > so this is worth an extra look at the first real dry-run execution in Actions.
+>
+> **Step 4 implemented.** Push-triggered runs of `.github/workflows/release-tag.yml` now default
+> `DRY_RUN` to `false` — a push to `main` touching an SDK `src/` tree computes the next CalVer tag
+> and actually pushes it, which fires the three ADO release pipelines and publishes real packages
+> to NuGet.org, npmjs.org and PyPI. Manual `workflow_dispatch` runs still default to dry-run
+> (`dry_run: true`) as a safety net; pass `dry_run: false` explicitly to push a tag by hand. No
+> live end-to-end run was performed as part of implementing this step — doing so would push a real
+> tag and trigger real publishes to public package registries, which cannot be undone (none of the
+> three registries allow republishing a version), so that should only happen with an explicit,
+> deliberate go-ahead, not as a routine verification step.
 
 Each step is independently useful and independently revertible.
