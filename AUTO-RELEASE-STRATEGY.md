@@ -3,7 +3,8 @@
 Working document describing how this repository moves from *manual* releases (human merges the
 Kiota-generated PR, then hand-tags `main`) to *automated* releases.
 
-Status: **proposal / in progress**. Steps 1–2 are implemented; steps 3–5 are not started.
+Status: **proposal / in progress**. Steps 1–2 are implemented; step 3 (tag bot, dry-run) is
+implemented; steps 4–5 are not started.
 
 ## Where we are today
 
@@ -132,8 +133,21 @@ No decision made yet.
 
 1. Add build and smoke validation to the generator pipeline. ✅ done
 2. Merge the three generated PRs into one. ✅ done
-3. Add the tag bot, running in dry-run (log the tag, do not push) for a few cycles.
+3. Add the tag bot, running in dry-run (log the tag, do not push) for a few cycles. ✅ done
 4. Enable tag push.
 5. Enable auto-merge — only once steps 1–4 are trusted.
+
+> **Step 3 implemented.** New pipeline `eng/release-tag.yml`, triggered on pushes to `main` that
+> touch `dotnet-sdk/src`, `typescript-sdk/src`, or `python-sdk/src`. It computes the CalVer tag
+> that *would* be created next (`YYYY.M.<highest existing MICRO this month + 1>`, unpadded per
+> `RELEASE.md`), skips entirely if `HEAD` is already tagged, and — gated by a `dryRun` pipeline
+> variable that defaults to `true` — only logs the tag it would push. No tag is created or pushed
+> yet. `persistCredentials: true` is set on checkout now so that flipping `dryRun` to `false`
+> later (step 4) is a one-line change with no pipeline restructuring. The repo has no tags today,
+> so the first computed tag would be `YYYY.M.1`; confirmed with a standalone simulation of the
+> arithmetic. The multi-tag/multi-month case (highest MICRO within the current month only) was
+> reviewed by hand rather than executed live — a local WSL bash quoting quirk got in the way of a
+> local dry run, and the real pipeline runs on a genuine Linux agent unaffected by it — so this
+> is worth an extra look at the first real dry-run execution in ADO.
 
 Each step is independently useful and independently revertible.
