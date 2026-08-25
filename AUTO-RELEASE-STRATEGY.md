@@ -3,7 +3,7 @@
 Working document describing how this repository moves from *manual* releases (human merges the
 Kiota-generated PR, then hand-tags `main`) to *automated* releases.
 
-Status: **proposal / in progress**. Step 1 is being implemented; steps 2–5 are not started.
+Status: **proposal / in progress**. Steps 1–2 are implemented; steps 3–5 are not started.
 
 ## Where we are today
 
@@ -63,6 +63,17 @@ One branch `sdk-update-<date>-<buildid>` containing all three regenerated SDKs, 
 Trade-off: one language breaking blocks the whole update. Acceptable — the SDKs are already
 lockstep-versioned, so a partial release is not a meaningful outcome anyway.
 
+> **Implemented.** `eng/azure-pipeline.yml` collapsed from three parallel stages (one per
+> language, each with its own branch/PR) into a single stage and job that runs the three
+> languages sequentially: detect change → create one shared branch → regenerate only the
+> languages that changed onto it → validate only those languages → one commit, one push →
+> publish preview packages only for changed languages → one `gh pr create`. Sequential (not
+> parallel) execution was chosen deliberately: three stages pushing to the same branch from
+> separate agents/checkouts would race; a single job avoids that without needing branch-level
+> locking. Per-language change detection is preserved so an update that only touches one
+> language's generated output doesn't needlessly regenerate/validate/republish the other two —
+> but all languages that *did* change land in the same branch and PR.
+
 ### 3. Auto-merge rather than auto-tag
 
 Do not release directly out of the generator. Instead:
@@ -119,8 +130,8 @@ No decision made yet.
 
 ## Rollout order
 
-1. Add build and smoke validation to the generator pipeline. ← *in progress*
-2. Merge the three generated PRs into one.
+1. Add build and smoke validation to the generator pipeline. ✅ done
+2. Merge the three generated PRs into one. ✅ done
 3. Add the tag bot, running in dry-run (log the tag, do not push) for a few cycles.
 4. Enable tag push.
 5. Enable auto-merge — only once steps 1–4 are trusted.
