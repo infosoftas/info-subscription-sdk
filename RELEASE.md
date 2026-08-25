@@ -89,6 +89,29 @@ git push origin 2024.8.1-beta.1
 
 All three pipelines inject the version explicitly from the git tag string — NuGet via `-p:Version=<tag>`, npm via `npm version <tag>`, and PyPI via `sed` on `pyproject.toml`. The tag string is used verbatim, so a tag of `2024.8.1-beta.1` will produce pre-release packages on all three registries.
 
+## Automation (auto-release)
+
+`eng/azure-pipeline.yml` regenerates the SDKs weekly, validates them, classifies the API diff via
+`oasdiff`, opens a PR labeled `breaking` or `auto-release`, and — for `auto-release` PRs — calls
+`gh pr merge --auto`. The tag bot (`.github/workflows/release-tag.yml`) then tags `main`
+automatically on merge, which fires the three pipelines above. See `AUTO-RELEASE-STRATEGY.md` for
+the full design.
+
+### Branch protection on `main` and merging regular PRs
+
+`main` requires the `sdk-pipeline/validated` status check to pass before merging. **That status
+is only ever posted by the SDK generator pipeline itself** — it is not, and cannot easily be made,
+scoped to just the SDK-update PRs, so it will show as permanently pending ("expected, never
+reported") on any other PR to `main` (docs, CI tweaks, this file, etc.).
+
+For those PRs, either:
+- Merge via **"Merge without waiting for requirements to be met"** in the GitHub UI (requires
+  admin/bypass permission on the repo), or
+- `gh pr merge <number> --admin --squash`
+
+This is a deliberate, accepted trade-off rather than a bug — see `AUTO-RELEASE-STRATEGY.md` for
+why removing the check entirely was considered and rejected.
+
 ## Hotfixes
 
 For a hotfix to an older release:

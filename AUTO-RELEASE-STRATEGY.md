@@ -172,6 +172,17 @@ No decision made yet.
    commit status (ADO does not do this automatically), `gh pr merge --auto --squash` is called for
    `auto-release` PRs, and `main` now requires that status plus CodeQL before any merge.
 
+> **Known trade-off: `sdk-pipeline/validated` blocks ordinary human PRs to `main` too.** Required
+> status checks in classic branch protection apply to every PR targeting the branch — there's no
+> way to scope one to "only PRs opened by this pipeline". Since `sdk-pipeline/validated` is only
+> ever posted by the generator pipeline, any other PR (docs, CI changes, this repo's own PR #132)
+> sits with that check permanently "expected, never reported". Considered removing the check from
+> branch protection (it's arguably redundant anyway — the pipeline posts it *before* creating the
+> PR, once validation already passed in the same job, so it never actually needs branch protection
+> to make `--auto` "wait"). Decided to keep it as documentation-by-configuration of intent and
+> accept manual bypass (`gh pr merge --admin` / "merge without waiting for requirements") for
+> non-pipeline PRs instead — see `RELEASE.md`.
+
 > **Step 3 implemented — as a GitHub Actions workflow, not an ADO pipeline.** Unlike steps 1–2,
 > the tag bot doesn't touch ADO-specific resources (agent pools, service connections, internal
 > feeds) — it only reads git tags/history and pushes a tag back to this repo, so it lives at
