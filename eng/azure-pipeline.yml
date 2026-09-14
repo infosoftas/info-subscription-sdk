@@ -73,12 +73,13 @@ stages:
         packageType: 'sdk'
         version: '10.x'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Install kiota as a dotnet tool'
-      inputs:
-        command: custom
-        custom: tool
-        arguments: 'install --global Microsoft.OpenApi.Kiota'
+    - script: |
+        set -e
+        git clean -ffdx
+        git reset --hard HEAD
+        dotnet tool restore
+        dotnet tool run kiota --version
+      displayName: 'Restore pinned Kiota tool and clean working tree'
 
     - script: |
         set -e
@@ -93,19 +94,19 @@ stages:
     # --- Detect per-language changes (each generates into a throwaway dir and diffs it) ---
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated-temp
+        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated-temp
         diff -qr dotnet-sdk/src/generated-temp dotnet-sdk/src/generated -x .kiota.log -x kiota-lock.json && echo "##vso[task.setvariable variable=dotnetChanged]false" || true
         rm -rf dotnet-sdk/src/generated-temp
       displayName: 'Detect change: .NET SDK'
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated-temp
+        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated-temp
         diff -qr typescript-sdk/src/generated-temp typescript-sdk/src/generated -x .kiota.log -x kiota-lock.json && echo "##vso[task.setvariable variable=tsChanged]false" || true
         rm -rf typescript-sdk/src/generated-temp
       displayName: 'Detect change: TypeScript SDK'
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l python -c InfoSubscription -n info_subscription --output python-sdk/src/info_subscription_sdk/generated-temp
+        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l python -c InfoSubscription -n info_subscription --output python-sdk/src/info_subscription_sdk/generated-temp
         diff -qr python-sdk/src/info_subscription_sdk/generated-temp python-sdk/src/info_subscription_sdk/generated -x .kiota.log -x kiota-lock.json && echo "##vso[task.setvariable variable=pythonChanged]false" || true
         rm -rf python-sdk/src/info_subscription_sdk/generated-temp
       displayName: 'Detect change: Python SDK'
@@ -129,19 +130,19 @@ stages:
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'))
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated
+        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated
         git add dotnet-sdk/src/generated
       displayName: 'Regenerate: .NET SDK'
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'), eq(variables['dotnetChanged'], 'true'))
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated
+        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l TypeScript -c InfoSubscription -n info.subscription.ts --output typescript-sdk/src/generated
         git add typescript-sdk/src/generated
       displayName: 'Regenerate: TypeScript SDK'
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'), eq(variables['tsChanged'], 'true'))
 
     - script: |
-        kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l python -c InfoSubscription -n info_subscription --output python-sdk/src/info_subscription_sdk/generated
+        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l python -c InfoSubscription -n info_subscription --output python-sdk/src/info_subscription_sdk/generated
         git add python-sdk/src/info_subscription_sdk/generated
       displayName: 'Regenerate: Python SDK'
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'), eq(variables['pythonChanged'], 'true'))
