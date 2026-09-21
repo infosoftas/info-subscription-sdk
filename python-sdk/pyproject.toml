@@ -16,8 +16,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/infosoftas/didactic-octo-chainsaw"
-Repository = "https://github.com/infosoftas/didactic-octo-chainsaw"
+Homepage = "https://github.com/infosoftas/info-subscription-sdk"
+Repository = "https://github.com/infosoftas/info-subscription-sdk"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/info_subscription_sdk"]

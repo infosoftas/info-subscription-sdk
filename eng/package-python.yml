@@ -149,11 +149,11 @@ stages:
         githubServiceConnection: 'infosoftas'
 
     - script: |
-        if gh release view "$(ReleaseTag)" --repo infosoftas/didactic-octo-chainsaw >/dev/null 2>&1; then
+        if gh release view "$(ReleaseTag)" --repo infosoftas/info-subscription-sdk >/dev/null 2>&1; then
           echo "GitHub Release $(ReleaseTag) already exists -- skipping creation"
         else
           gh release create "$(ReleaseTag)" \
-            --repo infosoftas/didactic-octo-chainsaw \
+            --repo infosoftas/info-subscription-sdk \
             --title "$(ReleaseTag)" \
             --generate-notes \
             --notes "## Packages

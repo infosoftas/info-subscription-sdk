@@ -120,11 +120,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view "$RELEASE_TAG" --repo infosoftas/didactic-octo-chainsaw >/dev/null 2>&1; then
+          if gh release view "$RELEASE_TAG" --repo infosoftas/info-subscription-sdk >/dev/null 2>&1; then
             echo "GitHub Release $RELEASE_TAG already exists -- skipping creation"
           else
             gh release create "$RELEASE_TAG" \
-              --repo infosoftas/didactic-octo-chainsaw \
+              --repo infosoftas/info-subscription-sdk \
               --title "$RELEASE_TAG" \
               --generate-notes \
               --notes "## Packages

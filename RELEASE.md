@@ -5,7 +5,7 @@ Releases are driven by **git tags**. Pushing a CalVer tag triggers all three Git
 ## Prerequisites (one-time setup)
 
 The **NuGet** workflow (`.github/workflows/package-nuget.yml`) uses [NuGet Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing) (OIDC) instead of a stored API key. One-time setup:
-1. On nuget.org, add a Trusted Publishing policy for the `Infosoft.Info.Subscription.Dotnet` package: Repository Owner `infosoftas`, Repository `didactic-octo-chainsaw`, Workflow File `package-nuget.yml`.
+1. On nuget.org, add a Trusted Publishing policy for the `Infosoft.Info.Subscription.Dotnet` package: Repository Owner `infosoftas`, Repository `info-subscription-sdk`, Workflow File `package-nuget.yml`.
 2. No secret is needed — the workflow's `deploy` job requests an OIDC token (`permissions: id-token: write`) via the `NuGet/login@v1` action, using the `NuGetUsername` value hardcoded in the workflow, and exchanges it for a short-lived API key at publish time.
 
 One secret must be configured in GitHub for the **npm** workflow (`.github/workflows/package-npm.yml`):
@@ -65,15 +65,15 @@ A single tag triggers **all three** release workflows simultaneously. All SDKs s
 
 **`.github/workflows/package-nuget.yml`** (2 jobs):
 1. **Pack** — validate tag on HEAD, `dotnet pack` with `-p:Version=<tag>` (version injected explicitly from the git tag), publish artifact
-2. **Deploy** — push to [NuGet.org](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes (skipped if already created)
+2. **Deploy** — push to [NuGet.org](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) + create [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) with auto-generated notes (skipped if already created)
 
 **`.github/workflows/package-npm.yml`** (2 jobs):
 1. **Pack** — validate tag, `npm ci`, `npm run build`, inject version via `npm version`, `npm pack`, publish artifact
-2. **Deploy** — push to [npmjs.org](https://www.npmjs.com/package/@infosoft/info-subscription-ts) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes (skipped if already created)
+2. **Deploy** — push to [npmjs.org](https://www.npmjs.com/package/@infosoft/info-subscription-ts) + create [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) with auto-generated notes (skipped if already created)
 
 **`.github/workflows/package-python.yml`** (2 jobs):
 1. **Pack** — validate tag, inject version into `pyproject.toml` via `sed`, `python -m build`, publish artifact
-2. **Deploy** — push to [PyPI](https://pypi.org/project/infosoft-info-subscription/) via `twine` + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes (skipped if already created)
+2. **Deploy** — push to [PyPI](https://pypi.org/project/infosoft-info-subscription/) via `twine` + create [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) with auto-generated notes (skipped if already created)
 
 Since a single tag fires all three release workflows simultaneously, each Deploy job checks whether
 the GitHub Release already exists (`gh release view`) before creating it, so only the first
@@ -86,7 +86,7 @@ Release notes are generated automatically from merged PRs and commits since the 
 - NuGet: https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet
 - npm: https://www.npmjs.com/package/@infosoft/info-subscription-ts
 - PyPI: https://pypi.org/project/infosoft-info-subscription/
-- GitHub Releases: https://github.com/infosoftas/didactic-octo-chainsaw/releases
+- GitHub Releases: https://github.com/infosoftas/info-subscription-sdk/releases
 
 ## Pre-release versions
 

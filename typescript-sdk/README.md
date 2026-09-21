@@ -105,7 +105,7 @@ src/
 
 ## Feedback and contributions
 
-Open an issue or pull request on [GitHub](https://github.com/infosoftas/didactic-octo-chainsaw).
+Open an issue or pull request on [GitHub](https://github.com/infosoftas/info-subscription-sdk).
 
 ## Support
 

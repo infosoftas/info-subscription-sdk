@@ -18,7 +18,7 @@ resources:
   repositories:
     - repository: self
       type: github
-      name: infosoftas/didactic-octo-chainsaw
+      name: infosoftas/info-subscription-sdk
       endpoint: Github-SDKs # <-- Service Connection name
 
 variables:
@@ -298,7 +298,7 @@ stages:
     - script: |
         set -e
         sha=$(git rev-parse HEAD)
-        gh api "repos/infosoftas/didactic-octo-chainsaw/statuses/$sha" \
+        gh api "repos/infosoftas/info-subscription-sdk/statuses/$sha" \
           -f state=success \
           -f context=sdk-pipeline/validated \
           -f description="Build, smoke test and oasdiff classification passed" \
@@ -374,8 +374,8 @@ stages:
         githubServiceConnection: 'infosoftas'
 
     - script: |
-        gh label create breaking --color "d73a4a" --description "SDK update removes/narrows public API surface -- needs human review" --repo infosoftas/didactic-octo-chainsaw 2>/dev/null || true
-        gh label create auto-release --color "0e8a16" --description "SDK update is additive-only per oasdiff -- safe to auto-release" --repo infosoftas/didactic-octo-chainsaw 2>/dev/null || true
+        gh label create breaking --color "d73a4a" --description "SDK update removes/narrows public API surface -- needs human review" --repo infosoftas/info-subscription-sdk 2>/dev/null || true
+        gh label create auto-release --color "0e8a16" --description "SDK update is additive-only per oasdiff -- safe to auto-release" --repo infosoftas/info-subscription-sdk 2>/dev/null || true
       displayName: 'Ensure PR labels exist'
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'))
       env:
@@ -405,13 +405,13 @@ stages:
         label="auto-release"
         [ "$(breakingChange)" = "true" ] && label="breaking"
 
-        pr_url=$(gh pr create --title "S4 SDK Update $(today)" --body-file $(Agent.TempDirectory)/pr-body.md --head "$(branchName)" --base main --repo infosoftas/didactic-octo-chainsaw --reviewer infosoftas/infosoft-devs -a esbenbach --label "$label")
+        pr_url=$(gh pr create --title "S4 SDK Update $(today)" --body-file $(Agent.TempDirectory)/pr-body.md --head "$(branchName)" --base main --repo infosoftas/info-subscription-sdk --reviewer infosoftas/infosoft-devs -a esbenbach --label "$label")
         echo "Created PR: $pr_url"
 
         # Additive-only changes merge themselves once required checks (sdk-pipeline/validated,
         # CodeQL) pass. Breaking changes are left for a human to review and merge manually.
         if [ "$label" = "auto-release" ]; then
-          gh pr merge "$pr_url" --auto --squash --repo infosoftas/didactic-octo-chainsaw
+          gh pr merge "$pr_url" --auto --squash --repo infosoftas/info-subscription-sdk
         fi
       displayName: 'Create Pull Request'
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'))

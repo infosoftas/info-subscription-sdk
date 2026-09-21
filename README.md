@@ -12,10 +12,9 @@ Active SDKs:
 | TypeScript | [`@infosoft/info-subscription-ts`](https://www.npmjs.com/package/@infosoft/info-subscription-ts) on npmjs.org | `typescript-sdk/` |
 | Python | [`infosoft-info-subscription`](https://pypi.org/project/infosoft-info-subscription/) on PyPI | `python-sdk/` |
 
-> **Note on the repository name:** `didactic-octo-chainsaw` is a GitHub auto-generated placeholder
-> name. It hasn't been renamed yet while we're still ironing out quirks in the SDK generation and
-> release pipelines, and the repository remains private in the meantime. It will be renamed to
-> something more descriptive once things stabilize.
+> **Note on the repository name:** this repo was renamed from its original GitHub auto-generated
+> placeholder name (`didactic-octo-chainsaw`) to `info-subscription-sdk` once the SDK generation
+> and release pipelines stabilized. It remains private for now.
 
 ## Getting started
 
