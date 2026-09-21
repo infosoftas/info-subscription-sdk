@@ -43,7 +43,7 @@ stages:
         useGlobalJson: true
 
     - script: |
-        dotnet pack --configuration Release --output $(NuGetDirectory) -p:Version=$RELEASE_TAG -p:ContinuousIntegrationBuild=true
+        dotnet pack dotnet-sdk/src/Info.Subscription.Dotnet.csproj --configuration Release --output $(NuGetDirectory) -p:Version=$RELEASE_TAG -p:ContinuousIntegrationBuild=true
       displayName: 'Pack NuGet'
       env:
         RELEASE_TAG: $(validateTag.ReleaseTag)
