@@ -5,4 +5,5 @@ class InvoiceState(str, Enum):
     Issued = "Issued",
     Credited = "Credited",
     Paid = "Paid",
+    WrittenOff = "WrittenOff",
 

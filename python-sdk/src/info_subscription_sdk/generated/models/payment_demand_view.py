@@ -75,6 +75,10 @@ class PaymentDemandView(Parsable):
     subscriber_id: Optional[UUID] = None
     # An optional payment method transaction id.
     transaction_id: Optional[UUID] = None
+    # The reason for the write off.
+    write_off_reason: Optional[str] = None
+    # Indicates if the demand was written off and when.
+    write_off_time: Optional[datetime.datetime] = None
     
     @staticmethod
     def create_from_discriminator_value(parse_node: ParseNode) -> PaymentDemandView:
@@ -135,6 +139,8 @@ class PaymentDemandView(Parsable):
             "subscriberAccount": lambda n : setattr(self, 'subscriber_account', n.get_uuid_value()),
             "subscriberId": lambda n : setattr(self, 'subscriber_id', n.get_uuid_value()),
             "transactionId": lambda n : setattr(self, 'transaction_id', n.get_uuid_value()),
+            "writeOffReason": lambda n : setattr(self, 'write_off_reason', n.get_str_value()),
+            "writeOffTime": lambda n : setattr(self, 'write_off_time', n.get_datetime_value()),
         }
         return fields
     
@@ -174,5 +180,7 @@ class PaymentDemandView(Parsable):
         writer.write_uuid_value("subscriberAccount", self.subscriber_account)
         writer.write_uuid_value("subscriberId", self.subscriber_id)
         writer.write_uuid_value("transactionId", self.transaction_id)
+        writer.write_str_value("writeOffReason", self.write_off_reason)
+        writer.write_datetime_value("writeOffTime", self.write_off_time)
     
 

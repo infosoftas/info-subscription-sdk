@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System;
 namespace Info.Subscription.Dotnet.Models
 {
-    /// <summary>Gets the payment methods.</summary>
+    /// <summary>The available payment methods.</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public enum PaymentMethods
     {
@@ -50,6 +50,10 @@ namespace Info.Subscription.Dotnet.Models
         [EnumMember(Value = "eFaktura")]
         #pragma warning disable CS1591
         EFaktura,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "Mollie")]
+        #pragma warning disable CS1591
+        Mollie,
         #pragma warning restore CS1591
     }
 }

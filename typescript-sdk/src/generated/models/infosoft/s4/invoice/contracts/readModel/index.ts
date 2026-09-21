@@ -11,6 +11,7 @@ export const InvoiceStateObject = {
     Issued: "Issued",
     Credited: "Credited",
     Paid: "Paid",
+    WrittenOff: "WrittenOff",
 } as const;
 /* tslint:enable */
 /* eslint-enable */

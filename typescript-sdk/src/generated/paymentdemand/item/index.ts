@@ -10,6 +10,8 @@ import { ReminderRequestBuilderRequestsMetadata, type ReminderRequestBuilder } f
 // @ts-ignore
 import { RemindersRequestBuilderRequestsMetadata, type RemindersRequestBuilder } from './reminders/index.js';
 // @ts-ignore
+import { type WriteoffRequestBuilder, WriteoffRequestBuilderRequestsMetadata } from './writeoff/index.js';
+// @ts-ignore
 import { type BaseRequestBuilder, type KeysToExcludeForNavigationMetadata, type NavigationMetadata, type Parsable, type ParsableFactory, type ParseNode, type RequestConfiguration, type RequestInformation, type RequestsMetadata, type SerializationWriter } from '@microsoft/kiota-abstractions';
 
 /**
@@ -54,6 +56,10 @@ export interface PaymentdemandItemRequestBuilder extends BaseRequestBuilder<Paym
      */
     get reminders(): RemindersRequestBuilder;
     /**
+     * The writeoff property
+     */
+    get writeoff(): WriteoffRequestBuilder;
+    /**
      * Gets a specific payment demand.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @returns {Promise<AccountPaymentDemandView | EnterprisePlanDemandView | OrderPaymentDemandView | PaymentDemandView | SubscriptionPaymentDemandView>}
@@ -97,6 +103,9 @@ export const PaymentdemandItemRequestBuilderNavigationMetadata: Record<Exclude<k
     },
     reminders: {
         requestsMetadata: RemindersRequestBuilderRequestsMetadata,
+    },
+    writeoff: {
+        requestsMetadata: WriteoffRequestBuilderRequestsMetadata,
     },
 };
 /**

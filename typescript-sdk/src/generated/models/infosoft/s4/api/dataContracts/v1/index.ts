@@ -132,6 +132,7 @@ export const PaymentMethodsObject = {
     BetalingsService: "BetalingsService",
     Autogiro: "Autogiro",
     EFaktura: "eFaktura",
+    Mollie: "Mollie",
 } as const;
 /* tslint:enable */
 /* eslint-enable */

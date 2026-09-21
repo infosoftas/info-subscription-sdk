@@ -42,7 +42,7 @@ class OrderView(Parsable):
     payment_agreement_id: Optional[UUID] = None
     # Identifier of the payment produced by the order processing flow.
     payment_id: Optional[UUID] = None
-    # Gets the payment methods.
+    # The available payment methods.
     payment_method: Optional[PaymentMethods] = None
     # Identifies the source/type of the subscription plan associated with an order.Stored in the order event and read model to drive code-path branching at completion and cancellation.
     plan_source_type: Optional[OrderPlanSourceType] = None

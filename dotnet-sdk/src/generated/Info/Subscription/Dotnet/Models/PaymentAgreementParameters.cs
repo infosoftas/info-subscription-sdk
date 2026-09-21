@@ -14,6 +14,14 @@ namespace Info.Subscription.Dotnet.Models
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class PaymentAgreementParameters : IParsable
     {
+        /// <summary>Order parameters for Mollie agreement registration.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::Info.Subscription.Dotnet.Models.MollieAgreementOrderParameters? MollieParameters { get; set; }
+#nullable restore
+#else
+        public global::Info.Subscription.Dotnet.Models.MollieAgreementOrderParameters MollieParameters { get; set; }
+#endif
         /// <summary>Order parameters for PayEx ecommerce agreement registration.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -50,6 +58,7 @@ namespace Info.Subscription.Dotnet.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "mollieParameters", n => { MollieParameters = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.MollieAgreementOrderParameters>(global::Info.Subscription.Dotnet.Models.MollieAgreementOrderParameters.CreateFromDiscriminatorValue); } },
                 { "payExEcommerceParameters", n => { PayExEcommerceParameters = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.PayExEcommerceOrderParameters>(global::Info.Subscription.Dotnet.Models.PayExEcommerceOrderParameters.CreateFromDiscriminatorValue); } },
                 { "paymentMethod", n => { PaymentMethod = n.GetEnumValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.PaymentMethods>(); } },
                 { "vippsMobilePayParameters", n => { VippsMobilePayParameters = n.GetObjectValue<global::Info.Subscription.Dotnet.Models.VippsMobilePayOrderParameters>(global::Info.Subscription.Dotnet.Models.VippsMobilePayOrderParameters.CreateFromDiscriminatorValue); } },
@@ -62,6 +71,7 @@ namespace Info.Subscription.Dotnet.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.MollieAgreementOrderParameters>("mollieParameters", MollieParameters);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.PayExEcommerceOrderParameters>("payExEcommerceParameters", PayExEcommerceParameters);
             writer.WriteEnumValue<global::Info.Subscription.Dotnet.Models.Infosoft.S4.Api.DataContracts.V1.PaymentMethods>("paymentMethod", PaymentMethod);
             writer.WriteObjectValue<global::Info.Subscription.Dotnet.Models.VippsMobilePayOrderParameters>("vippsMobilePayParameters", VippsMobilePayParameters);

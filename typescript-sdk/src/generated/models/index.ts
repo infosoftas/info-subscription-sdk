@@ -837,6 +837,15 @@ export function createLogoFromDiscriminatorValue(parseNode: ParseNode | undefine
 /**
  * Creates a new instance of the appropriate class based on discriminator value
  * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {MollieAgreementOrderParameters}
+ */
+// @ts-ignore
+export function createMollieAgreementOrderParametersFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoMollieAgreementOrderParameters;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
  * @returns {ObserverOptions}
  */
 // @ts-ignore
@@ -1664,6 +1673,15 @@ export function createValidationResultModelFromDiscriminatorValue(parseNode: Par
 // @ts-ignore
 export function createVippsMobilePayOrderParametersFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
     return deserializeIntoVippsMobilePayOrderParameters;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {WriteOffPaymentDemand}
+ */
+// @ts-ignore
+export function createWriteOffPaymentDemandFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoWriteOffPaymentDemand;
 }
 /**
  * A collection of settings for controlling billing behaviour during crediting operations.
@@ -2783,6 +2801,20 @@ export function deserializeIntoLogo(logo: Partial<Logo> | undefined = {}) : Reco
 }
 /**
  * The deserialization information for the current model
+ * @param MollieAgreementOrderParameters The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoMollieAgreementOrderParameters(mollieAgreementOrderParameters: Partial<MollieAgreementOrderParameters> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "accountId": n => { mollieAgreementOrderParameters.accountId = n.getGuidValue(); },
+        "cancelUrl": n => { mollieAgreementOrderParameters.cancelUrl = n.getStringValue(); },
+        "culture": n => { mollieAgreementOrderParameters.culture = n.getStringValue(); },
+        "returnUrl": n => { mollieAgreementOrderParameters.returnUrl = n.getStringValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
  * @param ObserverOptions The instance to deserialize into.
  * @returns {Record<string, (node: ParseNode) => void>}
  */
@@ -3067,6 +3099,7 @@ export function deserializeIntoPayment(payment: Partial<Payment> | undefined = {
 // @ts-ignore
 export function deserializeIntoPaymentAgreementParameters(paymentAgreementParameters: Partial<PaymentAgreementParameters> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
+        "mollieParameters": n => { paymentAgreementParameters.mollieParameters = n.getObjectValue<MollieAgreementOrderParameters>(createMollieAgreementOrderParametersFromDiscriminatorValue); },
         "payExEcommerceParameters": n => { paymentAgreementParameters.payExEcommerceParameters = n.getObjectValue<PayExEcommerceOrderParameters>(createPayExEcommerceOrderParametersFromDiscriminatorValue); },
         "paymentMethod": n => { paymentAgreementParameters.paymentMethod = n.getEnumValue<PaymentMethods>(PaymentMethodsObject); },
         "vippsMobilePayParameters": n => { paymentAgreementParameters.vippsMobilePayParameters = n.getObjectValue<VippsMobilePayOrderParameters>(createVippsMobilePayOrderParametersFromDiscriminatorValue); },
@@ -3191,6 +3224,8 @@ export function deserializeIntoPaymentDemandView(paymentDemandView: Partial<Paym
         "subscriberAccount": n => { paymentDemandView.subscriberAccount = n.getGuidValue(); },
         "subscriberId": n => { paymentDemandView.subscriberId = n.getGuidValue(); },
         "transactionId": n => { paymentDemandView.transactionId = n.getGuidValue(); },
+        "writeOffReason": n => { paymentDemandView.writeOffReason = n.getStringValue(); },
+        "writeOffTime": n => { paymentDemandView.writeOffTime = n.getDateValue(); },
     }
 }
 /**
@@ -4080,6 +4115,18 @@ export function deserializeIntoVippsMobilePayOrderParameters(vippsMobilePayOrder
     }
 }
 /**
+ * The deserialization information for the current model
+ * @param WriteOffPaymentDemand The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoWriteOffPaymentDemand(writeOffPaymentDemand: Partial<WriteOffPaymentDemand> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "writeOffReason": n => { writeOffPaymentDemand.writeOffReason = n.getStringValue(); },
+        "writeOffTime": n => { writeOffPaymentDemand.writeOffTime = n.getDateValue(); },
+    }
+}
+/**
  * Request properties to do a lookup for Invoice Document support in PEPPOL.
  */
 export interface DocumentNetworkLookupRequest extends Parsable {
@@ -4508,6 +4555,27 @@ export interface Logo extends Parsable {
 }
 export type MatchingType = (typeof MatchingTypeObject)[keyof typeof MatchingTypeObject];
 /**
+ * Order parameters for Mollie agreement registration.
+ */
+export interface MollieAgreementOrderParameters extends Parsable {
+    /**
+     * The identifier that determines which Mollie account to use for this payment.
+     */
+    accountId?: Guid | null;
+    /**
+     * URL where the user is sent if he or she cancels the checkout.
+     */
+    cancelUrl?: string | null;
+    /**
+     * The culture code in a Mollie compatible format (affect the checkout window language).
+     */
+    culture?: string | null;
+    /**
+     * URL where the user is sent when returned from Mollie after completing the checkout.
+     */
+    returnUrl?: string | null;
+}
+/**
  * Order observer configuration options. At the current time only valid for VippsMobilePay processing.
  */
 export interface ObserverOptions extends Parsable {
@@ -4710,7 +4778,7 @@ export interface OrderView extends Parsable {
      */
     paymentId?: Guid | null;
     /**
-     * Gets the payment methods.
+     * The available payment methods.
      */
     paymentMethod?: PaymentMethods | null;
     /**
@@ -5055,6 +5123,10 @@ export interface Payment extends Parsable {
  */
 export interface PaymentAgreementParameters extends Parsable {
     /**
+     * Order parameters for Mollie agreement registration.
+     */
+    mollieParameters?: MollieAgreementOrderParameters | null;
+    /**
      * Order parameters for PayEx ecommerce agreement registration.
      */
     payExEcommerceParameters?: PayExEcommerceOrderParameters | null;
@@ -5340,6 +5412,14 @@ export interface PaymentDemandView extends Parsable {
      * An optional payment method transaction id.
      */
     transactionId?: Guid | null;
+    /**
+     * The reason for the write off.
+     */
+    writeOffReason?: string | null;
+    /**
+     * Indicates if the demand was written off and when.
+     */
+    writeOffTime?: Date | null;
 }
 export type PaymentMethods = (typeof PaymentMethodsObject)[keyof typeof PaymentMethodsObject];
 /**
@@ -6539,6 +6619,20 @@ export function serializeLogo(writer: SerializationWriter, logo: Partial<Logo> |
 /**
  * Serializes information the current object
  * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param MollieAgreementOrderParameters The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeMollieAgreementOrderParameters(writer: SerializationWriter, mollieAgreementOrderParameters: Partial<MollieAgreementOrderParameters> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!mollieAgreementOrderParameters || isSerializingDerivedType) { return; }
+    writer.writeGuidValue("accountId", mollieAgreementOrderParameters.accountId);
+    writer.writeStringValue("cancelUrl", mollieAgreementOrderParameters.cancelUrl);
+    writer.writeStringValue("culture", mollieAgreementOrderParameters.culture);
+    writer.writeStringValue("returnUrl", mollieAgreementOrderParameters.returnUrl);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
  * @param ObserverOptions The instance to serialize from.
  * @param writer Serialization writer to use to serialize this model
  */
@@ -6823,6 +6917,7 @@ export function serializePayment(writer: SerializationWriter, payment: Partial<P
 // @ts-ignore
 export function serializePaymentAgreementParameters(writer: SerializationWriter, paymentAgreementParameters: Partial<PaymentAgreementParameters> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
     if (!paymentAgreementParameters || isSerializingDerivedType) { return; }
+    writer.writeObjectValue<MollieAgreementOrderParameters>("mollieParameters", paymentAgreementParameters.mollieParameters, serializeMollieAgreementOrderParameters);
     writer.writeObjectValue<PayExEcommerceOrderParameters>("payExEcommerceParameters", paymentAgreementParameters.payExEcommerceParameters, serializePayExEcommerceOrderParameters);
     writer.writeEnumValue<PaymentMethods>("paymentMethod", paymentAgreementParameters.paymentMethod);
     writer.writeObjectValue<VippsMobilePayOrderParameters>("vippsMobilePayParameters", paymentAgreementParameters.vippsMobilePayParameters, serializeVippsMobilePayOrderParameters);
@@ -6947,6 +7042,8 @@ export function serializePaymentDemandView(writer: SerializationWriter, paymentD
     writer.writeGuidValue("subscriberAccount", paymentDemandView.subscriberAccount);
     writer.writeGuidValue("subscriberId", paymentDemandView.subscriberId);
     writer.writeGuidValue("transactionId", paymentDemandView.transactionId);
+    writer.writeStringValue("writeOffReason", paymentDemandView.writeOffReason);
+    writer.writeDateValue("writeOffTime", paymentDemandView.writeOffTime);
 }
 /**
  * Serializes information the current object
@@ -7833,6 +7930,18 @@ export function serializeVippsMobilePayOrderParameters(writer: SerializationWrit
     writer.writeGuidValue("accountId", vippsMobilePayOrderParameters.accountId);
     writer.writeBooleanValue("generateSubscriberContact", vippsMobilePayOrderParameters.generateSubscriberContact);
     writer.writeStringValue("profileScope", vippsMobilePayOrderParameters.profileScope);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param WriteOffPaymentDemand The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeWriteOffPaymentDemand(writer: SerializationWriter, writeOffPaymentDemand: Partial<WriteOffPaymentDemand> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!writeOffPaymentDemand || isSerializingDerivedType) { return; }
+    writer.writeStringValue("writeOffReason", writeOffPaymentDemand.writeOffReason);
+    writer.writeDateValue("writeOffTime", writeOffPaymentDemand.writeOffTime);
 }
 /**
  * A setting create.
@@ -9064,6 +9173,19 @@ export interface VippsMobilePayOrderParameters extends BaseVippsOrderParameters,
     profileScope?: string | null;
 }
 /**
+ * Provides information needed to write off a payment demand (in full), without creating a credit note.
+ */
+export interface WriteOffPaymentDemand extends Parsable {
+    /**
+     * The descriptive reasoning for the write off action.
+     */
+    writeOffReason?: string | null;
+    /**
+     * The time of the write off, if not specified will default to the time of command processing.
+     */
+    writeOffTime?: Date | null;
+}
+/**
  * Values that represent allowance types.
  */
 export const AllowanceTypeObject = {
@@ -9203,7 +9325,7 @@ export const PackageRulesObject = {
     AllowPriceOverride: "AllowPriceOverride",
 } as const;
 /**
- * Gets the payment methods.
+ * The available payment methods.
  */
 export const PaymentMethodsObject = {
     Invoice: "Invoice",
@@ -9217,6 +9339,7 @@ export const PaymentMethodsObject = {
     BetalingsService: "BetalingsService",
     Autogiro: "Autogiro",
     EFaktura: "eFaktura",
+    Mollie: "Mollie",
 } as const;
 /**
  * Values that represent subscription cancellation types.
