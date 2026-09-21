@@ -9,7 +9,7 @@ Active SDKs:
 | Language | Package | Directory |
 |---|---|---|
 | .NET | [`Infosoft.Info.Subscription.Dotnet`](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) on NuGet.org | `dotnet-sdk/` |
-| TypeScript | [`@infosoft/info-subscription-ts`](https://www.npmjs.com/package/@infosoft/info-subscription-ts) on npmjs.org | `typescript-sdk/` |
+| TypeScript | [`@infosoftas/info-subscription-ts`](https://www.npmjs.com/package/@infosoftas/info-subscription-ts) on npmjs.org | `typescript-sdk/` |
 | Python | [`infosoft-info-subscription`](https://pypi.org/project/infosoft-info-subscription/) on PyPI | `python-sdk/` |
 
 > **Note on the repository name:** this repo was renamed from its original GitHub auto-generated

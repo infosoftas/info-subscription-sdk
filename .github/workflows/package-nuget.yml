@@ -112,6 +112,6 @@ jobs:
               --generate-notes \
               --notes "## Packages
           - NuGet: [Infosoft.Info.Subscription.Dotnet@$RELEASE_TAG](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet/$RELEASE_TAG)
-          - npm: [@infosoft/info-subscription-ts@$RELEASE_TAG](https://www.npmjs.com/package/@infosoft/info-subscription-ts/v/$RELEASE_TAG)
+          - npm: [@infosoftas/info-subscription-ts@$RELEASE_TAG](https://www.npmjs.com/package/@infosoftas/info-subscription-ts/v/$RELEASE_TAG)
           - PyPI: [infosoft-info-subscription@$RELEASE_TAG](https://pypi.org/project/infosoft-info-subscription/$RELEASE_TAG/)"
           fi
