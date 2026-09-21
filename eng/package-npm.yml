@@ -33,10 +33,10 @@ stages:
         echo "##vso[task.setvariable variable=ReleaseTag]$TAG"
       displayName: 'Validate tag on HEAD'
 
-    - task: UseNodeVersion@1
+    - task: UseNode@1
       displayName: 'Setup Node.js'
       inputs:
-        versionSpec: $(NODE_VERSION)
+        version: $(NODE_VERSION)
 
     - task: Cache@2
       displayName: 'Cache npm packages'
@@ -71,13 +71,16 @@ stages:
   - job: deploy_npm
     displayName: 'Push to npmjs.org'
     steps:
+    - checkout: self
+      fetchDepth: 0
+
     - download: current
       artifact: npm
 
-    - task: UseNodeVersion@1
+    - task: UseNode@1
       displayName: 'Setup Node.js'
       inputs:
-        versionSpec: $(NODE_VERSION)
+        version: $(NODE_VERSION)
 
     - script: |
         echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)" > .npmrc
@@ -86,3 +89,31 @@ stages:
       workingDirectory: '$(Pipeline.Workspace)/npm'
       env:
         NPM_TOKEN: $(NPM_TOKEN)
+
+    - script: |
+        TAG=$(git tag --points-at HEAD)
+        echo "##vso[task.setvariable variable=ReleaseTag]$TAG"
+      displayName: 'Resolve release tag'
+
+    - task: get-github-token-task@1
+      displayName: Get GitHub token
+      name: getGitHubToken
+      inputs:
+        githubServiceConnection: 'infosoftas'
+
+    - script: |
+        if gh release view "$(ReleaseTag)" --repo infosoftas/didactic-octo-chainsaw >/dev/null 2>&1; then
+          echo "GitHub Release $(ReleaseTag) already exists -- skipping creation"
+        else
+          gh release create "$(ReleaseTag)" \
+            --repo infosoftas/didactic-octo-chainsaw \
+            --title "$(ReleaseTag)" \
+            --generate-notes \
+            --notes "## Packages
+        - NuGet: [Infosoft.Info.Subscription.Dotnet@$(ReleaseTag)](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet/$(ReleaseTag))
+        - npm: [@infosoft/info-subscription-ts@$(ReleaseTag)](https://www.npmjs.com/package/@infosoft/info-subscription-ts/v/$(ReleaseTag))
+        - PyPI: [infosoft-info-subscription@$(ReleaseTag)](https://pypi.org/project/infosoft-info-subscription/$(ReleaseTag)/)"
+        fi
+      displayName: 'Create GitHub Release'
+      env:
+        GH_TOKEN: $(GitHub.InstallationToken)

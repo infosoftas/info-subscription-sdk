@@ -4,12 +4,11 @@ Releases are driven by **git tags**. Pushing a CalVer tag triggers all three ADO
 
 ## Prerequisites (one-time setup)
 
-Two secrets must be configured on the **NuGet** ADO pipeline (`package-nuget.yml`):
+One secret must be configured on the **NuGet** ADO pipeline (`package-nuget.yml`):
 
 | Variable | Description |
 |---|---|
 | `NUGET_APIKEY` | API key for the `Infosoft.Info.Subscription.Dotnet` package on NuGet.org |
-| `GITHUB_TOKEN` | GitHub PAT with `contents: write` permission on this repository (for creating GitHub Releases) |
 
 One secret must be configured on the **npm** ADO pipeline (`package-npm.yml`):
 
@@ -24,6 +23,10 @@ One secret must be configured on the **Python** ADO pipeline (`package-python.ym
 | `PYPI_TOKEN` | API token for the `infosoft-info-subscription` package on PyPI |
 
 The internal Azure Artifacts feeds (`S4/Internal`) use the build agent's identity — no additional secrets needed for internal publishing.
+
+No `GITHUB_TOKEN` secret is required for creating GitHub Releases. All three pipelines generate a
+short-lived GitHub App installation token at run time via the `get-github-token-task@1` task
+(same pattern as `azure-pipeline.yml`), using the `infosoftas` GitHub service connection.
 
 ### Internal feed publishing
 
@@ -59,15 +62,19 @@ A single tag triggers **all three** pipelines simultaneously. All SDKs share the
 
 **`package-nuget.yml`** (2 stages):
 1. **Pack** — validate tag on HEAD, `dotnet pack` with `-p:Version=<tag>` (version injected explicitly from the git tag), publish artifact
-2. **Deploy** — push to [NuGet.org](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes
+2. **Deploy** — push to [NuGet.org](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes (skipped if already created)
 
 **`package-npm.yml`** (2 stages):
 1. **Pack** — validate tag, `npm ci`, `npm run build`, inject version via `npm version`, `npm pack`, publish artifact
-2. **Deploy** — push to [npmjs.org](https://www.npmjs.com/package/@infosoft/info-subscription-ts)
+2. **Deploy** — push to [npmjs.org](https://www.npmjs.com/package/@infosoft/info-subscription-ts) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes (skipped if already created)
 
 **`package-python.yml`** (2 stages):
 1. **Pack** — validate tag, inject version into `pyproject.toml` via `sed`, `python -m build`, publish artifact
-2. **Deploy** — push to [PyPI](https://pypi.org/project/infosoft-info-subscription/) via `twine`
+2. **Deploy** — push to [PyPI](https://pypi.org/project/infosoft-info-subscription/) via `twine` + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes (skipped if already created)
+
+Since a single tag fires all three pipelines simultaneously, each Deploy stage checks whether the
+GitHub Release already exists (`gh release view`) before creating it, so only the first pipeline
+to reach that step actually creates the release — the others no-op.
 
 Release notes are generated automatically from merged PRs and commits since the previous tag (GitHub's `generate_release_notes` feature). No manual changelog editing is required.
 
@@ -94,8 +101,7 @@ All three pipelines inject the version explicitly from the git tag string — Nu
 `eng/azure-pipeline.yml` regenerates the SDKs weekly, validates them, classifies the API diff via
 `oasdiff`, opens a PR labeled `breaking` or `auto-release`, and — for `auto-release` PRs — calls
 `gh pr merge --auto`. The tag bot (`.github/workflows/release-tag.yml`) then tags `main`
-automatically on merge, which fires the three pipelines above. See `AUTO-RELEASE-STRATEGY.md` for
-the full design.
+automatically on merge, which fires the three pipelines above.
 
 ### Branch protection on `main` and merging regular PRs
 
@@ -109,8 +115,7 @@ For those PRs, either:
   admin/bypass permission on the repo), or
 - `gh pr merge <number> --admin --squash`
 
-This is a deliberate, accepted trade-off rather than a bug — see `AUTO-RELEASE-STRATEGY.md` for
-why removing the check entirely was considered and rejected.
+This is a deliberate, accepted trade-off rather than a bug.
 
 ## Hotfixes
 
