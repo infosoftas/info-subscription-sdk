@@ -16,7 +16,7 @@ env:
   DOTNET_NOLOGO: 'true'
   NuGetDirectory: nuget
   RELEASE_TAG: ${{ github.ref_name }}
-  NuGetUsername: Infosoft # nuget.org account matching the Trusted Publishing policy for this workflow
+  NuGetUsername: esbenbach # nuget.org account of the Trusted Publishing policy creator (not the package/org owner)
 
 jobs:
   pack:
