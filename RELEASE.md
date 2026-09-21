@@ -8,11 +8,10 @@ The **NuGet** workflow (`.github/workflows/package-nuget.yml`) uses [NuGet Trust
 1. On nuget.org, add a Trusted Publishing policy for the `Infosoft.Info.Subscription.Dotnet` package: Repository Owner `infosoftas`, Repository `info-subscription-sdk`, Workflow File `package-nuget.yml`.
 2. No secret is needed — the workflow's `deploy` job requests an OIDC token (`permissions: id-token: write`) via the `NuGet/login@v1` action, using the `NuGetUsername` value hardcoded in the workflow, and exchanges it for a short-lived API key at publish time.
 
-One secret must be configured in GitHub for the **npm** workflow (`.github/workflows/package-npm.yml`):
-
-| Variable | Description |
-|---|---|
-| `NPM_TOKEN` | Access token for the `@infosoft/info-subscription-ts` package on npmjs.org |
+The **npm** workflow (`.github/workflows/package-npm.yml`) uses [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC) instead of a stored token. One-time setup:
+1. On npmjs.com, open the `@infosoft/info-subscription-ts` package's **Settings → Trusted Publisher**, add a GitHub Actions publisher: Repository Owner `infosoftas`, Repository `info-subscription-sdk`, Workflow File `package-npm.yml`.
+2. No secret is needed — the workflow's `deploy` job requests an OIDC token (`permissions: id-token: write`), and `npm publish` (CLI >=11.5.1, ensured by the `npm install -g npm@latest` step) automatically exchanges it for a short-lived publish token.
+3. Recommended: once the trusted publisher is verified working, go to the package's **Settings → Publishing access** and select "Require two-factor authentication and disallow tokens" to disable classic token-based publishing.
 
 One secret must be configured in GitHub for the **Python** workflow (`.github/workflows/package-python.yml`):
 
@@ -20,7 +19,7 @@ One secret must be configured in GitHub for the **Python** workflow (`.github/wo
 |---|---|
 | `PYPI_TOKEN` | API token for the `infosoft-info-subscription` package on PyPI |
 
-Configure the npm/PyPI values as repository or environment secrets in GitHub Actions. The historical
+Configure the PyPI value as a repository or environment secret in GitHub Actions. The historical
 ADO pipeline files under `eng/package-*.yml` remain in the repo as reference-only copies of the
 old release flow; they are no longer the active public release mechanism.
 
@@ -69,7 +68,7 @@ A single tag triggers **all three** release workflows simultaneously. All SDKs s
 
 **`.github/workflows/package-npm.yml`** (2 jobs):
 1. **Pack** — validate tag, `npm ci`, `npm run build`, inject version via `npm version`, `npm pack`, publish artifact
-2. **Deploy** — push to [npmjs.org](https://www.npmjs.com/package/@infosoft/info-subscription-ts) + create [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) with auto-generated notes (skipped if already created)
+2. **Deploy** — publish to [npmjs.org](https://www.npmjs.com/package/@infosoft/info-subscription-ts) via Trusted Publishing (OIDC) + create [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) with auto-generated notes (skipped if already created)
 
 **`.github/workflows/package-python.yml`** (2 jobs):
 1. **Pack** — validate tag, inject version into `pyproject.toml` via `sed`, `python -m build`, publish artifact
