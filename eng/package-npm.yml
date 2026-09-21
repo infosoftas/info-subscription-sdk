@@ -55,6 +55,7 @@ stages:
       workingDirectory: typescript-sdk
 
     - script: |
+        mkdir -p $(PackageDirectory)
         npm version $(ReleaseTag) --no-git-tag-version
         npm pack --pack-destination $(PackageDirectory)
       displayName: 'Pack npm package'
