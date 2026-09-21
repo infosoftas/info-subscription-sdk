@@ -8,9 +8,13 @@ pr: none
 
 # Pipeline variables
 variables:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
-  DOTNET_NOLOGO: 'true'
-  NuGetDirectory: '$(Build.ArtifactStagingDirectory)/nuget'
+  - group: 'NuGet Tools Installation'
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: '1'
+  - name: DOTNET_NOLOGO
+    value: 'true'
+  - name: NuGetDirectory
+    value: '$(Build.ArtifactStagingDirectory)/nuget'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -76,11 +80,11 @@ stages:
     - script: |
         # nuget.org auto-discovers the matching .snupkg alongside each .nupkg pushed from the same directory
         for file in $(Pipeline.Workspace)/nuget/*.nupkg; do
-          dotnet nuget push "$file" --api-key "$(NUGET_APIKEY)" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          dotnet nuget push "$file" --api-key "$(NuGetApiKey)" --source https://api.nuget.org/v3/index.json --skip-duplicate
         done
       displayName: 'Publish to NuGet.org'
       env:
-        NUGET_APIKEY: $(NUGET_APIKEY)
+        NuGetApiKey: $(NuGetApiKey)
 
     - task: get-github-token-task@1
       displayName: Get GitHub token
