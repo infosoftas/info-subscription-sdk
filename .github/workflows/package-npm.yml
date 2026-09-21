@@ -93,7 +93,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Update npm to a version that supports Trusted Publishing
-        run: npm install -g npm@latest
+        run: npm install -g npm@^11.5.1
 
       - name: Publish to npmjs.org (Trusted Publishing)
         working-directory: ${{ env.PackageDirectory }}
