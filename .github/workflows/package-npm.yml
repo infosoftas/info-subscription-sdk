@@ -105,7 +105,14 @@ jobs:
             exit 1
           fi
 
-          npm publish *.tgz --provenance --access public
+          # npm refuses to publish a prerelease version to the "latest" dist-tag,
+          # so tag any tag containing a hyphen (e.g. 2024.8.1-preview1) as "next".
+          NPM_TAG="latest"
+          if [[ "$RELEASE_TAG" == *-* ]]; then
+            NPM_TAG="next"
+          fi
+
+          npm publish *.tgz --provenance --access public --tag "$NPM_TAG"
 
       - name: Create GitHub Release
         env:
