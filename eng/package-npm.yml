@@ -33,10 +33,10 @@ stages:
         echo "##vso[task.setvariable variable=ReleaseTag]$TAG"
       displayName: 'Validate tag on HEAD'
 
-    - task: UseNodeVersion@1
+    - task: UseNode@1
       displayName: 'Setup Node.js'
       inputs:
-        versionSpec: $(NODE_VERSION)
+        version: $(NODE_VERSION)
 
     - task: Cache@2
       displayName: 'Cache npm packages'
@@ -77,10 +77,10 @@ stages:
     - download: current
       artifact: npm
 
-    - task: UseNodeVersion@1
+    - task: UseNode@1
       displayName: 'Setup Node.js'
       inputs:
-        versionSpec: $(NODE_VERSION)
+        version: $(NODE_VERSION)
 
     - script: |
         echo "//registry.npmjs.org/:_authToken=$(NPM_TOKEN)" > .npmrc
