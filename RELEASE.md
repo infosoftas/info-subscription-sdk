@@ -10,7 +10,7 @@ The **NuGet** workflow (`.github/workflows/package-nuget.yml`) uses [NuGet Trust
 
 The **npm** workflow (`.github/workflows/package-npm.yml`) uses [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC) instead of a stored token. One-time setup:
 1. On npmjs.com, open the `@infosoftas/info-subscription-ts` package's **Settings → Trusted Publisher**, add a GitHub Actions publisher: Repository Owner `infosoftas`, Repository `info-subscription-sdk`, Workflow File `package-npm.yml`.
-2. No secret is needed — the workflow's `deploy` job requests an OIDC token (`permissions: id-token: write`), and `npm publish` (CLI >=11.5.1, ensured by the `npm install -g npm@latest` step) automatically exchanges it for a short-lived publish token.
+2. No secret is needed — the workflow's `deploy` job requests an OIDC token (`permissions: id-token: write`), and `npm publish` (CLI >=11.5.1, ensured by the `npm install -g npm@^11.5.1` step) automatically exchanges it for a short-lived publish token. Provenance (`--provenance`) is intentionally **not** used since it requires a public source repository, and this repo is private.
 3. Recommended: once the trusted publisher is verified working, go to the package's **Settings → Publishing access** and select "Require two-factor authentication and disallow tokens" to disable classic token-based publishing.
 
 One secret must be configured in GitHub for the **Python** workflow (`.github/workflows/package-python.yml`):
