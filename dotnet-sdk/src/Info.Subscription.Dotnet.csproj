@@ -15,6 +15,10 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- DotNet.ReproducibleBuilds defaults DebugType to "embedded" (pdb baked into the dll), which
+         leaves the .snupkg with no .pdb to ship and makes NuGet.org reject the symbol push.
+         Force separate portable pdbs so the snupkg is non-empty. -->
+    <DebugType>portable</DebugType>
     <!-- CI env var is set by Azure Pipelines agents; keeps local dev builds non-deterministic-path -->
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true' or '$(TF_BUILD)' == 'True'">true</ContinuousIntegrationBuild>
   </PropertyGroup>
