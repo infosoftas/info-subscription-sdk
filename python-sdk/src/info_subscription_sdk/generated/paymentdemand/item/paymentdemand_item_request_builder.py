@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from .paymentdemand_get_response import PaymentdemandGetResponse
     from .reminder.reminder_request_builder import ReminderRequestBuilder
     from .reminders.reminders_request_builder import RemindersRequestBuilder
+    from .writeoff.writeoff_request_builder import WriteoffRequestBuilder
 
 class PaymentdemandItemRequestBuilder(BaseRequestBuilder):
     """
@@ -100,6 +101,15 @@ class PaymentdemandItemRequestBuilder(BaseRequestBuilder):
         from .reminders.reminders_request_builder import RemindersRequestBuilder
 
         return RemindersRequestBuilder(self.request_adapter, self.path_parameters)
+    
+    @property
+    def writeoff(self) -> WriteoffRequestBuilder:
+        """
+        The writeoff property
+        """
+        from .writeoff.writeoff_request_builder import WriteoffRequestBuilder
+
+        return WriteoffRequestBuilder(self.request_adapter, self.path_parameters)
     
     @dataclass
     class PaymentdemandItemRequestBuilderGetRequestConfiguration(RequestConfiguration[QueryParameters]):

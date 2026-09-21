@@ -23,5 +23,9 @@ namespace Info.Subscription.Dotnet.Models.Infosoft.S4.Invoice.Contracts.ReadMode
         #pragma warning disable CS1591
         Paid,
         #pragma warning restore CS1591
+        [EnumMember(Value = "WrittenOff")]
+        #pragma warning disable CS1591
+        WrittenOff,
+        #pragma warning restore CS1591
     }
 }

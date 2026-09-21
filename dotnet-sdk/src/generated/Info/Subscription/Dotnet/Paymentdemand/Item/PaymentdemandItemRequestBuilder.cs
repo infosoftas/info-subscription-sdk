@@ -4,6 +4,7 @@ using Info.Subscription.Dotnet.Models;
 using Info.Subscription.Dotnet.Paymentdemand.Item.Credit;
 using Info.Subscription.Dotnet.Paymentdemand.Item.Reminder;
 using Info.Subscription.Dotnet.Paymentdemand.Item.Reminders;
+using Info.Subscription.Dotnet.Paymentdemand.Item.Writeoff;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -34,6 +35,11 @@ namespace Info.Subscription.Dotnet.Paymentdemand.Item
         public global::Info.Subscription.Dotnet.Paymentdemand.Item.Reminders.RemindersRequestBuilder Reminders
         {
             get => new global::Info.Subscription.Dotnet.Paymentdemand.Item.Reminders.RemindersRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The writeoff property</summary>
+        public global::Info.Subscription.Dotnet.Paymentdemand.Item.Writeoff.WriteoffRequestBuilder Writeoff
+        {
+            get => new global::Info.Subscription.Dotnet.Paymentdemand.Item.Writeoff.WriteoffRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Info.Subscription.Dotnet.Paymentdemand.Item.PaymentdemandItemRequestBuilder"/> and sets the default values.

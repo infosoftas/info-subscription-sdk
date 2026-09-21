@@ -61,7 +61,7 @@ namespace Info.Subscription.Dotnet.Models
         public Guid? PaymentAgreementId { get; set; }
         /// <summary>Identifier of the payment produced by the order processing flow.</summary>
         public Guid? PaymentId { get; set; }
-        /// <summary>Gets the payment methods.</summary>
+        /// <summary>The available payment methods.</summary>
         public global::Info.Subscription.Dotnet.Models.PaymentMethods? PaymentMethod { get; set; }
         /// <summary>Identifies the source/type of the subscription plan associated with an order.Stored in the order event and read model to drive code-path branching at completion and cancellation.</summary>
         public global::Info.Subscription.Dotnet.Models.OrderPlanSourceType? PlanSourceType { get; set; }

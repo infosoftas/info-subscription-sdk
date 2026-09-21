@@ -2981,7 +2981,7 @@
             "description": "Created",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": { }
               }
             }
           },
@@ -3405,7 +3405,7 @@
             "description": "Created",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": { }
               }
             }
           },
@@ -3647,7 +3647,7 @@
             "description": "Created",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": { }
               }
             }
           },
@@ -8990,6 +8990,63 @@
         "responses": {
           "202": {
             "description": "The credit action has been accepted and will be processed as soon as possible."
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "400": {
+            "description": "Invalid request, check your input parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResultModel"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/paymentdemand/{id}/writeoff": {
+      "post": {
+        "tags": [
+          "Demands"
+        ],
+        "summary": "Writes off the given payment demand.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The demand identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "Options for controlling the operation, such as the time and reason for the write-off.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WriteOffPaymentDemand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The write-off action has been accepted and will be processed as soon as possible."
           },
           "401": {
             "description": "Unauthorized"
@@ -17982,6 +18039,1588 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/account": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Creates a new Mollie account, required to process payments using the Mollie PSP.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "The account creation details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Api.CreateAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted, the account creation was forwarded to MollieService."
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets a filtered list of Mollie accounts. Defaults to listing active accounts only.",
+        "parameters": [
+          {
+            "name": "IsActive",
+            "in": "query",
+            "description": "filter by active status. Defaults to true (active accounts only).",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of accounts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Api.AccountResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/account/{id}": {
+      "put": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Updates the mutable fields of an existing Mollie account. Note that not all fields may be modified this way.",
+        "description": "To update/create a Refresh Token use the Connect endpoints.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The account identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "The update details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Api.UpdateAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The account update was forwarded to MollieService."
+          },
+          "404": {
+            "description": "No account was found with the given Id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Deletes a Mollie account.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The account identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The account deletion was forwarded to MollieService."
+          },
+          "404": {
+            "description": "No account was found with the given Id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets a specific Mollie account by its ID.",
+        "operationId": "GetMollieAccount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The account identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Api.AccountResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No account was found with the given id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/account/{id}/connect": {
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Starts the Mollie Connect authorization flow for an account, step 1 of generating/updating a refresh token.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The account identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "The caller-supplied anti-forgery state value to embed in the authorization URL. We recommend you use it, but if not, supply a random value.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorization URL and generated state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartAccountConnectResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Account not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/account/{id}/connect/token": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Completes Mollie Connect by exchanging an authorization code and storing the refresh token, step 2 of generating/updating a refresh token.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The account identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "The authorization code payload.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteAccountConnectTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The token exchange was forwarded to MollieService."
+          },
+          "400": {
+            "description": "Account, authorization code, or token response invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/customer": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Ensures a Mollie customer exists for the given subscriber (idempotent).",
+        "description": "If a customer for `(AccountId, SubscriberId)` already exists, the existing\nplatform `CustomerId` is returned in the `Location` header without creating a\nduplicate Mollie customer.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "The customer creation details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted, the customer creation was forwarded to MollieService."
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets a filtered list of Mollie customers.",
+        "parameters": [
+          {
+            "name": "AccountId",
+            "in": "query",
+            "description": "filter by Mollie account identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "SubscriberId",
+            "in": "query",
+            "description": "filter by platform subscriber identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of customers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/customer/{id}": {
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets a specific Mollie customer by its ID.",
+        "operationId": "GetMollieCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The customer identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The customer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No customer was found with the given id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/mandate": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Starts mandate registration for a subscriber with an initial payment.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "The mandate registration details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartMandateRegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted. The response body contains the checkout URL.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartMandateRegistrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets a filtered list of Mollie mandates.",
+        "parameters": [
+          {
+            "name": "AccountId",
+            "in": "query",
+            "description": "filter by Mollie account identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "SubscriberId",
+            "in": "query",
+            "description": "filter by platform subscriber identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "description": "filter by mandate lifecycle status.",
+            "schema": {
+              "$ref": "#/components/schemas/MandateStatus"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of mandates.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MandateResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/mandate/{id}": {
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets a specific Mollie mandate by its ID.",
+        "operationId": "GetMollieMandate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The mandate identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The mandate.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MandateResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No mandate was found with the given id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Soft-deactivates a mandate (local only; no remote Mollie API call). \nThe mandate remains but is no longer usable for recurring charges.",
+        "description": "Use this if you wish to keep the the Mandate on the Mollie side, but need to prevent further local charges.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The mandate identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted. The mandate will be deactivated."
+          },
+          "404": {
+            "description": "Mandate not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Mandate is not in a deactivatable state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/mandate/{id}/remote": {
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets the live Mollie mandate state directly from the Mollie API, bypassing the local state.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The mandate identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The remote mandate state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoteMandateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No mandate was found with the given id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/mandate/{id}/payment": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Performs a recurring on-demand charge against an active mandate.",
+        "description": "The request's `MandateId` identifies the target mandate; the ApiClient\n            forwards this action to MollieService's `Mandate/{id}/payment` route.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "The recurring payment details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerformMandatePaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Payment accepted for processing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerformMandatePaymentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or prerequisite not met (e.g. mandate not active).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mandate not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/mandate/{id}/revoke": {
+      "delete": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Revokes a mandate via the Mollie API (irreversible).\nThe mandate is cancelled at Mollie and no further charges are possible.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The mandate identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted. The mandate will be revoked."
+          },
+          "404": {
+            "description": "Mandate not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Mandate is not in a revocable state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/mandate/{id}/complete": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Completes mandate registration when the first payment is approved.\nUse this endpoint to finalize the mandate.\nThe handler fetches the current mandate status from Mollie and transitions to Active if valid.",
+        "description": "The mandate can also be completed automatically via webhooks/events sent by the Mollie platform.\nSo NOT calling this endpoint does not prevent the registration from completing.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The mandate identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "The Mollie mandate identifier and optional card details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmMandateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MandateResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted. Mandate completion will be processed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MandateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or prerequisite not met.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mandate not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/payment": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Creates a one-off hosted-checkout payment (`sequenceType:oneoff`) that does not require a mandate.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "The one-off payment details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOneOffPaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted. The response body contains the checkout URL.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateOneOffPaymentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets a filtered list of Mollie payments.",
+        "parameters": [
+          {
+            "name": "AccountId",
+            "in": "query",
+            "description": "filter by Mollie account identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MandateId",
+            "in": "query",
+            "description": "filter by platform mandate identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "description": "filter by payment lifecycle status.",
+            "schema": {
+              "$ref": "#/components/schemas/PaymentStatus"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A collection of payments.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Api.PaymentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/payment/{id}/capture": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Captures a previously authorized payment (e.g. first-invoice card authorization).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The platform payment identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted for processing."
+          },
+          "404": {
+            "description": "Payment not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/payment/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Cancels a payment that is still open or authorized (Mollie's `DELETE /payments/{id}` equivalent).\nCancelling a payment is transaction-scoped only — the underlying mandate, if any, is left untouched.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The platform payment identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The updated payment.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Api.PaymentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Payment not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/payment/{id}/refund": {
+      "post": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Refunds an existing payment.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The payment identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "requestBody": {
+          "description": "The refund details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefundPaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The refund response payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefundPaymentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Payment not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/payment/{id}": {
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets a specific Mollie payment by its Id.",
+        "operationId": "GetMolliePayment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The payment identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The payment.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Api.PaymentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No payment was found with the given id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "default": {
+            "description": "Default empty response"
+          }
+        }
+      }
+    },
+    "/mollie/payment/{id}/remote": {
+      "get": {
+        "tags": [
+          "Mollie"
+        ],
+        "summary": "Gets the live Mollie payment state directly from the Mollie API, bypassing the local state.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The platform payment identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/S4-TenantId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The remote payment state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemotePaymentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No payment was found with the given id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ProblemDetails"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "default": {
             "description": "Default empty response"
@@ -33138,7 +34777,8 @@
                 "$ref": "#/components/schemas/EventCampaign"
               }
             ],
-            "description": "Gets or sets the campaign."
+            "description": "Gets or sets the campaign.",
+            "nullable": true
           },
           "currency": {
             "type": "string",
@@ -34367,6 +36007,17 @@
         "additionalProperties": false,
         "description": "Class represents an AvtaleGiro claim."
       },
+      "CompleteAccountConnectTokenRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Gets or sets the authorization code to exchange."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request containing the authorization code returned by Mollie."
+      },
       "CompleteAgreementRegistration": {
         "type": "object",
         "properties": {
@@ -34495,6 +36146,11 @@
         },
         "additionalProperties": false,
         "description": "Represents a view contract of distribution innovation configuration."
+      },
+      "ConfirmMandateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Request body for confirming mandate registration."
       },
       "Contact": {
         "type": "object",
@@ -34857,6 +36513,44 @@
         "additionalProperties": false,
         "description": "Represent an charge to be billed on the next Invoice/Payment Demand."
       },
+      "CreateCustomerRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "an optional pre-assigned platform customer ID. A new ID is generated if omitted.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "description": "the Mollie account to create the customer under.",
+            "format": "uuid"
+          },
+          "subscriberId": {
+            "type": "string",
+            "description": "the platform subscriber identifier.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "the customer display name passed to Mollie. Optional — Mollie allows customers with no name.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "the customer email address passed to Mollie. Optional — Mollie allows customers with no email.",
+            "nullable": true
+          },
+          "locale": {
+            "type": "string",
+            "description": "the optional Mollie locale (e.g. `nl_NL`).",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request body for creating a new Mollie customer."
+      },
       "CreateDemand": {
         "type": "object",
         "properties": {
@@ -34944,6 +36638,83 @@
         },
         "additionalProperties": false,
         "description": "Properties for creating a new epayment with VippsMobilePay."
+      },
+      "CreateOneOffPaymentRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the payment, in UUID/GUID format. If omitted, a new GUID is generated automatically. Use this for idempotency as well.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "description": "The Mollie account to charge under.",
+            "format": "uuid"
+          },
+          "amount": {
+            "maximum": 1.7976931348623157E+308,
+            "minimum": 0.01,
+            "type": "number",
+            "description": "The payment amount (must be greater than zero).",
+            "format": "double"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string",
+            "description": "The ISO 4217 currency code (e.g. `EUR`)."
+          },
+          "description": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string",
+            "description": "The description shown on the Mollie checkout page."
+          },
+          "redirectUrl": {
+            "type": "string",
+            "description": "The URL to redirect the customer to after payment.",
+            "nullable": true
+          },
+          "cancelUrl": {
+            "type": "string",
+            "description": "The URL to redirect the customer to when checkout is cancelled.",
+            "nullable": true
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MandateMethod"
+            },
+            "description": "the preferred payment methods for the Mollie checkout request.",
+            "nullable": true
+          },
+          "captureMode": {
+            "$ref": "#/components/schemas/PaymentCaptureMode"
+          },
+          "accounting": {
+            "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Accounting"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request body for creating a one-off hosted-checkout payment."
+      },
+      "CreateOneOffPaymentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the platform payment identifier.",
+            "format": "uuid"
+          },
+          "checkoutUrl": {
+            "type": "string",
+            "description": "the Mollie-hosted checkout URL to redirect the customer to."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response body for a one-off hosted-checkout payment."
       },
       "CreateOrderPaymentDemand": {
         "type": "object",
@@ -35607,6 +37378,74 @@
           "XXX"
         ],
         "type": "string"
+      },
+      "CustomerProfile": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The customer display name passed to Mollie. Optional — Mollie allows customers with no name.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "The customer email address passed to Mollie. Optional — Mollie allows customers with no email.",
+            "nullable": true
+          },
+          "locale": {
+            "type": "string",
+            "description": "Optional Mollie locale (e.g. `nl_NL`).",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Profile data used to create a Mollie customer if one does not already exist for the\nsubscriber starting mandate registration."
+      },
+      "CustomerResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The platform customer identifier.",
+            "format": "uuid"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "The Mollie account this customer belongs to.",
+            "format": "uuid"
+          },
+          "subscriberId": {
+            "type": "string",
+            "description": "The platform subscriber identifier.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "The customer display name.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "The customer email address.",
+            "nullable": true
+          },
+          "locale": {
+            "type": "string",
+            "description": "The optional Mollie locale (e.g. `nl_NL`).",
+            "nullable": true
+          },
+          "mollieCustomerId": {
+            "type": "string",
+            "description": "The Mollie customer identifier (`cst_…`)."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "The timestamp when this customer was created.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response payload for customer read operations."
       },
       "DayOfWeek": {
         "enum": [
@@ -36702,7 +38541,8 @@
                 "$ref": "#/components/schemas/Infosoft.S4.Billing.Contracts.Api.Settlement.PercentOfDemandPolicy"
               }
             ],
-            "description": "The settlement policy if configured (defaults to 100% if not defined)."
+            "description": "The settlement policy if configured (defaults to 100% if not defined).",
+            "nullable": true
           },
           "cancellationProrationPolicyId": {
             "type": "string",
@@ -36748,7 +38588,8 @@
                 "$ref": "#/components/schemas/Infosoft.S4.Billing.Contracts.Api.Settlement.PercentOfDemandPolicy"
               }
             ],
-            "description": "An optional settlement policy. If omitted the default will be used."
+            "description": "An optional settlement policy. If omitted the default will be used.",
+            "nullable": true
           },
           "reminderPolicy": {
             "$ref": "#/components/schemas/ReminderPolicy"
@@ -37748,7 +39589,7 @@
             }
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": { }
       },
       "IdResult": {
         "type": "object",
@@ -38264,7 +40105,8 @@
           "SwedbankPay",
           "BetalingsService",
           "Autogiro",
-          "eFaktura"
+          "eFaktura",
+          "Mollie"
         ],
         "type": "string",
         "description": "Gets the payment methods."
@@ -38775,10 +40617,244 @@
           "Open",
           "Issued",
           "Credited",
-          "Paid"
+          "Paid",
+          "WrittenOff"
         ],
         "type": "string",
         "description": "Values that represent the invoice state."
+      },
+      "Infosoft.S4.Mollie.Contracts.Accounting": {
+        "type": "object",
+        "properties": {
+          "subscriberId": {
+            "type": "string",
+            "description": "Identifier for the subscriber.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "Identifier for the invoice.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "externalInvoiceIdentifier": {
+            "type": "string",
+            "description": "Identifier for the external invoice.",
+            "nullable": true
+          },
+          "subscriberAccountId": {
+            "type": "string",
+            "description": "Identifier for the subscriber account.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "organizationId": {
+            "type": "string",
+            "description": "Identifier for the organization.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "paymentRequestId": {
+            "type": "string",
+            "description": "Identifier for the payment request.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "paymentDemandId": {
+            "type": "string",
+            "description": "Identifier for the payment demand.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "paymentId": {
+            "type": "string",
+            "description": "Identifier for the payment.",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Various accounting and reporting parameters used by INFO-Subscription.\nSome of these values are purely for tracking/reporting/correlation purposes.\n\n\nProperties for payment creation will be used for payment matching in the most specific manner possible.\n1. ExternalInvoiceIdentifier\n2. InvoiceId\n3. SubscriberId/OrganizationId/SubscriberAccountId"
+      },
+      "Infosoft.S4.Mollie.Contracts.Api.AccountResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the account identifier.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "the display name."
+          },
+          "profileId": {
+            "type": "string",
+            "description": "the Mollie profile identifier (pfl_...). Not a secret."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "a value indicating whether this account is active."
+          },
+          "testMode": {
+            "type": "boolean",
+            "description": "a value indicating whether subsequent outbound Mollie API calls should target the test environment."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "the UTC timestamp when this account was created.",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "the UTC timestamp when this account was last updated.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "API response DTO for a Mollie account.\nSecret-related fields are intentionally omitted — secrets must never be returned via API."
+      },
+      "Infosoft.S4.Mollie.Contracts.Api.CreateAccountRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the ID for the new account. If not specified, a new Guid is generated.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "name": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "the display name for this account."
+          },
+          "profileId": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string",
+            "description": "the Mollie profile identifier (pfl_...). Not a secret."
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "the Mollie Connect OAuth refresh token obtained during account onboarding."
+          },
+          "testMode": {
+            "type": "boolean",
+            "description": "a value indicating whether subsequent outbound Mollie API calls should target the test environment."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request body for creating a new Mollie account."
+      },
+      "Infosoft.S4.Mollie.Contracts.Api.PaymentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the platform payment identifier.",
+            "format": "uuid"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "the Mollie account this payment belongs to.",
+            "format": "uuid"
+          },
+          "mandateId": {
+            "type": "string",
+            "description": "the platform mandate identifier, or `null` for one-off payments.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "molliePaymentId": {
+            "type": "string",
+            "description": "the Mollie payment identifier (`tr_…`)."
+          },
+          "sequenceType": {
+            "type": "string",
+            "description": "the sequence type of this payment (e.g. `\"first\"`, `\"recurring\"`)."
+          },
+          "status": {
+            "type": "string",
+            "description": "the lifecycle status of this payment."
+          },
+          "amount": {
+            "type": "number",
+            "description": "the payment amount.",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "description": "the ISO 4217 currency code."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "the UTC timestamp when this payment was created.",
+            "format": "date-time"
+          },
+          "paidAt": {
+            "type": "string",
+            "description": "the UTC timestamp when the payment was confirmed paid, or `null`.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "refunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Refund"
+            },
+            "description": "Refunds on this payment, if any."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Properties for a Mollie based Payment."
+      },
+      "Infosoft.S4.Mollie.Contracts.Api.UpdateAccountRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "the new display name."
+          },
+          "profileId": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string",
+            "description": "the new Mollie profile identifier (pfl_...). Not a secret."
+          },
+          "testMode": {
+            "type": "boolean",
+            "description": "a value indicating whether subsequent outbound Mollie API calls should target the test environment."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request body for updating a Mollie account's mutable fields."
+      },
+      "Infosoft.S4.Mollie.Contracts.Refund": {
+        "type": "object",
+        "properties": {
+          "mollieRefundId": {
+            "type": "string",
+            "description": "The Mollie refund identifier (`re_…`)."
+          },
+          "amount": {
+            "type": "number",
+            "description": "The refunded amount.",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "description": "The ISO 4217 currency code."
+          },
+          "status": {
+            "$ref": "#/components/schemas/PaymentRefundStatus"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Value object carrying the core data for a single Mollie refund."
       },
       "Infosoft.S4.PayEx.Contracts.Agreement": {
         "type": "object",
@@ -39910,7 +41986,8 @@
                 "$ref": "#/components/schemas/EventCampaign"
               }
             ],
-            "description": "An optional campaign for the agreement to start on."
+            "description": "An optional campaign for the agreement to start on.",
+            "nullable": true
           },
           "pricing": {
             "$ref": "#/components/schemas/Infosoft.S4.Vipps.Contracts.Price"
@@ -40743,7 +42820,9 @@
           "Credit",
           "Debit",
           "Balance",
-          "Refund"
+          "Refund",
+          "Summary",
+          "WriteOff"
         ],
         "type": "string",
         "description": "Values that represent ledger types."
@@ -40814,6 +42893,96 @@
         "additionalProperties": false,
         "description": "Class represents an AvtaleGiro mandate."
       },
+      "MandateMethod": {
+        "enum": [
+          "Card",
+          "Ideal",
+          "DirectDebit",
+          "Unknown"
+        ],
+        "type": "string",
+        "description": "Supported mandate (payment method) types for Mollie recurring payments."
+      },
+      "MandateResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the platform mandate identifier.",
+            "format": "uuid"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "the Mollie account this mandate belongs to.",
+            "format": "uuid"
+          },
+          "subscriberId": {
+            "type": "string",
+            "description": "the platform subscriber identifier.",
+            "format": "uuid"
+          },
+          "mollieCustomerId": {
+            "type": "string",
+            "description": "the Mollie customer identifier (`cst_…`)."
+          },
+          "mollieMandateId": {
+            "type": "string",
+            "description": "the Mollie mandate identifier (`mdt_…`), assigned once the mandate is completed. Null until then.",
+            "nullable": true
+          },
+          "initialPaymentId": {
+            "type": "string",
+            "description": "the initial payment identifier for the mandate-establishing payment.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "method": {
+            "$ref": "#/components/schemas/MandateMethod"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MandateStatus"
+          },
+          "checkoutUrl": {
+            "type": "string",
+            "description": "the Mollie-hosted checkout URL."
+          },
+          "cardLabel": {
+            "type": "string",
+            "description": "the card brand label (e.g., \"Visa\") — only set for creditcard mandates once completed.",
+            "nullable": true
+          },
+          "cardLastFour": {
+            "type": "string",
+            "description": "the last four digits of the card — only set for creditcard mandates once completed.",
+            "nullable": true
+          },
+          "cardExpiryDate": {
+            "type": "string",
+            "description": "the card expiry date — only set for creditcard mandates once completed.",
+            "format": "date",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "the UTC timestamp when this mandate was created.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Properties for a Mollie based Mandate."
+      },
+      "MandateStatus": {
+        "enum": [
+          "Unregistered",
+          "Pending",
+          "Active",
+          "Inactive",
+          "Revoked",
+          "Unknown"
+        ],
+        "type": "string",
+        "description": "Lifecycle states of a Mollie mandate."
+      },
       "MandateView": {
         "type": "object",
         "properties": {
@@ -40864,6 +43033,37 @@
         ],
         "type": "string",
         "description": "Values that represent matching variants"
+      },
+      "MollieAgreementOrderParameters": {
+        "required": [
+          "accountId",
+          "returnUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "returnUrl": {
+            "minLength": 1,
+            "type": "string",
+            "description": "URL where the user is sent when returned from Mollie after completing the checkout."
+          },
+          "cancelUrl": {
+            "type": "string",
+            "description": "URL where the user is sent if he or she cancels the checkout.",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "description": "The identifier that determines which Mollie account to use for this payment.",
+            "format": "uuid"
+          },
+          "culture": {
+            "type": "string",
+            "description": "The culture code in a Mollie compatible format (affect the checkout window language).",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Order parameters for Mollie agreement registration."
       },
       "Money": {
         "type": "object",
@@ -42295,6 +44495,9 @@
           },
           "vippsMobilePayParameters": {
             "$ref": "#/components/schemas/VippsMobilePayOrderParameters"
+          },
+          "mollieParameters": {
+            "$ref": "#/components/schemas/MollieAgreementOrderParameters"
           }
         },
         "additionalProperties": false,
@@ -42351,6 +44554,14 @@
         },
         "additionalProperties": false,
         "description": "A payment agreement view."
+      },
+      "PaymentCaptureMode": {
+        "enum": [
+          "Automatic",
+          "Manual"
+        ],
+        "type": "string",
+        "description": "Controls when funds are captured for a payment."
       },
       "PaymentDemandDetailView": {
         "type": "object",
@@ -42665,6 +44876,17 @@
             "format": "date-time",
             "nullable": true
           },
+          "writeOffTime": {
+            "type": "string",
+            "description": "Indicates if the demand was written off and when.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "writeOffReason": {
+            "type": "string",
+            "description": "The reason for the write off.",
+            "nullable": true
+          },
           "dueDate": {
             "type": "string",
             "description": "The payment due time.",
@@ -42888,10 +45110,11 @@
           "SwedbankPay",
           "BetalingsService",
           "Autogiro",
-          "eFaktura"
+          "eFaktura",
+          "Mollie"
         ],
         "type": "string",
-        "description": "Gets the payment methods."
+        "description": "The available payment methods."
       },
       "PaymentOrderResult": {
         "required": [
@@ -43002,10 +45225,20 @@
           "MobilePay",
           "Vipps",
           "OIO",
-          "SwedbankPay"
+          "SwedbankPay",
+          "Mollie"
         ],
         "type": "string",
         "description": "The enum which represents different types of payment type."
+      },
+      "PaymentRefundStatus": {
+        "enum": [
+          "Pending",
+          "Refunded",
+          "Failed"
+        ],
+        "type": "string",
+        "description": "Lifecycle status for a refund tracked on a payment aggregate."
       },
       "PaymentRequestBase": {
         "type": "object",
@@ -43128,6 +45361,20 @@
         "additionalProperties": false,
         "description": "Defines a payment request stop rule that halts payment attempts after a specified number of failures.\nWhen the maximum number of payment request attempts is reached and the delay period has passed,\nall future payment requests are automatically stopped."
       },
+      "PaymentStatus": {
+        "enum": [
+          "Pending",
+          "Authorized",
+          "Captured",
+          "Paid",
+          "Failed",
+          "Expired",
+          "Canceled",
+          "ChargedBack"
+        ],
+        "type": "string",
+        "description": "Lifecycle status for a platform payment."
+      },
       "PaymentStopReschedule": {
         "required": [
           "reason"
@@ -43166,7 +45413,7 @@
             "type": "number",
             "description": "Gets or sets the balance threshold amount that triggers the stop rule.\nWhen the subscriber's balance falls below this amount, payments are stopped.",
             "format": "double",
-            "example": -1000.0
+            "example": -1000.00
           }
         },
         "additionalProperties": false,
@@ -43247,6 +45494,73 @@
         "type": "object",
         "additionalProperties": false,
         "description": "A percent."
+      },
+      "PerformMandatePaymentRequest": {
+        "required": [
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "mandateId": {
+            "type": "string",
+            "description": "the platform mandate identifier to charge.",
+            "format": "uuid"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "the Mollie account under which the payment is created.",
+            "format": "uuid"
+          },
+          "subscriberId": {
+            "type": "string",
+            "description": "the platform subscriber identifier.",
+            "format": "uuid"
+          },
+          "amount": {
+            "maximum": 1.7976931348623157E+308,
+            "minimum": 0,
+            "type": "number",
+            "description": "the payment amount (must be positive).",
+            "format": "double"
+          },
+          "currency": {
+            "maxLength": 3,
+            "type": "string",
+            "description": "the ISO 4217 currency code (e.g. `EUR`)."
+          },
+          "description": {
+            "minLength": 1,
+            "type": "string",
+            "description": "the description shown on the Mollie payment."
+          },
+          "accounting": {
+            "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Accounting"
+          },
+          "paymentId": {
+            "type": "string",
+            "description": "The identifier of the INFO-Subscription payment, if not set a new one will be generated.",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request body creating a payment based on a mollie mandate."
+      },
+      "PerformMandatePaymentResponse": {
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "type": "string",
+            "description": "the platform payment identifier (aggregate ID / idempotency key).",
+            "format": "uuid"
+          },
+          "molliePaymentId": {
+            "type": "string",
+            "description": "the Mollie payment identifier (`tr_…`)."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response body forcreating a mandate based payment."
       },
       "Period": {
         "type": "object",
@@ -43927,7 +46241,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": { }
       },
       "ProcessedAccountPaymentRequestView": {
         "type": "object",
@@ -44847,6 +47161,33 @@
         "additionalProperties": false,
         "description": "Parameters to refund a charge."
       },
+      "RefundPaymentRequest": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "maximum": 1.7976931348623157E+308,
+            "minimum": 0.01,
+            "type": "number",
+            "description": "the refund amount.\nWhen omitted, the full payment amount is refunded.",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request body for refunding a payment."
+      },
+      "RefundPaymentResponse": {
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "type": "string",
+            "description": "the platform payment identifier.",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response body for refunding a payment."
+      },
       "ReleaseView": {
         "type": "object",
         "properties": {
@@ -45068,6 +47409,170 @@
         },
         "additionalProperties": false,
         "description": "A remote charge."
+      },
+      "RemoteMandateResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the Mollie mandate id."
+          },
+          "status": {
+            "type": "string",
+            "description": "the mandate status as reported by Mollie."
+          },
+          "method": {
+            "type": "string",
+            "description": "the payment method of this mandate.",
+            "nullable": true
+          },
+          "customerId": {
+            "type": "string",
+            "description": "the Mollie customer id that owns this mandate."
+          },
+          "signatureDate": {
+            "type": "string",
+            "description": "the mandate signature date.",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "the UTC timestamp when the mandate was created.",
+            "format": "date-time"
+          },
+          "cardLabel": {
+            "type": "string",
+            "description": "the masked card label for credit card mandates.",
+            "nullable": true
+          },
+          "cardLastFour": {
+            "type": "string",
+            "description": "the last four digits of the card.",
+            "nullable": true
+          },
+          "cardExpiryDate": {
+            "type": "string",
+            "description": "the card expiry date.",
+            "nullable": true
+          },
+          "cardHolder": {
+            "type": "string",
+            "description": "the card holder's name. Available for card mandates.",
+            "nullable": true
+          },
+          "cardFingerprint": {
+            "type": "string",
+            "description": "unique alphanumeric representation of this specific card, for identifying returning customers. Available for card mandates.",
+            "nullable": true
+          },
+          "consumerName": {
+            "type": "string",
+            "description": "the customer's name. Available for SEPA Direct Debit and PayPal mandates.",
+            "nullable": true
+          },
+          "consumerAccount": {
+            "type": "string",
+            "description": "the customer's IBAN (SEPA Direct Debit) or email address (PayPal). Available for SEPA Direct Debit and PayPal mandates.",
+            "nullable": true
+          },
+          "consumerBic": {
+            "type": "string",
+            "description": "the BIC of the customer's bank. Available for SEPA Direct Debit mandates.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response body for the live Mollie mandate state."
+      },
+      "RemotePaymentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the Mollie payment id (`tr_…`)."
+          },
+          "status": {
+            "type": "string",
+            "description": "the payment status as reported by Mollie."
+          },
+          "currency": {
+            "type": "string",
+            "description": "the payment amount currency."
+          },
+          "value": {
+            "type": "string",
+            "description": "the payment amount value as a decimal string."
+          },
+          "description": {
+            "type": "string",
+            "description": "a human-readable payment description.",
+            "nullable": true
+          },
+          "checkoutUrl": {
+            "type": "string",
+            "description": "the checkout URL for completing the payment.",
+            "nullable": true
+          },
+          "customerId": {
+            "type": "string",
+            "description": "the Mollie customer id associated with this payment.",
+            "nullable": true
+          },
+          "mandateId": {
+            "type": "string",
+            "description": "the Mollie mandate id used for this payment.",
+            "nullable": true
+          },
+          "method": {
+            "type": "string",
+            "description": "the payment method Mollie actually used/selected for this payment.",
+            "nullable": true
+          },
+          "sequenceType": {
+            "type": "string",
+            "description": "the payment sequence type.",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "the UTC timestamp when the payment was created.",
+            "format": "date-time"
+          },
+          "paidAt": {
+            "type": "string",
+            "description": "the UTC timestamp when the payment was paid, or `null`.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "failedAt": {
+            "type": "string",
+            "description": "the UTC timestamp when the payment failed, or `null`.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "profileId": {
+            "type": "string",
+            "description": "the Mollie profile id that this payment belongs to.",
+            "nullable": true
+          },
+          "cardLabel": {
+            "type": "string",
+            "description": "the card's brand/label (e.g. \"Visa\", \"Mastercard\"). Available for card payments once Mollie has detected it.",
+            "nullable": true
+          },
+          "cardLastFour": {
+            "type": "string",
+            "description": "the last four digits of the card number. Available for card payments.",
+            "nullable": true
+          },
+          "cardExpiryDate": {
+            "type": "string",
+            "description": "the card's expiry date in `YYYY-MM-DD` format. Available for card payments.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response body for the live Mollie payment state."
       },
       "RemoveAdditionalProductsRequest": {
         "type": "object",
@@ -45803,6 +48308,21 @@
         "additionalProperties": false,
         "description": "The specific deliveries export settings."
       },
+      "StartAccountConnectResponse": {
+        "type": "object",
+        "properties": {
+          "authorizationUrl": {
+            "type": "string",
+            "description": "Gets or sets the Mollie authorization URL."
+          },
+          "state": {
+            "type": "string",
+            "description": "Gets or sets the generated OAuth state returned to the caller."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response containing the Mollie authorization URL and generated OAuth state."
+      },
       "StartAgreementRegistration": {
         "type": "object",
         "allOf": [
@@ -45817,6 +48337,95 @@
         },
         "additionalProperties": false,
         "description": "Parameters to start a new authorization for an agreement, with an optional initial payment."
+      },
+      "StartMandateRegistrationRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the platform mandate identifier.\nIf not provided, a new identifier is generated.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "description": "the Mollie account under which the mandate is registered.",
+            "format": "uuid"
+          },
+          "subscriberId": {
+            "type": "string",
+            "description": "the platform subscriber identifier.",
+            "format": "uuid"
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MandateMethod"
+            },
+            "description": "the preferred payment methods for the Mollie checkout request.",
+            "nullable": true
+          },
+          "amount": {
+            "maximum": 1.7976931348623157E+308,
+            "minimum": 0,
+            "type": "number",
+            "description": "the first payment amount (must be zero or positive). A value of `0` registers the\nmandate via a zero-amount first payment — Mollie only accepts this for card and PayPal;\nother methods (e.g. SEPA Direct Debit) will be rejected by Mollie's API and surfaced to\nthe caller as a validation problem.",
+            "format": "double"
+          },
+          "currency": {
+            "maxLength": 3,
+            "type": "string",
+            "description": "the payment currency (ISO 4217, e.g. `EUR`)."
+          },
+          "description": {
+            "maxLength": 255,
+            "type": "string",
+            "description": "the description shown on the Mollie checkout page."
+          },
+          "redirectUrl": {
+            "maxLength": 2048,
+            "type": "string",
+            "description": "the URL to redirect the customer to after payment.",
+            "nullable": true
+          },
+          "cancelUrl": {
+            "maxLength": 2048,
+            "type": "string",
+            "description": "the URL to redirect the customer to when the checkout is cancelled.",
+            "nullable": true
+          },
+          "accounting": {
+            "$ref": "#/components/schemas/Infosoft.S4.Mollie.Contracts.Accounting"
+          },
+          "customerProfile": {
+            "$ref": "#/components/schemas/CustomerProfile"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request body for starting mandate registration."
+      },
+      "StartMandateRegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "mandateId": {
+            "type": "string",
+            "description": "The platform mandate identifier.",
+            "format": "uuid"
+          },
+          "checkoutUrl": {
+            "type": "string",
+            "description": "The Mollie-hosted checkout URL to redirect the customer to.",
+            "nullable": true
+          },
+          "initialPaymentId": {
+            "type": "string",
+            "description": "The identifier of the initial payment, if one exists.",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response body for starting mandate registration — carries the mandate ID and checkout URL."
       },
       "StartPaymentAuthorization": {
         "type": "object",
@@ -49458,6 +52067,26 @@
         "additionalProperties": false,
         "description": "Properties for writing off account transactions"
       },
+      "WriteOffPaymentDemand": {
+        "required": [
+          "writeOffReason"
+        ],
+        "type": "object",
+        "properties": {
+          "writeOffReason": {
+            "type": "string",
+            "description": "The descriptive reasoning for the write off action."
+          },
+          "writeOffTime": {
+            "type": "string",
+            "description": "The time of the write off, if not specified will default to the time of command processing.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Provides information needed to write off a payment demand (in full), without creating a credit note."
+      },
       "Z_EVENT_com.info-subscription.CreditNoteIssued": {
         "title": "com.info-subscription.CreditNoteIssued",
         "type": "object",
@@ -49999,18 +52628,12 @@
         "type": "openIdConnect",
         "description": "Open ID Connection Authentication and Authorizaiton for Adb2cIdentityPlatform",
         "openIdConnectUrl": "https://login.microsoftonline.com/7bdcdd56-3ba6-4e6d-a841-db4816d7909d/v2.0/.well-known/openid-configuration"
-      },
-      "Auth0": {
-        "type": "openIdConnect",
-        "description": "Open ID Connection Authentication Provided for Auth0",
-        "openIdConnectUrl": "https://infosubscription.eu.auth0.com/.well-known/openid-configuration"
       }
     }
   },
   "security": [
-    {},
-    {},
-    {}
+    { },
+    { }
   ],
   "tags": [
     {
@@ -50139,6 +52762,9 @@
     },
     {
       "name": "Vipps"
+    },
+    {
+      "name": "Mollie"
     },
     {
       "name": "Order"

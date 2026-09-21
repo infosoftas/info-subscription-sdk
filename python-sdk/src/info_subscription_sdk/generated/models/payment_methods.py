@@ -12,4 +12,5 @@ class PaymentMethods(str, Enum):
     BetalingsService = "BetalingsService",
     Autogiro = "Autogiro",
     EFaktura = "eFaktura",
+    Mollie = "Mollie",
 

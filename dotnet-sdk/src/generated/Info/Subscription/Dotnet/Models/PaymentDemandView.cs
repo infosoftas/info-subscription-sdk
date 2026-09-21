@@ -123,6 +123,16 @@ namespace Info.Subscription.Dotnet.Models
         public Guid? SubscriberId { get; set; }
         /// <summary>An optional payment method transaction id.</summary>
         public Guid? TransactionId { get; set; }
+        /// <summary>The reason for the write off.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? WriteOffReason { get; set; }
+#nullable restore
+#else
+        public string WriteOffReason { get; set; }
+#endif
+        /// <summary>Indicates if the demand was written off and when.</summary>
+        public DateTimeOffset? WriteOffTime { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -169,6 +179,8 @@ namespace Info.Subscription.Dotnet.Models
                 { "subscriberAccount", n => { SubscriberAccount = n.GetGuidValue(); } },
                 { "subscriberId", n => { SubscriberId = n.GetGuidValue(); } },
                 { "transactionId", n => { TransactionId = n.GetGuidValue(); } },
+                { "writeOffReason", n => { WriteOffReason = n.GetStringValue(); } },
+                { "writeOffTime", n => { WriteOffTime = n.GetDateTimeOffsetValue(); } },
             };
         }
         /// <summary>
@@ -206,6 +218,8 @@ namespace Info.Subscription.Dotnet.Models
             writer.WriteGuidValue("subscriberAccount", SubscriberAccount);
             writer.WriteGuidValue("subscriberId", SubscriberId);
             writer.WriteGuidValue("transactionId", TransactionId);
+            writer.WriteStringValue("writeOffReason", WriteOffReason);
+            writer.WriteDateTimeOffsetValue("writeOffTime", WriteOffTime);
         }
     }
 }
