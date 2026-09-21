@@ -1,0 +1,117 @@
+# Triggered automatically when a CalVer tag (e.g. 2024.8.1) is pushed to GitHub.
+# Replaces historical/reference-only ADO eng/package-nuget.yml for public NuGet releases.
+# See RELEASE.md for full release process.
+name: Release NuGet Package
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+
+permissions:
+  contents: write # needed to create GitHub Releases
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
+  DOTNET_NOLOGO: 'true'
+  NuGetDirectory: nuget
+  RELEASE_TAG: ${{ github.ref_name }}
+  NuGetUsername: Infosoft # nuget.org account matching the Trusted Publishing policy for this workflow
+
+jobs:
+  pack:
+    name: Pack NuGet Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # required by MinVer to walk history and find tags
+
+      - name: Validate tag on HEAD
+        run: |
+          if ! git tag --points-at HEAD | grep -Fx "$RELEASE_TAG" >/dev/null; then
+            echo "No tag found on HEAD. Create and push CalVer tag (for example 2024.8.1) before releasing."
+            exit 1
+          fi
+
+          echo "Releasing version: $RELEASE_TAG"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: dotnet-sdk/global.json
+
+      - name: Pack NuGet
+        run: |
+          mkdir -p "$NuGetDirectory"
+          dotnet pack dotnet-sdk/src/Info.Subscription.Dotnet.csproj --configuration Release --output "$NuGetDirectory" -p:Version="$RELEASE_TAG" -p:ContinuousIntegrationBuild=true
+
+      - name: Upload NuGet artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+          if-no-files-found: error
+
+  deploy:
+    name: Push to NuGet.org and Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: pack
+    permissions:
+      contents: write # needed to create GitHub Releases
+      id-token: write # needed for NuGet Trusted Publishing (OIDC)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download NuGet artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: dotnet-sdk/global.json
+
+      - name: NuGet Login (Trusted Publishing)
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ env.NuGetUsername }}
+
+      - name: Publish to NuGet.org
+        run: |
+          shopt -s nullglob
+          packages=("$NuGetDirectory"/*.nupkg)
+          if [ ${#packages[@]} -eq 0 ]; then
+            echo "No .nupkg files found in $NuGetDirectory"
+            exit 1
+          fi
+
+          for file in "${packages[@]}"; do
+            dotnet nuget push "$file" --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          done
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$RELEASE_TAG" --repo infosoftas/didactic-octo-chainsaw >/dev/null 2>&1; then
+            echo "GitHub Release $RELEASE_TAG already exists -- skipping creation"
+          else
+            gh release create "$RELEASE_TAG" \
+              --repo infosoftas/didactic-octo-chainsaw \
+              --title "$RELEASE_TAG" \
+              --generate-notes \
+              --notes "## Packages
+          - NuGet: [Infosoft.Info.Subscription.Dotnet@$RELEASE_TAG](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet/$RELEASE_TAG)
+          - npm: [@infosoft/info-subscription-ts@$RELEASE_TAG](https://www.npmjs.com/package/@infosoft/info-subscription-ts/v/$RELEASE_TAG)
+          - PyPI: [infosoft-info-subscription@$RELEASE_TAG](https://pypi.org/project/infosoft-info-subscription/$RELEASE_TAG/)"
+          fi
