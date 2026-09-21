@@ -1,11 +1,11 @@
-# @infosoft/info-subscription-ts
+# @infosoftas/info-subscription-ts
 
 A TypeScript SDK for the [INFO-Subscription API](https://api.info-subscription.com), generated with [Microsoft Kiota](https://learn.microsoft.com/en-us/openapi/kiota/) and wrapped with Azure AD B2C machine-to-machine authentication.
 
 ## Installation
 
 ```sh
-npm install @infosoft/info-subscription-ts
+npm install @infosoftas/info-subscription-ts
 ```
 
 ## Getting started
@@ -15,7 +15,7 @@ npm install @infosoft/info-subscription-ts
 Call `createInfoSubscriptionClient` with your Azure AD B2C credentials and tenant configuration:
 
 ```typescript
-import { createInfoSubscriptionClient } from '@infosoft/info-subscription-ts';
+import { createInfoSubscriptionClient } from '@infosoftas/info-subscription-ts';
 
 const client = createInfoSubscriptionClient({
   tenantId: 'your-tenant-guid',           // sent as S4-TenantId on every request
@@ -82,7 +82,7 @@ import {
   BaseBearerTokenAuthenticationProvider,
 } from '@microsoft/kiota-abstractions';
 import { FetchRequestAdapter } from '@microsoft/kiota-http-fetchlibrary';
-import { createInfoSubscription } from '@infosoft/info-subscription-ts/generated/infoSubscription.js';
+import { createInfoSubscription } from '@infosoftas/info-subscription-ts/generated/infoSubscription.js';
 
 const authProvider = new BaseBearerTokenAuthenticationProvider(myCustomTokenProvider);
 const adapter = new FetchRequestAdapter(authProvider);
@@ -105,7 +105,7 @@ src/
 
 ## Feedback and contributions
 
-Open an issue or pull request on [GitHub](https://github.com/infosoftas/didactic-octo-chainsaw).
+Open an issue or pull request on [GitHub](https://github.com/infosoftas/info-subscription-sdk).
 
 ## Support
 

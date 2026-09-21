@@ -8,9 +8,13 @@ pr: none
 
 # Pipeline variables
 variables:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
-  DOTNET_NOLOGO: 'true'
-  NuGetDirectory: '$(Build.ArtifactStagingDirectory)/nuget'
+  - group: 'NuGet Tools Installation'
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: '1'
+  - name: DOTNET_NOLOGO
+    value: 'true'
+  - name: NuGetDirectory
+    value: '$(Build.ArtifactStagingDirectory)/nuget'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -43,7 +47,7 @@ stages:
         useGlobalJson: true
 
     - script: |
-        dotnet pack --configuration Release --output $(NuGetDirectory) -p:Version=$RELEASE_TAG -p:ContinuousIntegrationBuild=true
+        dotnet pack dotnet-sdk/src/Info.Subscription.Dotnet.csproj --configuration Release --output $(NuGetDirectory) -p:Version=$RELEASE_TAG -p:ContinuousIntegrationBuild=true
       displayName: 'Pack NuGet'
       env:
         RELEASE_TAG: $(validateTag.ReleaseTag)
@@ -76,11 +80,11 @@ stages:
     - script: |
         # nuget.org auto-discovers the matching .snupkg alongside each .nupkg pushed from the same directory
         for file in $(Pipeline.Workspace)/nuget/*.nupkg; do
-          dotnet nuget push "$file" --api-key "$(NUGET_APIKEY)" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          dotnet nuget push "$file" --api-key "$(NuGetApiKey)" --source https://api.nuget.org/v3/index.json --skip-duplicate
         done
       displayName: 'Publish to NuGet.org'
       env:
-        NUGET_APIKEY: $(NUGET_APIKEY)
+        NuGetApiKey: $(NuGetApiKey)
 
     - task: get-github-token-task@1
       displayName: Get GitHub token
@@ -89,16 +93,16 @@ stages:
         githubServiceConnection: 'infosoftas'
 
     - script: |
-        if gh release view "$(ReleaseTag)" --repo infosoftas/didactic-octo-chainsaw >/dev/null 2>&1; then
+        if gh release view "$(ReleaseTag)" --repo infosoftas/info-subscription-sdk >/dev/null 2>&1; then
           echo "GitHub Release $(ReleaseTag) already exists -- skipping creation"
         else
           gh release create "$(ReleaseTag)" \
-            --repo infosoftas/didactic-octo-chainsaw \
+            --repo infosoftas/info-subscription-sdk \
             --title "$(ReleaseTag)" \
             --generate-notes \
             --notes "## Packages
         - NuGet: [Infosoft.Info.Subscription.Dotnet@$(ReleaseTag)](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet/$(ReleaseTag))
-        - npm: [@infosoft/info-subscription-ts@$(ReleaseTag)](https://www.npmjs.com/package/@infosoft/info-subscription-ts/v/$(ReleaseTag))
+        - npm: [@infosoftas/info-subscription-ts@$(ReleaseTag)](https://www.npmjs.com/package/@infosoftas/info-subscription-ts/v/$(ReleaseTag))
         - PyPI: [infosoft-info-subscription@$(ReleaseTag)](https://pypi.org/project/infosoft-info-subscription/$(ReleaseTag)/)"
         fi
       displayName: 'Create GitHub Release'

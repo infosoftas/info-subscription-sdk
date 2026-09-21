@@ -1,32 +1,34 @@
 # Release Process
 
-Releases are driven by **git tags**. Pushing a CalVer tag triggers all three ADO pipelines simultaneously, packing and publishing all SDKs and creating a GitHub Release.
+Releases are driven by **git tags**. Pushing a CalVer tag triggers all three GitHub Actions release workflows simultaneously, packing and publishing all SDKs and creating a GitHub Release.
 
 ## Prerequisites (one-time setup)
 
-One secret must be configured on the **NuGet** ADO pipeline (`package-nuget.yml`):
+The **NuGet** workflow (`.github/workflows/package-nuget.yml`) uses [NuGet Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing) (OIDC) instead of a stored API key. One-time setup:
+1. On nuget.org, add a Trusted Publishing policy for the `Infosoft.Info.Subscription.Dotnet` package: Repository Owner `infosoftas`, Repository `info-subscription-sdk`, Workflow File `package-nuget.yml`.
+2. No secret is needed — the workflow's `deploy` job requests an OIDC token (`permissions: id-token: write`) via the `NuGet/login@v1` action, using the `NuGetUsername` value hardcoded in the workflow, and exchanges it for a short-lived API key at publish time.
 
-| Variable | Description |
-|---|---|
-| `NUGET_APIKEY` | API key for the `Infosoft.Info.Subscription.Dotnet` package on NuGet.org |
+The **npm** workflow (`.github/workflows/package-npm.yml`) uses [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC) instead of a stored token. One-time setup:
+1. On npmjs.com, open the `@infosoftas/info-subscription-ts` package's **Settings → Trusted Publisher**, add a GitHub Actions publisher: Repository Owner `infosoftas`, Repository `info-subscription-sdk`, Workflow File `package-npm.yml`.
+2. No secret is needed — the workflow's `deploy` job requests an OIDC token (`permissions: id-token: write`), and `npm publish` (CLI >=11.5.1, ensured by the `npm install -g npm@^11.5.1` step) automatically exchanges it for a short-lived publish token. Provenance (`--provenance`) is intentionally **not** used since it requires a public source repository, and this repo is private.
+3. Recommended: once the trusted publisher is verified working, go to the package's **Settings → Publishing access** and select "Require two-factor authentication and disallow tokens" to disable classic token-based publishing.
 
-One secret must be configured on the **npm** ADO pipeline (`package-npm.yml`):
-
-| Variable | Description |
-|---|---|
-| `NPM_TOKEN` | Access token for the `@infosoft/info-subscription-ts` package on npmjs.org |
-
-One secret must be configured on the **Python** ADO pipeline (`package-python.yml`):
+One secret must be configured in GitHub for the **Python** workflow (`.github/workflows/package-python.yml`):
 
 | Variable | Description |
 |---|---|
 | `PYPI_TOKEN` | API token for the `infosoft-info-subscription` package on PyPI |
 
+Configure the PyPI value as a repository or environment secret in GitHub Actions. The historical
+ADO pipeline files under `eng/package-*.yml` remain in the repo as reference-only copies of the
+old release flow; they are no longer the active public release mechanism.
+
 The internal Azure Artifacts feeds (`S4/Internal`) use the build agent's identity — no additional secrets needed for internal publishing.
 
-No `GITHUB_TOKEN` secret is required for creating GitHub Releases. All three pipelines generate a
-short-lived GitHub App installation token at run time via the `get-github-token-task@1` task
-(same pattern as `azure-pipeline.yml`), using the `infosoftas` GitHub service connection.
+No custom `GITHUB_TOKEN`/PAT secret is required for creating GitHub Releases. All three GitHub
+Actions workflows use the built-in `${{ github.token }}` with `permissions: contents: write`, so
+there is no `get-github-token-task@1` step or ADO GitHub service connection involved in release
+creation anymore.
 
 ### Internal feed publishing
 
@@ -56,34 +58,34 @@ git push origin 2024.8.1
 
 > The tag must point to a commit on `main`. Do not tag pre-merge commits.
 
-### 3. All pipelines run automatically
+### 3. All release workflows run automatically
 
-A single tag triggers **all three** pipelines simultaneously. All SDKs share the same version number.
+A single tag triggers **all three** release workflows simultaneously. All SDKs share the same version number.
 
-**`package-nuget.yml`** (2 stages):
+**`.github/workflows/package-nuget.yml`** (2 jobs):
 1. **Pack** — validate tag on HEAD, `dotnet pack` with `-p:Version=<tag>` (version injected explicitly from the git tag), publish artifact
-2. **Deploy** — push to [NuGet.org](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes (skipped if already created)
+2. **Deploy** — push to [NuGet.org](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) + create [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) with auto-generated notes (skipped if already created)
 
-**`package-npm.yml`** (2 stages):
+**`.github/workflows/package-npm.yml`** (2 jobs):
 1. **Pack** — validate tag, `npm ci`, `npm run build`, inject version via `npm version`, `npm pack`, publish artifact
-2. **Deploy** — push to [npmjs.org](https://www.npmjs.com/package/@infosoft/info-subscription-ts) + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes (skipped if already created)
+2. **Deploy** — publish to [npmjs.org](https://www.npmjs.com/package/@infosoftas/info-subscription-ts) via Trusted Publishing (OIDC) + create [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) with auto-generated notes (skipped if already created)
 
-**`package-python.yml`** (2 stages):
+**`.github/workflows/package-python.yml`** (2 jobs):
 1. **Pack** — validate tag, inject version into `pyproject.toml` via `sed`, `python -m build`, publish artifact
-2. **Deploy** — push to [PyPI](https://pypi.org/project/infosoft-info-subscription/) via `twine` + create [GitHub Release](https://github.com/infosoftas/didactic-octo-chainsaw/releases) with auto-generated notes (skipped if already created)
+2. **Deploy** — push to [PyPI](https://pypi.org/project/infosoft-info-subscription/) via `twine` + create [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) with auto-generated notes (skipped if already created)
 
-Since a single tag fires all three pipelines simultaneously, each Deploy stage checks whether the
-GitHub Release already exists (`gh release view`) before creating it, so only the first pipeline
-to reach that step actually creates the release — the others no-op.
+Since a single tag fires all three release workflows simultaneously, each Deploy job checks whether
+the GitHub Release already exists (`gh release view`) before creating it, so only the first
+workflow to reach that step actually creates the release — the others no-op.
 
 Release notes are generated automatically from merged PRs and commits since the previous tag (GitHub's `generate_release_notes` feature). No manual changelog editing is required.
 
 ### 4. Verify
 
 - NuGet: https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet
-- npm: https://www.npmjs.com/package/@infosoft/info-subscription-ts
+- npm: https://www.npmjs.com/package/@infosoftas/info-subscription-ts
 - PyPI: https://pypi.org/project/infosoft-info-subscription/
-- GitHub Releases: https://github.com/infosoftas/didactic-octo-chainsaw/releases
+- GitHub Releases: https://github.com/infosoftas/info-subscription-sdk/releases
 
 ## Pre-release versions
 
@@ -94,14 +96,14 @@ git tag 2024.8.1-beta.1
 git push origin 2024.8.1-beta.1
 ```
 
-All three pipelines inject the version explicitly from the git tag string — NuGet via `-p:Version=<tag>`, npm via `npm version <tag>`, and PyPI via `sed` on `pyproject.toml`. The tag string is used verbatim, so a tag of `2024.8.1-beta.1` will produce pre-release packages on all three registries.
+All three release workflows inject the version explicitly from the git tag string — NuGet via `-p:Version=<tag>`, npm via `npm version <tag>`, and PyPI via `sed` on `pyproject.toml`. The tag string is used verbatim, so a tag of `2024.8.1-beta.1` will produce pre-release packages on all three registries.
 
 ## Automation (auto-release)
 
 `eng/azure-pipeline.yml` regenerates the SDKs weekly, validates them, classifies the API diff via
 `oasdiff`, opens a PR labeled `breaking` or `auto-release`, and — for `auto-release` PRs — calls
 `gh pr merge --auto`. The tag bot (`.github/workflows/release-tag.yml`) then tags `main`
-automatically on merge, which fires the three pipelines above.
+automatically on merge, which fires the three release workflows above.
 
 ### Branch protection on `main` and merging regular PRs
 

@@ -1,0 +1,134 @@
+# Triggered automatically when a CalVer tag (e.g. 2024.8.1) is pushed to GitHub.
+# Replaces historical/reference-only ADO eng/package-npm.yml for public npm releases.
+# See RELEASE.md for full release process.
+name: Release npm Package
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+
+permissions:
+  contents: write # needed to create GitHub Releases
+
+env:
+  # npm Trusted Publishing (OIDC) requires npm CLI >=11.5.1, which needs Node >=22.14.0.
+  NODE_VERSION: '22.14.0'
+  PackageDirectory: npm
+  RELEASE_TAG: ${{ github.ref_name }}
+
+jobs:
+  pack:
+    name: Build and Pack npm Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag on HEAD
+        run: |
+          if ! git tag --points-at HEAD | grep -Fx "$RELEASE_TAG" >/dev/null; then
+            echo "No tag found on HEAD. Create and push CalVer tag (for example 2024.8.1) before releasing."
+            exit 1
+          fi
+
+          echo "Releasing version: $RELEASE_TAG"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: typescript-sdk/package-lock.json
+
+      - name: Install dependencies
+        working-directory: typescript-sdk
+        run: npm ci
+
+      - name: Build TypeScript
+        working-directory: typescript-sdk
+        run: npm run build
+
+      - name: Pack npm package
+        working-directory: typescript-sdk
+        run: |
+          mkdir -p "../$PackageDirectory"
+          npm version "$RELEASE_TAG" --no-git-tag-version
+          npm pack --pack-destination "../$PackageDirectory"
+
+      - name: Upload npm artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm
+          path: ${{ env.PackageDirectory }}
+          if-no-files-found: error
+
+  deploy:
+    name: Publish to npmjs.org and Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: pack
+    permissions:
+      contents: write # needed to create GitHub Releases
+      id-token: write # needed for npm Trusted Publishing (OIDC)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download npm artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: npm
+          path: ${{ env.PackageDirectory }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
+
+      - name: Update npm to a version that supports Trusted Publishing
+        run: npm install -g npm@^11.5.1
+
+      - name: Publish to npmjs.org (Trusted Publishing)
+        working-directory: ${{ env.PackageDirectory }}
+        run: |
+          shopt -s nullglob
+          packages=(./*.tgz)
+          if [ ${#packages[@]} -eq 0 ]; then
+            echo "No .tgz files found in $PWD"
+            exit 1
+          fi
+
+          # npm refuses to publish a prerelease version to the "latest" dist-tag,
+          # so tag any tag containing a hyphen (e.g. 2024.8.1-preview1) as "next".
+          NPM_TAG="latest"
+          if [[ "$RELEASE_TAG" == *-* ]]; then
+            NPM_TAG="next"
+          fi
+
+          # --provenance requires a public source repository (Sigstore cannot attest
+          # a private repo's build); this repo is private, so provenance is omitted.
+          npm publish *.tgz --access public --tag "$NPM_TAG"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$RELEASE_TAG" --repo infosoftas/info-subscription-sdk >/dev/null 2>&1; then
+            echo "GitHub Release $RELEASE_TAG already exists -- skipping creation"
+          else
+            gh release create "$RELEASE_TAG" \
+              --repo infosoftas/info-subscription-sdk \
+              --title "$RELEASE_TAG" \
+              --generate-notes \
+              --notes "## Packages
+          - NuGet: [Infosoft.Info.Subscription.Dotnet@$RELEASE_TAG](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet/$RELEASE_TAG)
+          - npm: [@infosoftas/info-subscription-ts@$RELEASE_TAG](https://www.npmjs.com/package/@infosoftas/info-subscription-ts/v/$RELEASE_TAG)
+          - PyPI: [infosoft-info-subscription@$RELEASE_TAG](https://pypi.org/project/infosoft-info-subscription/$RELEASE_TAG/)"
+          fi
