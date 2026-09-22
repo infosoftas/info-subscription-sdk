@@ -22,15 +22,15 @@ const client = createInfoSubscriptionClient({
   auth: {
     clientId: 'your-b2c-client-id',
     clientSecret: 'your-b2c-client-secret',
-    b2cTenantName: 'prodlogins4',          // default if omitted; uses prodlogins4.b2clogin.com
-    // signInPolicy: 'B2C_1A_V2SIGNIN',   // optional, this is the default
-    // scopeName: 'api',                  // optional, this is the default
+    // b2cTenantName: 'prodlogins4',     // optional, defaults to 'prodlogins4'
+    // signInPolicy: 'B2C_1A_V2SIGNIN', // optional, this is the default
+    // scopeName: 'api',                // optional, this is the default
   },
   // apiEndpoint: 'https://api.info-subscription.com', // optional, this is the default
 });
 ```
 
-If you do not specify `auth.b2cTenantName`, the SDK uses `prodlogins4` automatically.
+If you do not specify `auth.b2cTenantName`, the SDK defaults it to `prodlogins4`.
 
 ### 2. Use the client
 
