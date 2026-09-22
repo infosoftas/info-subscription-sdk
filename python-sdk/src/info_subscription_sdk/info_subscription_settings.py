@@ -12,8 +12,8 @@ class B2CAuthSettings:
     client_secret: str
     """Azure AD B2C client secret."""
 
-    b2c_tenant_name: str
-    """Azure AD B2C tenant name (e.g. ``"mycompany"`` for ``mycompany.b2clogin.com``)."""
+    b2c_tenant_name: str = "prodlogins4"
+    """Azure AD B2C tenant name (e.g. ``"mycompany"`` for ``mycompany.b2clogin.com``). Default: ``prodlogins4``."""
 
     sign_in_policy: str = "B2C_1A_V2SIGNIN"
     """B2C sign-in policy name."""

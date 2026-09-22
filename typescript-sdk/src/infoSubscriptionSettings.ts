@@ -21,8 +21,9 @@ export interface InfoSubscriptionSettings {
 
     /**
      * Azure AD B2C tenant name (e.g. `"mycompany"` for `mycompany.b2clogin.com`).
+     * @default "prodlogins4"
      */
-    b2cTenantName: string;
+    b2cTenantName?: string;
 
     /**
      * B2C sign-in policy name.
