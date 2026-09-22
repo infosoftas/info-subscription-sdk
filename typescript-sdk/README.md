@@ -55,7 +55,7 @@ const order = await client.order.get();
 | `tenantId` | `string` | ✅ | — | Tenant GUID sent as `S4-TenantId` on every request |
 | `auth.clientId` | `string` | ✅ | — | Azure AD B2C application (client) ID |
 | `auth.clientSecret` | `string` | ✅ | — | Azure AD B2C client secret |
-| `auth.b2cTenantName` | `string` | ✅ | — | B2C tenant name (e.g. `"mycompany"`) |
+| `auth.b2cTenantName` | `string` | | `"prodlogins4"` | B2C tenant name (e.g. `"mycompany"` or `"prodlogins4"`) |
 | `auth.signInPolicy` | `string` | | `"B2C_1A_V2SIGNIN"` | B2C sign-in policy |
 | `auth.scopeName` | `string` | | `"api"` | API scope name |
 | `apiEndpoint` | `string` | | `"https://api.info-subscription.com"` | API base URL |

@@ -17,7 +17,8 @@ dotnet add package infosoft.info.subscription.dotnet
 ```json
 {
   "InfoSubscription": {
-    "TenantId": "00000000-0000-0000-0000-000000000000"
+    "TenantId": "00000000-0000-0000-0000-000000000000",
+    "ApiEndpoint": "https://api.info-subscription.com"
   },
   "Adb2cSettings": {
     "ClientId": "00000000-0000-0000-0000-000000000000",
@@ -64,6 +65,7 @@ The sample in the GitHub repository shows a more complete example for a console 
 | Section / property | Required | Default | Description |
 |---|---|---|---|
 | `InfoSubscription:TenantId` | ✅ | — | Tenant GUID sent as `S4-TenantId` on each request |
+| `InfoSubscription:ApiEndpoint` | | `https://api.info-subscription.com` | Base API URL used by the generated client |
 | `Adb2cSettings:ClientId` | ✅ | — | Azure AD B2C application (client) ID |
 | `Adb2cSettings:ClientSecret` | ✅ | — | Azure AD B2C client secret |
 | `Adb2cSettings:B2CTenantName` | | `prodlogins4` | B2C tenant name, e.g. `prodlogins4` for `prodlogins4.b2clogin.com` |
