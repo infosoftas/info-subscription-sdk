@@ -7,6 +7,7 @@ import { TenantHeaderMiddleware } from './tenantHeaderMiddleware.js';
 import type { InfoSubscriptionSettings } from './infoSubscriptionSettings.js';
 
 const DEFAULT_API_ENDPOINT = 'https://api.info-subscription.com';
+const DEFAULT_B2C_TENANT_NAME = 'prodlogins4';
 const DEFAULT_SIGN_IN_POLICY = 'B2C_1A_V2SIGNIN';
 const DEFAULT_SCOPE_NAME = 'api';
 
@@ -28,18 +29,19 @@ const DEFAULT_SCOPE_NAME = 'api';
  */
 export function createInfoSubscriptionClient(settings: InfoSubscriptionSettings): InfoSubscription {
   const { auth, tenantId, apiEndpoint = DEFAULT_API_ENDPOINT } = settings;
+  const b2cTenantName = auth.b2cTenantName ?? DEFAULT_B2C_TENANT_NAME;
   const policy = auth.signInPolicy ?? DEFAULT_SIGN_IN_POLICY;
   const scopeName = auth.scopeName ?? DEFAULT_SCOPE_NAME;
 
-  const authority = `https://${auth.b2cTenantName}.b2clogin.com/tfp/${auth.b2cTenantName}.onmicrosoft.com/${policy}`;
-  const scopes = [`https://${auth.b2cTenantName}.onmicrosoft.com/${scopeName}/.default`];
+  const authority = `https://${b2cTenantName}.b2clogin.com/tfp/${b2cTenantName}.onmicrosoft.com/${policy}`;
+  const scopes = [`https://${b2cTenantName}.onmicrosoft.com/${scopeName}/.default`];
 
   const msalApp = new ConfidentialClientApplication({
     auth: {
       clientId: auth.clientId,
       clientSecret: auth.clientSecret,
       authority,
-      knownAuthorities: [`${auth.b2cTenantName}.b2clogin.com`],
+      knownAuthorities: [`${b2cTenantName}.b2clogin.com`],
     },
   });
 

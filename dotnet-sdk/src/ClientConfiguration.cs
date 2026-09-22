@@ -46,7 +46,7 @@ public static class ClientConfiguration
     public static IServiceCollection AddApiAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         var client = configuration.GetSection("Adb2cSettings:ClientId").Get<string?>();
-        var tenantName = configuration.GetSection("Adb2cSettings:B2CTenantName").Get<string?>();
+        var tenantName = configuration.GetSection("Adb2cSettings:B2CTenantName").Get<string?>() ?? "prodlogins4";
         var secret = configuration.GetSection("Adb2cSettings:ClientSecret").Get<string?>();
         var flowName = configuration.GetSection("Adb2cSettings:SignInPolicy").Get<string?>() ?? "B2C_1A_V2SIGNIN";
         var apiName = configuration.GetSection("Adb2cSettings:ScopeName").Get<string?>() ?? "api";

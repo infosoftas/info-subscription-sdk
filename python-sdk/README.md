@@ -28,7 +28,7 @@ client = create_info_subscription_client(
         auth=B2CAuthSettings(
             client_id="your-client-id",
             client_secret="your-client-secret",
-            b2c_tenant_name="yourb2ctenant",
+            b2c_tenant_name="prodlogins4",    # default if omitted
             # sign_in_policy="B2C_1A_V2SIGNIN",  # default
             # scope_name="api",                   # default
         ),
@@ -51,7 +51,7 @@ asyncio.run(main())
 | `tenant_id` | `str` | required | Tenant GUID — sent as `S4-TenantId` on every request |
 | `auth.client_id` | `str` | required | Azure AD B2C application (client) ID |
 | `auth.client_secret` | `str` | required | Azure AD B2C client secret |
-| `auth.b2c_tenant_name` | `str` | required | B2C tenant name (e.g. `"mycompany"`) |
+| `auth.b2c_tenant_name` | `str` | `"prodlogins4"` | B2C tenant name (e.g. `"mycompany"` or `"prodlogins4"`) |
 | `auth.sign_in_policy` | `str` | `"B2C_1A_V2SIGNIN"` | B2C sign-in policy |
 | `auth.scope_name` | `str` | `"api"` | API scope name |
 | `api_endpoint` | `str` | `"https://api.info-subscription.com"` | API base URL |

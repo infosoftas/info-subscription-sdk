@@ -22,13 +22,15 @@ const client = createInfoSubscriptionClient({
   auth: {
     clientId: 'your-b2c-client-id',
     clientSecret: 'your-b2c-client-secret',
-    b2cTenantName: 'yourb2ctenant',        // e.g. "mycompany" for mycompany.b2clogin.com
-    // signInPolicy: 'B2C_1A_V2SIGNIN',   // optional, this is the default
-    // scopeName: 'api',                  // optional, this is the default
+    // b2cTenantName: 'prodlogins4',     // optional, defaults to 'prodlogins4'
+    // signInPolicy: 'B2C_1A_V2SIGNIN', // optional, this is the default
+    // scopeName: 'api',                // optional, this is the default
   },
   // apiEndpoint: 'https://api.info-subscription.com', // optional, this is the default
 });
 ```
+
+If you do not specify `auth.b2cTenantName`, the SDK defaults it to `prodlogins4`.
 
 ### 2. Use the client
 
@@ -53,7 +55,7 @@ const order = await client.order.get();
 | `tenantId` | `string` | ✅ | — | Tenant GUID sent as `S4-TenantId` on every request |
 | `auth.clientId` | `string` | ✅ | — | Azure AD B2C application (client) ID |
 | `auth.clientSecret` | `string` | ✅ | — | Azure AD B2C client secret |
-| `auth.b2cTenantName` | `string` | ✅ | — | B2C tenant name (e.g. `"mycompany"`) |
+| `auth.b2cTenantName` | `string` | | `"prodlogins4"` | B2C tenant name (e.g. `"mycompany"` or `"prodlogins4"`) |
 | `auth.signInPolicy` | `string` | | `"B2C_1A_V2SIGNIN"` | B2C sign-in policy |
 | `auth.scopeName` | `string` | | `"api"` | API scope name |
 | `apiEndpoint` | `string` | | `"https://api.info-subscription.com"` | API base URL |
