@@ -2,6 +2,8 @@
 
 This sample mirrors the .NET console application in `dotnet-sdk/Sample` and prints the first page of products and packages from the INFO-Subscription API.
 
+It depends on the local SDK package in this repo via `file:..`, so the sample installs the required SDK runtime dependencies without becoming part of the published npm package.
+
 ## Setup
 
 1. Open a terminal in `typescript-sdk/Sample`.

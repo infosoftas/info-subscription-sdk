@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { createInfoSubscriptionClient } from '../../src/index.ts';
+import { createInfoSubscriptionClient } from '@infosoftas/info-subscription-ts';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -41,7 +41,7 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  console.error('Failed to list products:');
+  console.error('Failed to list products and packages:');
   console.error(error instanceof Error ? error.message : error);
   process.exitCode = 1;
 });

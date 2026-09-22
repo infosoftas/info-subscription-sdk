@@ -8,6 +8,7 @@
     "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
+    "@infosoftas/info-subscription-ts": "file:..",
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
