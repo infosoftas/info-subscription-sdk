@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prepare": "npm --prefix .. install && npm --prefix .. run build",
     "build": "tsc --project tsconfig.json",
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts"
