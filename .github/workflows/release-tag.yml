@@ -10,6 +10,13 @@
 # Runs as a GitHub Actions workflow (rather than an ADO pipeline) because it only needs to read
 # git tags/history and push a tag back to this same GitHub repo -- no ADO-specific resources
 # (agent pools, service connections, internal feeds) are involved.
+#
+# The tag is pushed using a short-lived token minted for the "infosoftas-release-tag-bot" GitHub
+# App (Contents: write only, installed on this repo), NOT the default GITHUB_TOKEN. GitHub
+# suppresses push-triggered workflow runs caused by the default GITHUB_TOKEN to prevent recursive
+# runs -- which silently prevented package-nuget.yml/package-npm.yml/package-python.yml from ever
+# running. Pushing as the App's own identity avoids that suppression so the tag push correctly
+# triggers the release pipelines.
 name: Release Tag Bot
 
 on:
@@ -40,9 +47,17 @@ jobs:
   compute-tag:
     runs-on: ubuntu-latest
     steps:
+      - name: Mint release-tag-bot App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # need full tag history to find the highest MICRO this month
+          token: ${{ steps.app-token.outputs.token }} # checkout wires this token into git config so later `git push` steps use it, not GITHUB_TOKEN
 
       - name: Compute next CalVer tag
         id: compute

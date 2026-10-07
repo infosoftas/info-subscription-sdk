@@ -30,6 +30,27 @@ Actions workflows use the built-in `${{ github.token }}` with `permissions: cont
 there is no `get-github-token-task@1` step or ADO GitHub service connection involved in release
 creation anymore.
 
+### Release Tag Bot's own push token
+
+`.github/workflows/release-tag.yml` pushes the computed CalVer tag using a token minted for the
+**`infosoftas-release-tag-bot` GitHub App** (installed on this org, `Contents: write` only), not
+the default `GITHUB_TOKEN`. This is required because GitHub does not fire `push` (or other)
+workflow triggers for pushes made with the default `GITHUB_TOKEN`, to prevent recursive runs — so
+a tag pushed with `GITHUB_TOKEN` would silently never trigger `package-nuget.yml`,
+`package-npm.yml`, or `package-python.yml`.
+
+Two values configured in the repo for this:
+
+| Name | Kind | Description |
+|---|---|---|
+| `RELEASE_BOT_APP_ID` | Variable | App ID of `infosoftas-release-tag-bot` |
+| `RELEASE_BOT_APP_PRIVATE_KEY` | Secret | Private key (PEM) for the same App |
+
+The workflow exchanges these for a short-lived installation token via
+`actions/create-github-app-token@v1` and passes it to `actions/checkout@v4`'s `token:` input,
+which wires it into git config so the later `git push` step authenticates as the App instead of
+`github-actions[bot]`.
+
 ### Internal feed publishing
 
 Preview packages are published to `S4/Internal` automatically by `azure-pipeline.yml` whenever API changes are detected (i.e., whenever a PR is created). Versions follow the pattern `0.0.0-preview{today}{BuildId}` (NuGet), `0.0.0-preview.{today}{BuildId}` (npm), and `0.0.0.dev{today}{BuildId}` (Python), where `{today}` is the `yyyyMMdd` pipeline run date. These are not tagged releases — they reflect the current API shape after each Kiota regeneration run.
