@@ -8,10 +8,10 @@ using System;
 namespace Info.Subscription.Dotnet.Models
 {
     /// <summary>
-    /// A container for optional values, specifically designed to be used in the contextserialization in an HTTP API using JSON.
+    /// The person/subscriber that has purchased something which the Invoice represtens
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class OptionalOfBuyer : global::Info.Subscription.Dotnet.Models.Buyer, IParsable
+    public partial class OptionalOfBuyer : global::Info.Subscription.Dotnet.Models.Recipient, IParsable
     {
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
