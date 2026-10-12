@@ -112,8 +112,8 @@ jobs:
             NPM_TAG="next"
           fi
 
-          # --provenance requires a public source repository (Sigstore cannot attest
-          # a private repo's build); this repo is private, so provenance is omitted.
+          # Trusted Publishing auto-generates provenance for public repos (no --provenance
+          # flag needed); npm then requires package.json "repository.url" to match this repo.
           npm publish *.tgz --access public --tag "$NPM_TAG"
 
       - name: Create GitHub Release
