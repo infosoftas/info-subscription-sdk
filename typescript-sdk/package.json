@@ -18,6 +18,11 @@
     "sdk",
     "subscription"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infosoftas/info-subscription-sdk.git",
+    "directory": "typescript-sdk"
+  },
   "author": "Infosoft AS",
   "license": "MIT",
   "dependencies": {
