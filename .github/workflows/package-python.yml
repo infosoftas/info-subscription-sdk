@@ -130,5 +130,6 @@ jobs:
               --notes "## Packages
           - NuGet: [Infosoft.Info.Subscription.Dotnet@$RELEASE_TAG](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet/$RELEASE_TAG)
           - npm: [@infosoftas/info-subscription-ts@$RELEASE_TAG](https://www.npmjs.com/package/@infosoftas/info-subscription-ts/v/$RELEASE_TAG)
-          - PyPI: [infosoft-info-subscription@$RELEASE_TAG](https://pypi.org/project/infosoft-info-subscription/$RELEASE_TAG/)"
+          - PyPI: [infosoft-info-subscription@$RELEASE_TAG](https://pypi.org/project/infosoft-info-subscription/$RELEASE_TAG/)
+          - Packagist: [infosoftas/info-subscription-php@$RELEASE_TAG](https://packagist.org/packages/infosoftas/info-subscription-php#$RELEASE_TAG)"
           fi
