@@ -11,6 +11,7 @@ Active SDKs:
 | .NET | [`Infosoft.Info.Subscription.Dotnet`](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet) on NuGet.org | `dotnet-sdk/` |
 | TypeScript | [`@infosoftas/info-subscription-ts`](https://www.npmjs.com/package/@infosoftas/info-subscription-ts) on npmjs.org | `typescript-sdk/` |
 | Python | [`infosoft-info-subscription`](https://pypi.org/project/infosoft-info-subscription/) on PyPI | `python-sdk/` |
+| PHP | `infosoftas/info-subscription-php` (packaging in progress) | `php-sdk/` |
 
 > **Note on the repository name:** this repo was renamed from its original GitHub auto-generated
 > placeholder name (`didactic-octo-chainsaw`) to `info-subscription-sdk` once the SDK generation
@@ -22,6 +23,7 @@ Each SDK has its own README with installation and usage instructions:
 - [.NET SDK](dotnet-sdk/src/README.md)
 - [TypeScript SDK](typescript-sdk/README.md)
 - [Python SDK](python-sdk/README.md)
+- [PHP SDK](php-sdk/README.md)
 
 ## Repository layout
 
@@ -29,6 +31,7 @@ Each SDK has its own README with installation and usage instructions:
 dotnet-sdk/       # .NET SDK (Kiota-generated client + auth/DI helpers + Sample app)
 typescript-sdk/   # TypeScript SDK (Kiota-generated client + auth/middleware helpers)
 python-sdk/       # Python SDK (Kiota-generated client + auth/middleware helpers)
+php-sdk/          # PHP SDK (Kiota-generated client + package skeleton)
 eng/              # Azure DevOps: azure-pipeline.yml (active, weekly SDK regeneration) plus
                   #   package-*.yml (historical/reference only -- releases moved to GitHub Actions)
 .github/workflows/ # Active GitHub Actions workflows: package releases (NuGet/npm/PyPI) + tag bot

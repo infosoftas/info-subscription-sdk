@@ -1,0 +1,36 @@
+services:
+  php84:
+    build:
+      context: ..
+      dockerfile: php-sdk/Dockerfile
+      args:
+        PHP_VERSION: "8.4"
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+    command: sleep infinity
+
+  php85:
+    build:
+      context: ..
+      dockerfile: php-sdk/Dockerfile
+      args:
+        PHP_VERSION: "8.5"
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+    command: sleep infinity
+
+  sample:
+    build:
+      context: ..
+      dockerfile: php-sdk/Dockerfile
+      args:
+        PHP_VERSION: "8.4"
+    working_dir: /workspace/php-sdk/Sample
+    volumes:
+      - ..:/workspace
+    env_file:
+      - path: ./Sample/.env
+        required: false
+    command: php -v
