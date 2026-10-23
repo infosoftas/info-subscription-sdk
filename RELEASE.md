@@ -1,6 +1,9 @@
 # Release Process
 
-Releases are driven by **git tags**. Pushing a CalVer tag triggers all three GitHub Actions release workflows simultaneously, packing and publishing all SDKs and creating a GitHub Release.
+Releases are driven by **git tags**. Pushing a numeric CalVer tag triggers all GitHub Actions release
+workflows simultaneously. NuGet, npm, and PyPI packages publish to their registries; PHP is packed
+as a Composer ZIP and attached to the shared GitHub Release. Packagist indexes PHP tags through its
+GitHub webhook.
 
 ## Prerequisites (one-time setup)
 
@@ -23,10 +26,23 @@ Configure the PyPI value as a repository or environment secret in GitHub Actions
 ADO pipeline files under `eng/package-*.yml` remain in the repo as reference-only copies of the
 old release flow; they are no longer the active public release mechanism.
 
+The **PHP** package uses [Packagist](https://packagist.org/packages/infosoftas/info-subscription-php)
+auto-indexing from Git tags:
+1. An operator registers `infosoftas/info-subscription-php` on Packagist with this GitHub repository
+   as its source, then enables Packagist's GitHub webhook/automatic update integration using the
+   setup instructions shown for the package.
+2. Packagist indexes each pushed tag when its webhook is delivered. Indexing is asynchronous and
+   may happen before or after `.github/workflows/package-php.yml` completes. Check the Packagist
+   package page if the new version is not immediately visible.
+3. No Packagist publishing secret or API token is used by GitHub Actions. The PHP workflow only
+   validates the Composer package, creates a ZIP, and attaches that ZIP to the shared GitHub
+   Release. The webhook and package registration are operator one-time setup, not a per-release
+   action.
+
 The internal Azure Artifacts feeds (`S4/Internal`) use the build agent's identity — no additional secrets needed for internal publishing.
 
-No custom `GITHUB_TOKEN`/PAT secret is required for creating GitHub Releases. All three GitHub
-Actions workflows use the built-in `${{ github.token }}` with `permissions: contents: write`, so
+No custom `GITHUB_TOKEN`/PAT secret is required for creating GitHub Releases. All GitHub
+Actions release workflows use the built-in `${{ github.token }}` with `permissions: contents: write`, so
 there is no `get-github-token-task@1` step or ADO GitHub service connection involved in release
 creation anymore.
 
@@ -37,7 +53,7 @@ creation anymore.
 the default `GITHUB_TOKEN`. This is required because GitHub does not fire `push` (or other)
 workflow triggers for pushes made with the default `GITHUB_TOKEN`, to prevent recursive runs — so
 a tag pushed with `GITHUB_TOKEN` would silently never trigger `package-nuget.yml`,
-`package-npm.yml`, or `package-python.yml`.
+`package-npm.yml`, `package-python.yml`, or `package-php.yml`.
 
 Two values configured in the repo for this:
 
@@ -53,7 +69,7 @@ which wires it into git config so the later `git push` step authenticates as the
 
 ### Internal feed publishing
 
-Preview packages are published to `S4/Internal` automatically by `azure-pipeline.yml` whenever API changes are detected (i.e., whenever a PR is created). Versions follow the pattern `0.0.0-preview{today}{BuildId}` (NuGet), `0.0.0-preview.{today}{BuildId}` (npm), and `0.0.0.dev{today}{BuildId}` (Python), where `{today}` is the `yyyyMMdd` pipeline run date. These are not tagged releases — they reflect the current API shape after each Kiota regeneration run.
+Preview packages are published to `S4/Internal` automatically by `azure-pipeline.yml` whenever API changes are detected (i.e., whenever a PR is created). Versions follow the pattern `0.0.0-preview{today}{BuildId}` (NuGet), `0.0.0-preview.{today}{BuildId}` (npm), and `0.0.0.dev{today}{BuildId}` (Python), where `{today}` is the `yyyyMMdd` pipeline run date. PHP has no internal preview feed. These are not tagged releases — they reflect the current API shape after each Kiota regeneration run.
 
 ## Releasing a new version
 
@@ -81,7 +97,7 @@ git push origin 2024.8.1
 
 ### 3. All release workflows run automatically
 
-A single tag triggers **all three** release workflows simultaneously. All SDKs share the same version number.
+A single numeric tag triggers **all** release workflows simultaneously. All SDKs share the same version number.
 
 **`.github/workflows/package-nuget.yml`** (2 jobs):
 1. **Pack** — validate tag on HEAD, `dotnet pack` with `-p:Version=<tag>` (version injected explicitly from the git tag), publish artifact
@@ -95,17 +111,32 @@ A single tag triggers **all three** release workflows simultaneously. All SDKs s
 1. **Pack** — validate tag, inject version into `pyproject.toml` via `sed`, `python -m build`, publish artifact
 2. **Deploy** — push to [PyPI](https://pypi.org/project/infosoft-info-subscription/) via `twine` + create [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) with auto-generated notes (skipped if already created)
 
-Since a single tag fires all three release workflows simultaneously, each Deploy job checks whether
-the GitHub Release already exists (`gh release view`) before creating it, so only the first
-workflow to reach that step actually creates the release — the others no-op.
+**`.github/workflows/package-php.yml`** (2 jobs):
+1. **Pack** — validate the numeric tag is on HEAD, install dependencies, validate/lint/test PHP, create and verify a `composer archive` ZIP, then upload it as an artifact
+2. **Release** — create or reuse the shared [GitHub Release](https://github.com/infosoftas/info-subscription-sdk/releases) and attach the PHP ZIP. It does not publish to Packagist; the configured Packagist webhook indexes the tag independently.
 
-Release notes are generated automatically from merged PRs and commits since the previous tag (GitHub's `generate_release_notes` feature). No manual changelog editing is required.
+The Composer archive excludes unrelated SDK trees, tests, and development files through root
+`composer.json`'s `archive.exclude`. This controls the PHP ZIP attached to GitHub Releases. Packagist
+creates its source ZIP from the GitHub repository/tag and does not use Composer's archive exclusions,
+so that Composer install path can contain monorepo trees. This accepted trade-off avoids restructuring
+the monorepo or maintaining a separate distribution repository.
+
+Since a single tag fires all release workflows simultaneously, each release job checks whether
+the GitHub Release already exists (`gh release view`) before creating it, so only the first
+workflow to reach that step actually creates the release — the others reuse it. The PHP workflow
+also verifies a release appeared after a failed create to handle concurrent creation safely, then
+uploads its asset.
+
+Release notes are generated automatically from merged PRs and commits since the previous tag
+(GitHub's `generate_release_notes` feature). Each workflow's package list includes NuGet, npm, PyPI,
+and Packagist. No manual changelog editing is required.
 
 ### 4. Verify
 
 - NuGet: https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet
 - npm: https://www.npmjs.com/package/@infosoftas/info-subscription-ts
 - PyPI: https://pypi.org/project/infosoft-info-subscription/
+- Packagist: https://packagist.org/packages/infosoftas/info-subscription-php
 - GitHub Releases: https://github.com/infosoftas/info-subscription-sdk/releases
 
 ## Pre-release versions
@@ -117,14 +148,18 @@ git tag 2024.8.1-beta.1
 git push origin 2024.8.1-beta.1
 ```
 
-All three release workflows inject the version explicitly from the git tag string — NuGet via `-p:Version=<tag>`, npm via `npm version <tag>`, and PyPI via `sed` on `pyproject.toml`. The tag string is used verbatim, so a tag of `2024.8.1-beta.1` will produce pre-release packages on all three registries.
+NuGet, npm, and PyPI workflows inject the version explicitly from the git tag string — NuGet via
+`-p:Version=<tag>`, npm via `npm version <tag>`, and PyPI via `sed` on `pyproject.toml`. Their
+workflows also accept prerelease suffixes. The PHP workflow accepts numeric CalVer tags only;
+Packagist's versions are indexed from Git tags by the configured webhook.
 
 ## Automation (auto-release)
 
-`eng/azure-pipeline.yml` regenerates the SDKs weekly, validates them, classifies the API diff via
+`eng/azure-pipeline.yml` regenerates all SDKs weekly, validates them, classifies the API diff via
 `oasdiff`, opens a PR labeled `breaking` or `auto-release`, and — for `auto-release` PRs — calls
 `gh pr merge --auto`. The tag bot (`.github/workflows/release-tag.yml`) then tags `main`
-automatically on merge, which fires the three release workflows above.
+automatically on relevant SDK source or Composer manifest changes, which fires all release
+workflows above.
 
 ### Branch protection on `main` and merging regular PRs
 

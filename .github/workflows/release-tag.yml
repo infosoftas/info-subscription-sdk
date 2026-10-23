@@ -1,7 +1,7 @@
-# Tag bot: computes the next CalVer version whenever `main` changes under an SDK source tree,
-# and pushes that tag -- which triggers the three ADO release pipelines (package-nuget.yml,
-# package-npm.yml, package-python.yml), publishing real packages to NuGet.org, npmjs.org and
-# PyPI. See RELEASE.md for the CalVer format and what a pushed tag triggers.
+# Tag bot: computes the next CalVer version whenever `main` changes under an SDK source tree or
+# root composer.json, and pushes that tag -- which triggers the four GitHub Actions release
+# workflows that publish NuGet.org, npmjs.org, and PyPI packages, plus attach the PHP Composer
+# archive to the shared release. Packagist indexes the Git tag independently by webhook.
 #
 # Push-triggered runs are live (DRY_RUN=false) now that this behavior has been verified. A manual
 # workflow_dispatch run still defaults to dry-run unless `dry_run: false` is explicitly passed, as
@@ -14,9 +14,8 @@
 # The tag is pushed using a short-lived token minted for the "infosoftas-release-tag-bot" GitHub
 # App (Contents: write only, installed on this repo), NOT the default GITHUB_TOKEN. GitHub
 # suppresses push-triggered workflow runs caused by the default GITHUB_TOKEN to prevent recursive
-# runs -- which silently prevented package-nuget.yml/package-npm.yml/package-python.yml from ever
-# running. Pushing as the App's own identity avoids that suppression so the tag push correctly
-# triggers the release pipelines.
+# runs -- which silently prevented the package release workflows from ever running. Pushing as the
+# App's own identity avoids that suppression so the tag push correctly triggers them.
 name: Release Tag Bot
 
 on:
@@ -27,6 +26,8 @@ on:
       - 'dotnet-sdk/src/**'
       - 'typescript-sdk/src/**'
       - 'python-sdk/src/**'
+      - 'php-sdk/src/**'
+      - 'composer.json'
   workflow_dispatch:
     inputs:
       dry_run:

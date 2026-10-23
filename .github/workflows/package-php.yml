@@ -1,0 +1,141 @@
+# Triggered automatically when a CalVer tag (e.g. 2024.8.1) is pushed to GitHub.
+# Validates and archives the Composer package, then attaches the ZIP to the shared GitHub Release.
+# Packagist indexes the tag separately through its GitHub webhook; see RELEASE.md.
+name: Release PHP Package
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+
+permissions:
+  contents: write # needed to create GitHub Releases and upload release assets
+
+env:
+  PhpPackageDirectory: php-package
+  RELEASE_TAG: ${{ github.ref_name }}
+
+jobs:
+  pack:
+    name: Validate and Pack PHP Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag on HEAD
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tag must use numeric CalVer format YYYY.M.MICRO."
+            exit 1
+          fi
+
+          if ! git tag --points-at HEAD | grep -Fx "$RELEASE_TAG" >/dev/null; then
+            echo "No tag found on HEAD. Create and push a numeric CalVer tag before releasing."
+            exit 1
+          fi
+
+          echo "Releasing version: $RELEASE_TAG"
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate Composer package
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Lint and test PHP SDK
+        run: |
+          composer lint
+          composer test
+
+      - name: Create and verify Composer archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$PhpPackageDirectory"
+          composer archive --format=zip --dir="$PhpPackageDirectory"
+
+          archive="$(find "$PhpPackageDirectory" -maxdepth 1 -type f -name '*.zip' -print -quit)"
+          if [ -z "$archive" ]; then
+            echo "Composer did not produce a ZIP archive."
+            exit 1
+          fi
+
+          listing="$(unzip -Z1 "$archive")"
+          printf '%s\n' "$listing" | grep -Fxq 'composer.json' || {
+            echo "Archive is missing root composer.json."
+            exit 1
+          }
+          printf '%s\n' "$listing" | grep -Eq '^php-sdk/src/[^/]' || {
+            echo "Archive is missing PHP SDK source files."
+            exit 1
+          }
+
+          if printf '%s\n' "$listing" | grep -Eq '^(\.git|dotnet-sdk|typescript-sdk|python-sdk|\.github|\.superpowers|eng|vendor|php-sdk/tests|php-sdk/Sample)/|^php-sdk/(Dockerfile|compose\.yml)$'; then
+            echo "Composer archive contains files outside the PHP package."
+            exit 1
+          fi
+
+          mv "$archive" "$PhpPackageDirectory/infosoftas-info-subscription-php-$RELEASE_TAG.zip"
+
+      - name: Upload PHP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: php
+          path: ${{ env.PhpPackageDirectory }}/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Attach PHP Package to GitHub Release
+    runs-on: ubuntu-latest
+    needs: pack
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download PHP artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: php
+          path: ${{ env.PhpPackageDirectory }}
+
+      - name: Create or reuse GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$RELEASE_TAG" --repo infosoftas/info-subscription-sdk >/dev/null 2>&1; then
+            echo "GitHub Release $RELEASE_TAG already exists -- reusing it"
+          else
+            if ! gh release create "$RELEASE_TAG" \
+              --repo infosoftas/info-subscription-sdk \
+              --title "$RELEASE_TAG" \
+              --generate-notes \
+              --notes "## Packages
+          - NuGet: [Infosoft.Info.Subscription.Dotnet@$RELEASE_TAG](https://www.nuget.org/packages/Infosoft.Info.Subscription.Dotnet/$RELEASE_TAG)
+          - npm: [@infosoftas/info-subscription-ts@$RELEASE_TAG](https://www.npmjs.com/package/@infosoftas/info-subscription-ts/v/$RELEASE_TAG)
+          - PyPI: [infosoft-info-subscription@$RELEASE_TAG](https://pypi.org/project/infosoft-info-subscription/$RELEASE_TAG/)
+          - Packagist: [infosoftas/info-subscription-php@$RELEASE_TAG](https://packagist.org/packages/infosoftas/info-subscription-php#$RELEASE_TAG)"; then
+              # Another SDK workflow may have created the shared release concurrently.
+              if gh release view "$RELEASE_TAG" --repo infosoftas/info-subscription-sdk >/dev/null 2>&1; then
+                echo "GitHub Release $RELEASE_TAG was created concurrently -- reusing it"
+              else
+                echo "Failed to create GitHub Release $RELEASE_TAG."
+                exit 1
+              fi
+            fi
+          fi
+
+          gh release upload "$RELEASE_TAG" "$PhpPackageDirectory"/*.zip \
+            --repo infosoftas/info-subscription-sdk \
+            --clobber

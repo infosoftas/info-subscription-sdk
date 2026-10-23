@@ -1,0 +1,78 @@
+name: Validate PHP SDK
+
+on:
+  pull_request:
+    paths:
+      - 'composer.*'
+      - 'php-sdk/**'
+      - '.github/workflows/validate-php.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'composer.*'
+      - 'php-sdk/**'
+      - '.github/workflows/validate-php.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: PHP ${{ matrix.php-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Lint PHP SDK
+        run: composer lint
+
+      - name: Test PHP SDK
+        run: composer test
+
+      - name: Build and verify Composer archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive_dir="$(mktemp -d "$RUNNER_TEMP/php-sdk-archive.XXXXXX")"
+          trap 'rm -rf "$archive_dir"' EXIT
+          composer archive --format=zip --dir="$archive_dir"
+
+          archive="$(find "$archive_dir" -maxdepth 1 -type f -name '*.zip' -print -quit)"
+          if [ -z "$archive" ]; then
+            echo "Composer did not produce a ZIP archive."
+            exit 1
+          fi
+
+          listing="$(unzip -Z1 "$archive")"
+          printf '%s\n' "$listing" | grep -Fxq 'composer.json' || {
+            echo "Archive is missing root composer.json."
+            exit 1
+          }
+          printf '%s\n' "$listing" | grep -Eq '^php-sdk/src/[^/]' || {
+            echo "Archive is missing PHP SDK source files."
+            exit 1
+          }
+
+          while IFS= read -r path; do
+            case "$path" in
+              dotnet-sdk/*|typescript-sdk/*|python-sdk/*|.github/*|.superpowers/*|eng/*|vendor/*|tests/*|Sample/*|sample/*|php-sdk/tests/*|php-sdk/Sample/*|php-sdk/sample/*)
+                echo "Unexpected path in Composer archive: $path"
+                exit 1
+                ;;
+            esac
+          done <<< "$listing"
