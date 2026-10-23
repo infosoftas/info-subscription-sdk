@@ -15,7 +15,7 @@ Active SDKs:
 
 > **Note on the repository name:** this repo was renamed from its original GitHub auto-generated
 > placeholder name (`didactic-octo-chainsaw`) to `info-subscription-sdk` once the SDK generation
-> and release pipelines stabilized. It remains private for now.
+> and release pipelines stabilized. The repository is public.
 
 ## Getting started
 
