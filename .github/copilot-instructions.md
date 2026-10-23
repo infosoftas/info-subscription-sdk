@@ -147,7 +147,7 @@ Use the `create_info_subscription_client(settings)` factory function from the `i
 - From the repo root, copy `php-sdk/Sample/.env.example` to `php-sdk/Sample/.env` with `Copy-Item php-sdk/Sample/.env.example php-sdk/Sample/.env`, set `TENANT_ID`, `CLIENT_ID`, and `CLIENT_SECRET`, then run `docker compose -f php-sdk/compose.yml run --rm sample php index.php`.
 
 ### Versioning and releasing
-[MinVer](https://github.com/adamralph/minver) (.NET), `npm version` (TypeScript), `sed` on `pyproject.toml` (Python), and the root Composer package (PHP) share git-tag versioning. All SDKs share numeric CalVer (`YYYY.M.MICRO`); a single tag triggers all four GitHub Actions release workflows.
+[MinVer](https://github.com/adamralph/minver) (.NET), `npm version` (TypeScript), `sed` on `pyproject.toml` (Python), and the root Composer package (PHP) share git-tag versioning. All SDKs share numeric CalVer (`YYYY.M.MICRO`); a single tag triggers all GitHub Actions release workflows.
 
 `package-nuget.yml`: **Pack → Deploy (NuGet.org + GitHub Release)**
 
@@ -192,7 +192,7 @@ Both `/order` and `/order/**` exist in the lock files and pipeline. Based on obs
 
 ### Adding new API paths
 
-1. Add both `--include-path /newresource` and `--include-path /newresource/**` to the `kiotaIncludePaths` variable in `eng/azure-pipeline.yml` — that variable is shared by all four SDK generation stages (C#, TypeScript, Python, PHP).
+1. Add both `--include-path /newresource` and `--include-path /newresource/**` to the `kiotaIncludePaths` variable in `eng/azure-pipeline.yml` — that variable is shared by all SDK generation stages (C#, TypeScript, Python, PHP).
 2. Add the same two patterns to `includePatterns` in each `kiota-lock.json`:
    - `dotnet-sdk/src/generated/kiota-lock.json`
    - `typescript-sdk/src/generated/kiota-lock.json`

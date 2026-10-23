@@ -1,6 +1,6 @@
 # Release Process
 
-Releases are driven by **git tags**. Pushing a numeric CalVer tag triggers all four GitHub Actions
+Releases are driven by **git tags**. Pushing a numeric CalVer tag triggers all GitHub Actions release
 workflows simultaneously. NuGet, npm, and PyPI packages publish to their registries; PHP is packed
 as a Composer ZIP and attached to the shared GitHub Release. Packagist indexes PHP tags through its
 GitHub webhook.
@@ -41,8 +41,8 @@ auto-indexing from Git tags:
 
 The internal Azure Artifacts feeds (`S4/Internal`) use the build agent's identity — no additional secrets needed for internal publishing.
 
-No custom `GITHUB_TOKEN`/PAT secret is required for creating GitHub Releases. All four GitHub
-Actions workflows use the built-in `${{ github.token }}` with `permissions: contents: write`, so
+No custom `GITHUB_TOKEN`/PAT secret is required for creating GitHub Releases. All GitHub
+Actions release workflows use the built-in `${{ github.token }}` with `permissions: contents: write`, so
 there is no `get-github-token-task@1` step or ADO GitHub service connection involved in release
 creation anymore.
 
@@ -97,7 +97,7 @@ git push origin 2024.8.1
 
 ### 3. All release workflows run automatically
 
-A single numeric tag triggers **all four** release workflows simultaneously. All SDKs share the same version number.
+A single numeric tag triggers **all** release workflows simultaneously. All SDKs share the same version number.
 
 **`.github/workflows/package-nuget.yml`** (2 jobs):
 1. **Pack** — validate tag on HEAD, `dotnet pack` with `-p:Version=<tag>` (version injected explicitly from the git tag), publish artifact
@@ -121,7 +121,7 @@ creates its source ZIP from the GitHub repository/tag and does not use Composer'
 so that Composer install path can contain monorepo trees. This accepted trade-off avoids restructuring
 the monorepo or maintaining a separate distribution repository.
 
-Since a single tag fires all four release workflows simultaneously, each release job checks whether
+Since a single tag fires all release workflows simultaneously, each release job checks whether
 the GitHub Release already exists (`gh release view`) before creating it, so only the first
 workflow to reach that step actually creates the release — the others reuse it. The PHP workflow
 also verifies a release appeared after a failed create to handle concurrent creation safely, then
@@ -155,10 +155,10 @@ Packagist's versions are indexed from Git tags by the configured webhook.
 
 ## Automation (auto-release)
 
-`eng/azure-pipeline.yml` regenerates all four SDKs weekly, validates them, classifies the API diff via
+`eng/azure-pipeline.yml` regenerates all SDKs weekly, validates them, classifies the API diff via
 `oasdiff`, opens a PR labeled `breaking` or `auto-release`, and — for `auto-release` PRs — calls
 `gh pr merge --auto`. The tag bot (`.github/workflows/release-tag.yml`) then tags `main`
-automatically on relevant SDK source or Composer manifest changes, which fires the four release
+automatically on relevant SDK source or Composer manifest changes, which fires all release
 workflows above.
 
 ### Branch protection on `main` and merging regular PRs
