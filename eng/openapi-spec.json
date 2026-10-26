@@ -41969,6 +41969,12 @@
         ],
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "An optional caller-supplied identifier for the agreement to be created.",
+            "format": "uuid",
+            "nullable": true
+          },
           "accountId": {
             "type": "string",
             "description": "The account id the agreement should be connected to.",
@@ -47842,6 +47848,12 @@
             "description": "The cancellation time if processing is set to OnScheduledTime.",
             "format": "date-time",
             "nullable": true
+          },
+          "resumeTime": {
+            "type": "string",
+            "description": "An optional time at which the subscription should be resumed.",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -48333,6 +48345,12 @@
         "properties": {
           "initialPayment": {
             "$ref": "#/components/schemas/RequestForPayment"
+          },
+          "id": {
+            "type": "string",
+            "description": "The identifier the created agreement should be given, if not given one will be generated.",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false,

@@ -7,9 +7,9 @@ use Microsoft\Kiota\Abstractions\Serialization\ParseNode;
 use Microsoft\Kiota\Abstractions\Serialization\SerializationWriter;
 
 /**
- * The person/subscriber that has purchased something which the Invoice represtens
+ * A container for optional values, specifically designed to be used in the contextserialization in an HTTP API using JSON.
 */
-class OptionalOfBuyer extends Recipient implements Parsable 
+class OptionalOfBuyer extends Buyer implements Parsable 
 {
     /**
      * Creates a new instance of the appropriate class based on discriminator value
