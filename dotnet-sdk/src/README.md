@@ -60,29 +60,6 @@ public class MyService
 
 The sample in the GitHub repository shows a more complete example for a console application.
 
-### Resolve an external identity to products
-
-Use the identity-provider ID configured in S4 together with the provider-specific
-external identifier (for example, an `oid` or `sub` claim). The identifier is passed
-as a path parameter and is encoded by Kiota.
-
-```csharp
-var products = await client.Authorizations
-    .Identityprovider[identityProviderId]
-    .User[externalId]
-    .GetAsync(cancellationToken: cancellationToken);
-
-foreach (var product in products ?? [])
-{
-    // Apply your application's access policy using the resolved products.
-}
-```
-
-An empty collection means that no products are currently resolved. Authentication,
-validation, and upstream failures are reported as exceptions rather than an empty result.
-This endpoint resolves products; it does not provide a universal access decision or
-per-source product attribution.
-
 ## Configuration reference
 
 | Section / property | Required | Default | Description |

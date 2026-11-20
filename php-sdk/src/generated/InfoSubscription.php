@@ -2,6 +2,7 @@
 
 namespace Infosoft\InfoSubscription\Generated;
 
+use Infosoft\InfoSubscription\Generated\Authorizations\AuthorizationsRequestBuilder;
 use Infosoft\InfoSubscription\Generated\Billingfrequency\BillingfrequencyRequestBuilder;
 use Infosoft\InfoSubscription\Generated\Creditnote\CreditnoteRequestBuilder;
 use Infosoft\InfoSubscription\Generated\Invoice\InvoiceRequestBuilder;
@@ -31,6 +32,13 @@ use Microsoft\Kiota\Serialization\Text\TextSerializationWriterFactory;
 */
 class InfoSubscription extends BaseRequestBuilder 
 {
+    /**
+     * The authorizations property
+    */
+    public function authorizations(): AuthorizationsRequestBuilder {
+        return new AuthorizationsRequestBuilder($this->pathParameters, $this->requestAdapter);
+    }
+    
     /**
      * The billingfrequency property
     */
