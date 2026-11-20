@@ -1,5 +1,5 @@
 {
-  "descriptionHash": "16590C621401FE4E50173F952F17A5FC5B54E2041BBBE9588B45921950C976C71C164BBBFCAD779C5226BA063D38878D063BC641C544F6E4D0FD521728A2501C",
+  "descriptionHash": "98235813EC49CEB549521B217F2CECC693D4B38CA8FD8517A22BFFCD640A89EC69BEF10FFFBF6BF8E18B5F8D456D0881C80DE9CBA3074477DBA28B32EC246740",
   "descriptionLocation": "https://api.info-subscription.com/swagger/latest/swagger.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.34.1",
@@ -49,7 +49,16 @@
     "/organization",
     "/organization/**",
     "/payment",
-    "/payment/**"
+    "/payment/**",
+    "/authorizations/identityprovider#GET",
+    "/authorizations/user#GET",
+    "/authorizations/user/{id}#GET",
+    "/authorizations/source/subscriber#GET",
+    "/authorizations/source/account#GET",
+    "/authorizations/source/external#GET",
+    "/authorizations/source/emaildomain#GET",
+    "/authorizations/domain#GET",
+    "/authorizations/identityprovider/{identityProviderId}/user/{externalId}#GET"
   ],
   "excludePatterns": [],
   "disabledValidationRules": [],
