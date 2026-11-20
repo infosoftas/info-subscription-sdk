@@ -49,6 +49,16 @@ variables:
     --include-path /organization/**
     --include-path /payment
     --include-path /payment/**
+  kiotaDotnetAuthorizationIncludePaths: >-
+    --include-path /authorizations/identityprovider#GET
+    --include-path /authorizations/user#GET
+    --include-path /authorizations/user/{id}#GET
+    --include-path /authorizations/source/subscriber#GET
+    --include-path /authorizations/source/account#GET
+    --include-path /authorizations/source/external#GET
+    --include-path /authorizations/source/emaildomain#GET
+    --include-path /authorizations/domain#GET
+    --include-path /authorizations/identityprovider/{identityProviderId}/user/{externalId}#GET
 
 # All four SDKs share one version number and are regenerated from the same OpenAPI spec, so they
 # are generated, validated, committed and released as a single unit: one branch, one PR, one tag.
@@ -95,7 +105,7 @@ stages:
     # --- Detect per-language changes (each generates into a throwaway dir and diffs it) ---
 
     - script: |
-        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated-temp
+        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) $(kiotaDotnetAuthorizationIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated-temp
         diff -qr dotnet-sdk/src/generated-temp dotnet-sdk/src/generated -x .kiota.log -x kiota-lock.json && echo "##vso[task.setvariable variable=dotnetChanged]false" || true
         rm -rf dotnet-sdk/src/generated-temp
       displayName: 'Detect change: .NET SDK'
@@ -150,7 +160,7 @@ stages:
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'))
 
     - script: |
-        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated
+        dotnet tool run kiota generate --co --openapi https://api.info-subscription.com/swagger/latest/swagger.json $(kiotaIncludePaths) $(kiotaDotnetAuthorizationIncludePaths) -l csharp -c InfoSubscription -n info.subscription.dotnet --output dotnet-sdk/src/generated
         git add dotnet-sdk/src/generated
       displayName: 'Regenerate: .NET SDK'
       condition: and(succeeded(), eq(variables['anyChanged'], 'true'), eq(variables['dotnetChanged'], 'true'))
