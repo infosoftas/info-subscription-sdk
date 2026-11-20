@@ -199,3 +199,8 @@ Both `/order` and `/order/**` exist in the lock files and pipeline. Based on obs
    - `python-sdk/src/info_subscription_sdk/generated/kiota-lock.json`
    - `php-sdk/src/generated/kiota-lock.json`
 3. The `descriptionHash` in those files will be refreshed automatically on the next pipeline run; do not compute it manually.
+
+
+## Code Review
+
+- When performing a code review, verify that code in `*-sdk/src/generated/` paths is indeed generated and not manually modified. Ignore reviewing the actual code as it is auto-generated.
