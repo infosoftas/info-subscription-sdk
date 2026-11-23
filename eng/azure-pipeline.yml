@@ -49,6 +49,15 @@ variables:
     --include-path /organization/**
     --include-path /payment
     --include-path /payment/**
+    --include-path /authorizations/identityprovider#GET
+    --include-path /authorizations/user#GET
+    --include-path /authorizations/user/{id}#GET
+    --include-path /authorizations/source/subscriber#GET
+    --include-path /authorizations/source/account#GET
+    --include-path /authorizations/source/external#GET
+    --include-path /authorizations/source/emaildomain#GET
+    --include-path /authorizations/domain#GET
+    --include-path /authorizations/identityprovider/{identityProviderId}/user/{externalId}#GET
 
 # All four SDKs share one version number and are regenerated from the same OpenAPI spec, so they
 # are generated, validated, committed and released as a single unit: one branch, one PR, one tag.

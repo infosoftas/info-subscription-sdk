@@ -31128,7 +31128,14 @@
         ],
         "responses": {
           "200": {
-            "description": "A single ScheduledCancellation instance."
+            "description": "A single ScheduledCancellation instance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduledCancellation"
+                }
+              }
+            }
           },
           "404": {
             "description": "No scheduled cancellation was found with the given id."
@@ -31204,7 +31211,17 @@
         ],
         "responses": {
           "200": {
-            "description": "A collection of ScheduledCancellation objects."
+            "description": "A collection of ScheduledCancellation objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduledCancellation"
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found"
@@ -47822,6 +47839,58 @@
         },
         "additionalProperties": false,
         "description": "A payment request."
+      },
+      "ScheduledCancellation": {
+        "type": "object",
+        "properties": {
+          "scheduledCancellationId": {
+            "type": "string",
+            "description": "The scheduled cancellation identifier.",
+            "format": "uuid"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "description": "The subscription identifier.",
+            "format": "uuid"
+          },
+          "subscriberId": {
+            "type": "string",
+            "description": "The subscriber identifier.",
+            "format": "uuid"
+          },
+          "processingType": {
+            "$ref": "#/components/schemas/ScheduledProcessingType"
+          },
+          "cancellationTime": {
+            "type": "string",
+            "description": "The cancellation time.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "resumeTime": {
+            "type": "string",
+            "description": "An optional time at which the subscription should be resumed.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "description": "An optional cancellation reason.",
+            "nullable": true
+          },
+          "ignoringContractSurcharge": {
+            "type": "boolean",
+            "description": "Whether the contract surcharge is ignored."
+          },
+          "processed": {
+            "type": "string",
+            "description": "The processed time.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A scheduled cancellation."
       },
       "ScheduledCancellationBase": {
         "type": "object",

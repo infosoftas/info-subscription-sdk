@@ -15,6 +15,7 @@ from kiota_serialization_text.text_serialization_writer_factory import TextSeria
 from typing import Any, Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
+    from .authorizations.authorizations_request_builder import AuthorizationsRequestBuilder
     from .billingfrequency.billingfrequency_request_builder import BillingfrequencyRequestBuilder
     from .creditnote.creditnote_request_builder import CreditnoteRequestBuilder
     from .invoice.invoice_request_builder import InvoiceRequestBuilder
@@ -52,6 +53,15 @@ class InfoSubscription(BaseRequestBuilder):
         if not self.request_adapter.base_url:
             self.request_adapter.base_url = "https://api.info-subscription.com"
         self.path_parameters["base_url"] = self.request_adapter.base_url
+    
+    @property
+    def authorizations(self) -> AuthorizationsRequestBuilder:
+        """
+        The authorizations property
+        """
+        from .authorizations.authorizations_request_builder import AuthorizationsRequestBuilder
+
+        return AuthorizationsRequestBuilder(self.request_adapter, self.path_parameters)
     
     @property
     def billingfrequency(self) -> BillingfrequencyRequestBuilder:

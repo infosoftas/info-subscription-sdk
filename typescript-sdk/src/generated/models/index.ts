@@ -26,6 +26,23 @@ import { type ApiError, type DateOnly, type Guid, type Parsable, type ParseNode,
 export interface AccountPaymentDemandView extends Parsable, PaymentDemandView {
 }
 /**
+ * Account source model
+ */
+export interface AccountSource extends Parsable {
+    /**
+     * Gets or sets the identifier of the source.
+     */
+    id?: Guid | null;
+    /**
+     * Gets or sets the identifier of the subscriber account.
+     */
+    subscriberAccountId?: Guid | null;
+    /**
+     * Gets or sets the identifier of the user.
+     */
+    userId?: Guid | null;
+}
+/**
  * A additional product.
  */
 export interface AdditionalProduct extends Parsable {
@@ -326,6 +343,15 @@ export interface CreateAccountPaymentDemand extends Parsable {
 // @ts-ignore
 export function createAccountPaymentDemandViewFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
     return deserializeIntoAccountPaymentDemandView;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {AccountSource}
+ */
+// @ts-ignore
+export function createAccountSourceFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoAccountSource;
 }
 /**
  * Creates a new instance of the appropriate class based on discriminator value
@@ -666,11 +692,38 @@ export function createDocumentNetworkLookupResponseFromDiscriminatorValue(parseN
 /**
  * Creates a new instance of the appropriate class based on discriminator value
  * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {DomainAuthorization}
+ */
+// @ts-ignore
+export function createDomainAuthorizationFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoDomainAuthorization;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {EmailDomainAuthorizationSource}
+ */
+// @ts-ignore
+export function createEmailDomainAuthorizationSourceFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoEmailDomainAuthorizationSource;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
  * @returns {EnterprisePlanDemandView}
  */
 // @ts-ignore
 export function createEnterprisePlanDemandViewFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
     return deserializeIntoEnterprisePlanDemandView;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {ExternalStaticProductSource}
+ */
+// @ts-ignore
+export function createExternalStaticProductSourceFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoExternalStaticProductSource;
 }
 /**
  * Creates a new instance of the appropriate class based on discriminator value
@@ -698,6 +751,15 @@ export function createIdentificationFromDiscriminatorValue(parseNode: ParseNode 
 // @ts-ignore
 export function createIdentificationViewFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
     return deserializeIntoIdentificationView;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {IdentityProvider}
+ */
+// @ts-ignore
+export function createIdentityProviderFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoIdentityProvider;
 }
 /**
  * Creates a new instance of the appropriate class based on discriminator value
@@ -1272,6 +1334,15 @@ export function createProductTaxDetailViewFromDiscriminatorValue(parseNode: Pars
 /**
  * Creates a new instance of the appropriate class based on discriminator value
  * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {ProductView}
+ */
+// @ts-ignore
+export function createProductViewFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoProductView;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
  * @returns {Recipient}
  */
 // @ts-ignore
@@ -1425,6 +1496,15 @@ export function createSubscriberContactViewFromDiscriminatorValue(parseNode: Par
 // @ts-ignore
 export function createSubscriberCreateFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
     return deserializeIntoSubscriberCreate;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {SubscriberSource}
+ */
+// @ts-ignore
+export function createSubscriberSourceFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoSubscriberSource;
 }
 /**
  * Creates a new instance of the appropriate class based on discriminator value
@@ -1646,6 +1726,15 @@ export function createTemplatePlanReferenceFromDiscriminatorValue(parseNode: Par
 // @ts-ignore
 export function createUpdatePaymentFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
     return deserializeIntoUpdatePayment;
+}
+/**
+ * Creates a new instance of the appropriate class based on discriminator value
+ * @param parseNode The parse node to use to read the discriminator value and create the object
+ * @returns {User}
+ */
+// @ts-ignore
+export function createUserFromDiscriminatorValue(parseNode: ParseNode | undefined) : ((instance?: Parsable) => Record<string, (node: ParseNode) => void>) {
+    return deserializeIntoUser;
 }
 /**
  * Creates a new instance of the appropriate class based on discriminator value
@@ -2018,6 +2107,19 @@ export type DemandType = (typeof DemandTypeObject)[keyof typeof DemandTypeObject
 export function deserializeIntoAccountPaymentDemandView(accountPaymentDemandView: Partial<AccountPaymentDemandView> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
         ...deserializeIntoPaymentDemandView(accountPaymentDemandView),
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param AccountSource The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoAccountSource(accountSource: Partial<AccountSource> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "id": n => { accountSource.id = n.getGuidValue(); },
+        "subscriberAccountId": n => { accountSource.subscriberAccountId = n.getGuidValue(); },
+        "userId": n => { accountSource.userId = n.getGuidValue(); },
     }
 }
 /**
@@ -2531,6 +2633,32 @@ export function deserializeIntoDocumentNetworkLookupResponse(documentNetworkLook
 }
 /**
  * The deserialization information for the current model
+ * @param DomainAuthorization The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoDomainAuthorization(domainAuthorization: Partial<DomainAuthorization> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "domainName": n => { domainAuthorization.domainName = n.getStringValue(); },
+        "id": n => { domainAuthorization.id = n.getGuidValue(); },
+        "subscriberAccountId": n => { domainAuthorization.subscriberAccountId = n.getGuidValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param EmailDomainAuthorizationSource The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoEmailDomainAuthorizationSource(emailDomainAuthorizationSource: Partial<EmailDomainAuthorizationSource> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "domainAuthorization": n => { emailDomainAuthorizationSource.domainAuthorization = n.getObjectValue<DomainAuthorization>(createDomainAuthorizationFromDiscriminatorValue); },
+        "id": n => { emailDomainAuthorizationSource.id = n.getGuidValue(); },
+        "userId": n => { emailDomainAuthorizationSource.userId = n.getGuidValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
  * @param EnterprisePlanDemandView The instance to deserialize into.
  * @returns {Record<string, (node: ParseNode) => void>}
  */
@@ -2538,6 +2666,20 @@ export function deserializeIntoDocumentNetworkLookupResponse(documentNetworkLook
 export function deserializeIntoEnterprisePlanDemandView(enterprisePlanDemandView: Partial<EnterprisePlanDemandView> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
         ...deserializeIntoPaymentDemandView(enterprisePlanDemandView),
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param ExternalStaticProductSource The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoExternalStaticProductSource(externalStaticProductSource: Partial<ExternalStaticProductSource> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "id": n => { externalStaticProductSource.id = n.getGuidValue(); },
+        "name": n => { externalStaticProductSource.name = n.getStringValue(); },
+        "products": n => { externalStaticProductSource.products = n.getCollectionOfPrimitiveValues<Guid>("string"); },
+        "userId": n => { externalStaticProductSource.userId = n.getGuidValue(); },
     }
 }
 /**
@@ -2576,6 +2718,19 @@ export function deserializeIntoIdentificationView(identificationView: Partial<Id
         "id": n => { identificationView.id = n.getGuidValue(); },
         "type": n => { identificationView.type = n.getStringValue(); },
         "value": n => { identificationView.value = n.getStringValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param IdentityProvider The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoIdentityProvider(identityProvider: Partial<IdentityProvider> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "id": n => { identityProvider.id = n.getGuidValue(); },
+        "integrationType": n => { identityProvider.integrationType = n.getEnumValue<IntegrationType>(IntegrationTypeObject); },
+        "name": n => { identityProvider.name = n.getStringValue(); },
     }
 }
 /**
@@ -3401,6 +3556,17 @@ export function deserializeIntoProductTaxDetailView(productTaxDetailView: Partia
 }
 /**
  * The deserialization information for the current model
+ * @param ProductView The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoProductView(productView: Partial<ProductView> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "id": n => { productView.id = n.getGuidValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
  * @param Recipient The instance to deserialize into.
  * @returns {Record<string, (node: ParseNode) => void>}
  */
@@ -3634,6 +3800,19 @@ export function deserializeIntoSubscriberCreate(subscriberCreate: Partial<Subscr
         "contact": n => { subscriberCreate.contact = n.getObjectValue<SubscriberContact>(createSubscriberContactFromDiscriminatorValue); },
         "externalId": n => { subscriberCreate.externalId = n.getStringValue(); },
         "subscriberNumber": n => { subscriberCreate.subscriberNumber = n.getNumberValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
+ * @param SubscriberSource The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoSubscriberSource(subscriberSource: Partial<SubscriberSource> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "id": n => { subscriberSource.id = n.getGuidValue(); },
+        "subscriberId": n => { subscriberSource.subscriberId = n.getGuidValue(); },
+        "userId": n => { subscriberSource.userId = n.getGuidValue(); },
     }
 }
 /**
@@ -4078,6 +4257,20 @@ export function deserializeIntoUpdatePayment(updatePayment: Partial<UpdatePaymen
 }
 /**
  * The deserialization information for the current model
+ * @param User The instance to deserialize into.
+ * @returns {Record<string, (node: ParseNode) => void>}
+ */
+// @ts-ignore
+export function deserializeIntoUser(user: Partial<User> | undefined = {}) : Record<string, (node: ParseNode) => void> {
+    return {
+        "externalId": n => { user.externalId = n.getStringValue(); },
+        "id": n => { user.id = n.getGuidValue(); },
+        "identityProviderId": n => { user.identityProviderId = n.getGuidValue(); },
+        "subscriberId": n => { user.subscriberId = n.getGuidValue(); },
+    }
+}
+/**
+ * The deserialization information for the current model
  * @param ValidationError The instance to deserialize into.
  * @returns {Record<string, (node: ParseNode) => void>}
  */
@@ -4149,9 +4342,64 @@ export interface DocumentNetworkLookupResponse extends Parsable {
     documentTypes?: string[] | null;
 }
 /**
+ * The domain authorization
+ */
+export interface DomainAuthorization extends Parsable {
+    /**
+     * Gets or sets the domain name.
+     */
+    domainName?: string | null;
+    /**
+     * Gets or sets the identifier.
+     */
+    id?: Guid | null;
+    /**
+     * Gets or sets the identifier of the subscriber account.
+     */
+    subscriberAccountId?: Guid | null;
+}
+/**
+ * The email domain authorization source model
+ */
+export interface EmailDomainAuthorizationSource extends Parsable {
+    /**
+     * The domain authorization
+     */
+    domainAuthorization?: DomainAuthorization | null;
+    /**
+     * Gets or sets the identifier of the source.
+     */
+    id?: Guid | null;
+    /**
+     * Gets or sets the identifier of the user.
+     */
+    userId?: Guid | null;
+}
+/**
  * An account payment demand view.
  */
 export interface EnterprisePlanDemandView extends Parsable, PaymentDemandView {
+}
+/**
+ * Account source model
+ */
+export interface ExternalStaticProductSource extends Parsable {
+    /**
+     * Gets or sets the identifier of the source.
+     */
+    id?: Guid | null;
+    /**
+     * Gets or sets the name of the source (like the name of the external system)
+     */
+    name?: string | null;
+    /**
+     * Gets or sets the products identifiers
+     */
+    products?: Guid[] | null;
+    /**
+     * Gets or sets the identifier of the user.
+     */
+    userId?: Guid | null;
 }
 /**
  * An identification.
@@ -4196,6 +4444,23 @@ export interface IdentificationView extends Parsable {
      * Gets or sets the value.
      */
     value?: string | null;
+}
+/**
+ * The identity provider
+ */
+export interface IdentityProvider extends Parsable {
+    /**
+     * Gets or sets the identifier of the identity provider.
+     */
+    id?: Guid | null;
+    /**
+     * The integration type.
+     */
+    integrationType?: IntegrationType | null;
+    /**
+     * Gets or sets the name.
+     */
+    name?: string | null;
 }
 /**
  * Represents an Id for an object. Typically the Location of the object is available in the Location header.
@@ -4259,6 +4524,7 @@ export interface InitialTerm extends Parsable {
      */
     value?: string | null;
 }
+export type IntegrationType = (typeof IntegrationTypeObject)[keyof typeof IntegrationTypeObject];
 /**
  * A commercial document confirming a sale between a seller and a buyer. The invoice is issued by the seller and the buyer has to pay the claim.
  */
@@ -5722,6 +5988,15 @@ export interface ProductTaxDetailView extends Parsable {
     taxPercent?: number | null;
 }
 /**
+ * The product view model.
+ */
+export interface ProductView extends Parsable {
+    /**
+     * Gets or sets the identifier of the product.
+     */
+    id?: Guid | null;
+}
+/**
  * A recipient is a person, company or other entity which a given invoice is distributed to.
  */
 export interface Recipient extends Parsable {
@@ -5836,6 +6111,19 @@ export interface ReminderReference extends Parsable {
 export function serializeAccountPaymentDemandView(writer: SerializationWriter, accountPaymentDemandView: Partial<AccountPaymentDemandView> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
     if (!accountPaymentDemandView || isSerializingDerivedType) { return; }
     serializePaymentDemandView(writer, accountPaymentDemandView, isSerializingDerivedType)
+}
+/**
+ * Serializes information the current object
+ * @param AccountSource The instance to serialize from.
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeAccountSource(writer: SerializationWriter, accountSource: Partial<AccountSource> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!accountSource || isSerializingDerivedType) { return; }
+    writer.writeGuidValue("id", accountSource.id);
+    writer.writeGuidValue("subscriberAccountId", accountSource.subscriberAccountId);
+    writer.writeGuidValue("userId", accountSource.userId);
 }
 /**
  * Serializes information the current object
@@ -6348,6 +6636,32 @@ export function serializeDocumentNetworkLookupResponse(writer: SerializationWrit
 }
 /**
  * Serializes information the current object
+ * @param DomainAuthorization The instance to serialize from.
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeDomainAuthorization(writer: SerializationWriter, domainAuthorization: Partial<DomainAuthorization> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!domainAuthorization || isSerializingDerivedType) { return; }
+    writer.writeStringValue("domainName", domainAuthorization.domainName);
+    writer.writeGuidValue("id", domainAuthorization.id);
+    writer.writeGuidValue("subscriberAccountId", domainAuthorization.subscriberAccountId);
+}
+/**
+ * Serializes information the current object
+ * @param EmailDomainAuthorizationSource The instance to serialize from.
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeEmailDomainAuthorizationSource(writer: SerializationWriter, emailDomainAuthorizationSource: Partial<EmailDomainAuthorizationSource> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!emailDomainAuthorizationSource || isSerializingDerivedType) { return; }
+    writer.writeObjectValue<DomainAuthorization>("domainAuthorization", emailDomainAuthorizationSource.domainAuthorization, serializeDomainAuthorization);
+    writer.writeGuidValue("id", emailDomainAuthorizationSource.id);
+    writer.writeGuidValue("userId", emailDomainAuthorizationSource.userId);
+}
+/**
+ * Serializes information the current object
  * @param EnterprisePlanDemandView The instance to serialize from.
  * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
  * @param writer Serialization writer to use to serialize this model
@@ -6356,6 +6670,20 @@ export function serializeDocumentNetworkLookupResponse(writer: SerializationWrit
 export function serializeEnterprisePlanDemandView(writer: SerializationWriter, enterprisePlanDemandView: Partial<EnterprisePlanDemandView> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
     if (!enterprisePlanDemandView || isSerializingDerivedType) { return; }
     serializePaymentDemandView(writer, enterprisePlanDemandView, isSerializingDerivedType)
+}
+/**
+ * Serializes information the current object
+ * @param ExternalStaticProductSource The instance to serialize from.
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeExternalStaticProductSource(writer: SerializationWriter, externalStaticProductSource: Partial<ExternalStaticProductSource> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!externalStaticProductSource || isSerializingDerivedType) { return; }
+    writer.writeGuidValue("id", externalStaticProductSource.id);
+    writer.writeStringValue("name", externalStaticProductSource.name);
+    writer.writeCollectionOfPrimitiveValues<Guid>("products", externalStaticProductSource.products);
+    writer.writeGuidValue("userId", externalStaticProductSource.userId);
 }
 /**
  * Serializes information the current object
@@ -6394,6 +6722,19 @@ export function serializeIdentificationView(writer: SerializationWriter, identif
     writer.writeGuidValue("id", identificationView.id);
     writer.writeStringValue("type", identificationView.type);
     writer.writeStringValue("value", identificationView.value);
+}
+/**
+ * Serializes information the current object
+ * @param IdentityProvider The instance to serialize from.
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeIdentityProvider(writer: SerializationWriter, identityProvider: Partial<IdentityProvider> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!identityProvider || isSerializingDerivedType) { return; }
+    writer.writeGuidValue("id", identityProvider.id);
+    writer.writeEnumValue<IntegrationType>("integrationType", identityProvider.integrationType);
+    writer.writeStringValue("name", identityProvider.name);
 }
 /**
  * Serializes information the current object
@@ -7219,6 +7560,17 @@ export function serializeProductTaxDetailView(writer: SerializationWriter, produ
 /**
  * Serializes information the current object
  * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param ProductView The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeProductView(writer: SerializationWriter, productView: Partial<ProductView> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!productView || isSerializingDerivedType) { return; }
+    writer.writeGuidValue("id", productView.id);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
  * @param Recipient The instance to serialize from.
  * @param writer Serialization writer to use to serialize this model
  */
@@ -7452,6 +7804,19 @@ export function serializeSubscriberCreate(writer: SerializationWriter, subscribe
     writer.writeObjectValue<SubscriberContact>("contact", subscriberCreate.contact, serializeSubscriberContact);
     writer.writeStringValue("externalId", subscriberCreate.externalId);
     writer.writeNumberValue("subscriberNumber", subscriberCreate.subscriberNumber);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param SubscriberSource The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeSubscriberSource(writer: SerializationWriter, subscriberSource: Partial<SubscriberSource> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!subscriberSource || isSerializingDerivedType) { return; }
+    writer.writeGuidValue("id", subscriberSource.id);
+    writer.writeGuidValue("subscriberId", subscriberSource.subscriberId);
+    writer.writeGuidValue("userId", subscriberSource.userId);
 }
 /**
  * Serializes information the current object
@@ -7896,6 +8261,20 @@ export function serializeUpdatePayment(writer: SerializationWriter, updatePaymen
 /**
  * Serializes information the current object
  * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
+ * @param User The instance to serialize from.
+ * @param writer Serialization writer to use to serialize this model
+ */
+// @ts-ignore
+export function serializeUser(writer: SerializationWriter, user: Partial<User> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
+    if (!user || isSerializingDerivedType) { return; }
+    writer.writeStringValue("externalId", user.externalId);
+    writer.writeGuidValue("id", user.id);
+    writer.writeGuidValue("identityProviderId", user.identityProviderId);
+    writer.writeGuidValue("subscriberId", user.subscriberId);
+}
+/**
+ * Serializes information the current object
+ * @param isSerializingDerivedType A boolean indicating whether the serialization is for a derived type.
  * @param ValidationError The instance to serialize from.
  * @param writer Serialization writer to use to serialize this model
  */
@@ -8221,6 +8600,23 @@ export interface SubscriberCreate extends Parsable {
      * Gets or sets the subscriber number.
      */
     subscriberNumber?: number | null;
+}
+/**
+ * Subscriber source model.
+ */
+export interface SubscriberSource extends Parsable {
+    /**
+     * Gets or sets the identifier of the source.
+     */
+    id?: Guid | null;
+    /**
+     * Gets or sets the identifier of the subscriber.
+     */
+    subscriberId?: Guid | null;
+    /**
+     * Gets or sets the identifier of the user.
+     */
+    userId?: Guid | null;
 }
 /**
  * A subscriber view.
@@ -9130,6 +9526,27 @@ export interface TemplatePlanReference extends Parsable {
 export interface UpdatePayment extends CreatePayment, Parsable {
 }
 /**
+ * The user
+ */
+export interface User extends Parsable {
+    /**
+     * Gets or sets the external identifier.
+     */
+    externalId?: string | null;
+    /**
+     * Get or set the user identifier
+     */
+    id?: Guid | null;
+    /**
+     * Gets or sets the identity provider identifier.
+     */
+    identityProviderId?: Guid | null;
+    /**
+     * Gets or sets the identifier of the subscriber.
+     */
+    subscriberId?: Guid | null;
+}
+/**
  * Represents a validation error.
  */
 export interface ValidationError extends Parsable {
@@ -9282,6 +9699,15 @@ export const InitialPackageTermTypesObject = {
     FixedTimeSpan: "FixedTimeSpan",
     RemainingOfMonth: "RemainingOfMonth",
     RemainingOfYear: "RemainingOfYear",
+} as const;
+/**
+ * The integration type.
+ */
+export const IntegrationTypeObject = {
+    Auth0: "Auth0",
+    AzureADB2C: "AzureADB2C",
+    SiteAccess: "SiteAccess",
+    External: "External",
 } as const;
 /**
  * Values that represent matching variants

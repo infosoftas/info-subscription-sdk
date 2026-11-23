@@ -1,0 +1,59 @@
+from __future__ import annotations
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from kiota_abstractions.serialization import Parsable, ParseNode, SerializationWriter
+from typing import Any, Optional, TYPE_CHECKING, Union
+from uuid import UUID
+
+@dataclass
+class User(Parsable):
+    """
+    The user
+    """
+    # Gets or sets the external identifier.
+    external_id: Optional[str] = None
+    # Get or set the user identifier
+    id: Optional[UUID] = None
+    # Gets or sets the identity provider identifier.
+    identity_provider_id: Optional[UUID] = None
+    # Gets or sets the identifier of the subscriber.
+    subscriber_id: Optional[UUID] = None
+    
+    @staticmethod
+    def create_from_discriminator_value(parse_node: ParseNode) -> User:
+        """
+        Creates a new instance of the appropriate class based on discriminator value
+        param parse_node: The parse node to use to read the discriminator value and create the object
+        Returns: User
+        """
+        if parse_node is None:
+            raise TypeError("parse_node cannot be null.")
+        return User()
+    
+    def get_field_deserializers(self,) -> dict[str, Callable[[ParseNode], None]]:
+        """
+        The deserialization information for the current model
+        Returns: dict[str, Callable[[ParseNode], None]]
+        """
+        fields: dict[str, Callable[[Any], None]] = {
+            "externalId": lambda n : setattr(self, 'external_id', n.get_str_value()),
+            "id": lambda n : setattr(self, 'id', n.get_uuid_value()),
+            "identityProviderId": lambda n : setattr(self, 'identity_provider_id', n.get_uuid_value()),
+            "subscriberId": lambda n : setattr(self, 'subscriber_id', n.get_uuid_value()),
+        }
+        return fields
+    
+    def serialize(self,writer: SerializationWriter) -> None:
+        """
+        Serializes information the current object
+        param writer: Serialization writer to use to serialize this model
+        Returns: None
+        """
+        if writer is None:
+            raise TypeError("writer cannot be null.")
+        writer.write_str_value("externalId", self.external_id)
+        writer.write_uuid_value("id", self.id)
+        writer.write_uuid_value("identityProviderId", self.identity_provider_id)
+        writer.write_uuid_value("subscriberId", self.subscriber_id)
+    
+
